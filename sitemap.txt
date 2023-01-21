@@ -1,2 +1,3 @@
+http://example.com/2023/01/22/happy-new-year/
 http://example.com/2023/01/21/hello-world/
 http://example.com/

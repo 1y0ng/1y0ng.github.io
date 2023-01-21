@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-01-21T14:57:41.893Z</updated>
+  <updated>2023-01-21T16:53:17.561Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>新年好</title>
+    <link href="http://example.com/2023/01/22/happy-new-year/"/>
+    <id>http://example.com/2023/01/22/happy-new-year/</id>
+    <published>2023-01-21T16:36:32.000Z</published>
+    <updated>2023-01-21T16:53:17.561Z</updated>
+    
+    <content type="html"><![CDATA[<p> 欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt; 欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
