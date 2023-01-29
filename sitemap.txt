@@ -1,3 +1,5 @@
+http://example.com/2023/01/29/Using-ipv6-to-realize-public-ip/
 http://example.com/2023/01/22/happy-new-year/
 http://example.com/2023/01/21/hello-world/
 http://example.com/
+http://example.com/tags/ipv6/
