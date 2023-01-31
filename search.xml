@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>新年好</title>
+    <url>/2023/01/22/happy-new-year/</url>
+    <content><![CDATA[<p> 欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+]]></content>
+  </entry>
+  <entry>
     <title>利用ipv6实现公网ip</title>
     <url>/2023/01/29/Using-ipv6-to-realize-public-ip/</url>
     <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a><strong>背景</strong></h3><p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
@@ -59,12 +65,6 @@
 <h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>新年好</title>
-    <url>/2023/01/22/happy-new-year/</url>
-    <content><![CDATA[<p> 欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
 ]]></content>
   </entry>
 </search>
