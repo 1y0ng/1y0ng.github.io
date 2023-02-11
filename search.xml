@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>新年好</title>
-    <url>/2023/01/22/happy-new-year/</url>
-    <content><![CDATA[<p> 欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
-]]></content>
-  </entry>
-  <entry>
     <title>利用ipv6实现公网ip</title>
     <url>/2023/01/29/Using-ipv6-to-realize-public-ip/</url>
     <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a><strong>背景</strong></h3><p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
@@ -45,8 +39,115 @@
 <p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
 <p> <a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
 ]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
       <tags>
         <tag>ipv6</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>新年好</title>
+    <url>/2023/01/22/happy-new-year/</url>
+    <content><![CDATA[<p> 欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2023/01/21/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>seafile和alist使用体验</title>
+    <url>/2023/02/11/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="seafile"><a href="#seafile" class="headerlink" title="seafile"></a>seafile</h3><p> 一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
+<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
+<p> seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
+<p>优点：</p>
+<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
+<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
+<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
+<p>缺点：</p>
+<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
+<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
+<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
+<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="alist"><a href="#alist" class="headerlink" title="alist"></a>alist</h3><p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
+<p>alist的部署更加简单，具体可以看这位博主的文章</p>
+<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
+<p>同样讲一下alist的优缺点</p>
+<p>优点：</p>
+<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
+<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
+<p>缺点：</p>
+<p>​    1.没有客户端工具只能通过网页端访问资源</p>
+<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
+<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
+<p>​    4.有点“重”，内容多的话要加载很久</p>
+<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
+<h3 id="alist的安全问题"><a href="#alist的安全问题" class="headerlink" title="alist的安全问题"></a>alist的安全问题</h3><p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
+<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
+<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p> （上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
+<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
+<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
+<p>同时也可以参考下面这位up主的视频</p>
+<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>alist</tag>
+        <tag>seafile</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Zerotier的使用体验</title>
+    <url>/2023/02/11/zerotier/</url>
+    <content><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
+<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
+<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
+<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
+<p><img src="https://img-blog.csdnimg.cn/ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
+<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
+<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
+<h1 id="Zerotier"><a href="#Zerotier" class="headerlink" title="Zerotier"></a>Zerotier</h1><p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
+<p><img src="https://img-blog.csdnimg.cn/43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h2 id="安装配置"><a href="#安装配置" class="headerlink" title="安装配置"></a>安装配置</h2><p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
+<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&is_story_h5=false&mid=CZP6291YuQ9EvlArsK6mQw==&p=1&plat_id=114&share_from=ugc&share_medium=android&share_plat=android&share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&share_source=COPY&share_tag=s_i&timestamp=1676083314&unique_k=arTrXpi&up_id=35973342&vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
+<p>同时centos 的安装可以参照这位大佬的文章</p>
+<p> <a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
+<h2 id="体验"><a href="#体验" class="headerlink" title="体验"></a>体验</h2><p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
+<p><img src="https://img-blog.csdnimg.cn/d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
+<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
+<h2 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h2><p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
+<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>zerotier</tag>
       </tags>
   </entry>
   <entry>
@@ -107,27 +208,12 @@
 <p>虽然这些操作很复杂，但我想告诉你网络安全真的很重要！！！</p>
 <p>（我的一个朋友之前就因为ssh密码被爆破而被入侵了……）</p>
 ]]></content>
+      <categories>
+        <category>经历</category>
+      </categories>
       <tags>
         <tag>ipv6</tag>
         <tag>服务器</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2023/01/21/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
   </entry>
 </search>

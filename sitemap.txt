@@ -1,7 +1,17 @@
+http://example.com/2023/02/11/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/
+http://example.com/categories/index.html
+http://example.com/tags/index.html
+http://example.com/2023/02/11/zerotier/
 http://example.com/2023/02/07/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/
 http://example.com/2023/01/29/Using-ipv6-to-realize-public-ip/
 http://example.com/2023/01/22/happy-new-year/
 http://example.com/2023/01/21/hello-world/
 http://example.com/
 http://example.com/tags/ipv6/
+http://example.com/tags/alist/
+http://example.com/tags/seafile/
+http://example.com/tags/zerotier/
 http://example.com/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/
+http://example.com/categories/%E6%8A%80%E6%9C%AF/
+http://example.com/categories/%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/
+http://example.com/categories/%E7%BB%8F%E5%8E%86/
