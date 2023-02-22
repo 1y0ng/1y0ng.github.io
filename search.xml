@@ -3,41 +3,46 @@
   <entry>
     <title>利用ipv6实现公网ip</title>
     <url>/2023/01/29/Using-ipv6-to-realize-public-ip/</url>
-    <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a><strong>背景</strong></h3><p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
-<h3 id="偶然发现的ipv6"><a href="#偶然发现的ipv6" class="headerlink" title="偶然发现的ipv6"></a>偶然发现的ipv6</h3><p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
+    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
+<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
+<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
+<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
 <p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
 <p><img src="https://img-blog.csdnimg.cn/94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> 如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
+<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
 <p><img src="https://img-blog.csdnimg.cn/e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
 <p><img src="https://img-blog.csdnimg.cn/90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> 到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
+<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
 <p><img src="https://img-blog.csdnimg.cn/e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> 在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="https://img-blog.csdnimg.cn/a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="https://img-blog.csdnimg.cn/a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
 <p><img src="https://img-blog.csdnimg.cn/6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>ipv6配置</p>
 <p><img src="https://img-blog.csdnimg.cn/f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
 <p><img src="https://img-blog.csdnimg.cn/8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> 到这里光猫的配置就结束了</p>
+<p>到这里光猫的配置就结束了</p>
 <p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
-<p> <img src="https://img-blog.csdnimg.cn/9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p><img src="https://img-blog.csdnimg.cn/9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>设置防火墙的入站规则，开启80端口</p>
 <p><img src="https://img-blog.csdnimg.cn/ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> 通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
+<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
 <p>对自己的ipv6进行测试</p>
-<p> 全都响应了就说明ipv6公网配置成功了<img src="https://img-blog.csdnimg.cn/7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> 到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
+<p>全都响应了就说明ipv6公网配置成功了<img src="https://img-blog.csdnimg.cn/7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
 <p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
-<h3 id="一些小缺陷"><a href="#一些小缺陷" class="headerlink" title="一些小缺陷"></a>一些小缺陷</h3><p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
+<h3 id="一些小缺陷">一些小缺陷</h3>
+<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
 <p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
-<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state&#x3D;disable</strong> 关闭）</p>
-<h3 id="接下来的目标"><a href="#接下来的目标" class="headerlink" title="接下来的目标"></a>接下来的目标</h3><p>1.购买域名，通过域名访问公网ipv6</p>
+<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
+<h3 id="接下来的目标">接下来的目标</h3>
+<p>1.购买域名，通过域名访问公网ipv6</p>
 <p>2.在linux系统中配置ipv6公网地址</p>
-<h3 id="大佬的文章"><a href="#大佬的文章" class="headerlink" title="大佬的文章"></a>大佬的文章</h3><p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
+<h3 id="大佬的文章">大佬的文章</h3>
+<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
 <p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
-<p> <a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
+<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
 ]]></content>
       <categories>
         <category>技术</category>
@@ -49,35 +54,119 @@
   <entry>
     <title>新年好</title>
     <url>/2023/01/22/happy-new-year/</url>
-    <content><![CDATA[<p> 欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
 ]]></content>
   </entry>
   <entry>
     <title>Hello World</title>
     <url>/2023/01/21/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
+<h2 id="Quick-Start">Quick Start</h2>
+<h3 id="Create-a-new-post">Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
+<h3 id="Run-server">Run server</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
+<h3 id="Generate-static-files">Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
+<h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
   </entry>
   <entry>
+    <title>XXE漏洞详解</title>
+    <url>/2023/02/22/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h1>简介</h1>
+<p>XXE(XML External Entity Injection) <code>XML外部实体注入</code>,之前听这个词听过很多次了,但由于平日里不管是ctf比赛或者是src遇到的都不多,所以一直没有详细的了解过,趁着假期空闲,决定好好学一下这方面的知识。</p>
+<p>XML一般可以用来做数据传输和数据存储,其传输功能和JSON类似,但现在基本使用JSON,很少使用XML,因为XML使用起来太“重”了,而外部实体引入是XML的一个正常功能,但如果在引入时,注入了恶意的外部实体,但本地对注入的外部实体未做严格校验,这时就会出现XXE漏洞。</p>
+<h1>XML基础</h1>
+<p>要明白XXE,我们可以首先从XML基础学起。</p>
+<p>一个XML文档结构包括、<code>XML声明、文档类型定义DTD（可选）、文档元素</code>。</p>
+<p>例如下面这一段就是标准的XML文档</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">user</span> (<span class="keyword">username</span>, <span class="keyword">password</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">username</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">password</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/4d4d27c0633b434f8243f7d8b50a5ce2.png" alt="在这里插入图片描述"></p>
+<p>通过DTD可以验证XML是否符合正确的语法规则 （DTD实际上类似一段说明文字,说明XML文档的组成元素及结构,如果这里将DTD中的username改为name,打开XML文档并不会报错,只是不符合DTD中定义的语法规则）,DTD可以本地声明,也可以外部引用,而XXE主要就是从DTD入手。</p>
+<h1>DTD实体</h1>
+<p>实体是<code>用于定义引用普通文本或特殊字符的快捷方式的变量</code>,可在内部或外部进行声明。</p>
+<p>实体包括<code>一般实体</code>和<code>参数实体</code>,为防止大家被绕晕,这里我们只讲一般实体。</p>
+<p>一般实体声明方式：<code>&lt;!ENTITY 名字 '内容'&gt;</code></p>
+<p>使用方式：<code>&amp;名字;</code></p>
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="string">&quot;admin&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在浏览器中打开</p>
+<p><img src="https://img-blog.csdnimg.cn/470a490266c14d9d8af3bc61cca3c847.png" alt="在这里插入图片描述"></p>
+<p>而外部实体声明方式为： <code>&lt;!ENTITY 名字 SYSTEM &quot;URI/URL&quot;&gt;</code></p>
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;admin.txt&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>admin.txt中的内容如下<br>
+<img src="https://img-blog.csdnimg.cn/2f42b5236de848d99d31ff0d72379852.png" alt="在这里插入图片描述"></p>
+<p>在IE8浏览器(其他浏览器显示不出来)中打开</p>
+<p><img src="https://img-blog.csdnimg.cn/3043d1c444e2426fbcede512168256e4.png" alt="在这里插入图片描述"></p>
+<p>同时在引用外部实体时,可以使用不同的协议类型来引用 ：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">file:///path/file.txt</span><br><span class="line">http://url/file.txt</span><br><span class="line">php://filter/read=convert.base64-encode/resource=file.txt</span><br></pre></td></tr></table></figure>
+<p>聪明的你们一定已经发现了,只要将admin.txt换成其他文件,就可以实现文件的任意读取了</p>
+<h1>PHP中的XML</h1>
+<p>php中常见的与XML有关的函数是 <code>simplexml_load_string</code></p>
+<p>其用法为 <code>simplexml_load_file(string,class,options,ns,is_prefix)</code></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>必需。规定要使用的 XML 字符串。</td>
+</tr>
+<tr>
+<td>class</td>
+<td>可选。规定新对象的 class。</td>
+</tr>
+<tr>
+<td>options</td>
+<td>可选。规定附加的 Libxml 参数。</td>
+</tr>
+<tr>
+<td>ns</td>
+<td>可选。</td>
+</tr>
+<tr>
+<td>is_prefix</td>
+<td>可选。</td>
+</tr>
+</tbody>
+</table>
+<p>一个简单的例子</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type:text/html;charset=utf-8&#x27;</span>);</span><br><span class="line"><span class="comment">//通过php伪协议直接接收POST传参</span></span><br><span class="line"><span class="variable">$data</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line"><span class="variable">$xml</span> = <span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$data</span>, <span class="string">&quot;SimpleXMLElement&quot;</span>, LIBXML_NOENT);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xml</span>-&gt;username;</span><br></pre></td></tr></table></figure>
+<p>利用XXE读取log.txt的内容<br>
+<img src="https://img-blog.csdnimg.cn/4d7a3d360f154acc92b406c30ac7e9e3.png" alt="在这里插入图片描述"></p>
+<h1>防御</h1>
+<p>XXE的防御一般通过两种方式<br>
+1.使用开发语言提供的禁用外部实体的方法, 例如php中使用<code>libxml_disable_entity_loader(true)</code><br>
+2.对用户输入的内容进行过滤,过滤掉<code>&lt;!DOCTYPE</code>和<code>&lt;!ENTITY</code>,或者<code>SYSTEM</code>和<code>PUBLIC</code>。</p>
+]]></content>
+      <categories>
+        <category>知识分享</category>
+      </categories>
+      <tags>
+        <tag>xxe</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>seafile和alist使用体验</title>
     <url>/2023/02/11/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
-    <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
 <p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="seafile"><a href="#seafile" class="headerlink" title="seafile"></a>seafile</h3><p> 一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
+<h3 id="seafile">seafile</h3>
+<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
 <p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
-<p> seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
+<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
 <p>优点：</p>
 <p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
 <p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
@@ -87,7 +176,8 @@
 <p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
 <p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
 <p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="alist"><a href="#alist" class="headerlink" title="alist"></a>alist</h3><p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
+<h3 id="alist">alist</h3>
+<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
 <p>alist的部署更加简单，具体可以看这位博主的文章</p>
 <p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
 <p>同样讲一下alist的优缺点</p>
@@ -100,16 +190,18 @@
 <p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
 <p>​    4.有点“重”，内容多的话要加载很久</p>
 <p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
-<h3 id="alist的安全问题"><a href="#alist的安全问题" class="headerlink" title="alist的安全问题"></a>alist的安全问题</h3><p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
+<h3 id="alist的安全问题">alist的安全问题</h3>
+<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
 <p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
 <p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> （上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
+<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
 <p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
 <p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
 <p>同时也可以参考下面这位up主的视频</p>
 <p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+<h3 id="最后">最后</h3>
+<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
 ]]></content>
       <categories>
         <category>使用体验</category>
@@ -120,86 +212,86 @@
       </tags>
   </entry>
   <entry>
-    <title>Zerotier的使用体验</title>
-    <url>/2023/02/11/zerotier/</url>
-    <content><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
-<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
-<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
-<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
-<p><img src="https://img-blog.csdnimg.cn/ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
-<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
-<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
-<h1 id="Zerotier"><a href="#Zerotier" class="headerlink" title="Zerotier"></a>Zerotier</h1><p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
-<p><img src="https://img-blog.csdnimg.cn/43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h2 id="安装配置"><a href="#安装配置" class="headerlink" title="安装配置"></a>安装配置</h2><p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
-<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&is_story_h5=false&mid=CZP6291YuQ9EvlArsK6mQw==&p=1&plat_id=114&share_from=ugc&share_medium=android&share_plat=android&share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&share_source=COPY&share_tag=s_i&timestamp=1676083314&unique_k=arTrXpi&up_id=35973342&vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
-<p>同时centos 的安装可以参照这位大佬的文章</p>
-<p> <a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
-<h2 id="体验"><a href="#体验" class="headerlink" title="体验"></a>体验</h2><p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
-<p><img src="https://img-blog.csdnimg.cn/d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
-<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
-<h2 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h2><p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
-<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
+    <title>寒假实习经历</title>
+    <url>/2023/02/19/%E5%AF%92%E5%81%87%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/</url>
+    <content><![CDATA[<h1>背景</h1>
+<p>大三上要结束了,之前便立下了一个flag,说必须在寒假找到一个实习,于是终于在11月开始了简历的制作,运气比较好,投出了人生的第一份简历后的第三天就收到了hr的面试通知,顺利通过2轮面试之后在1月3日开始了人生中的第一份实习</p>
+<h1>租房</h1>
+<p>由于害怕不适应工作,选择先租了一个礼拜的青年旅舍,后面才在豆瓣上找了房子与别人合租,三室一厅,舍友一共养了四只猫猫（提前体验铲屎官生活,嘻嘻~~）,这次租房,真是让我明白到了“<strong>塞翁失马焉知非福</strong>”的道理,本来和别人约好了周日去看房,结果周六晚上被告知说已经房子租出去了,得我一晚没睡重新找房😠,但也多亏了这一波操作让我在第二天找到了离公司更近,环境更好的房子😆</p>
+<p><img src="https://img-blog.csdnimg.cn/293776e497114a11a7bcdd3850a23812.png" alt="img"></p>
+<center style="color:#C0C0C0;text-decoration:underline">超可爱的猫猫,嘻嘻~~</center>
+<h1>实习环境</h1>
+<p>实习公司是一家国内小有名气的网络安全公司,其下的网络空间搜索引擎在安全圈里可谓人尽皆知。工作地点在湖南长沙（因为我老家也在长沙）,工作内容还算轻松,并且遇到了有一位非常耐心的导师（导师说话真的好温柔,我哭死😭）,同事也很热心（前期工作都是靠同事引导的）,工作是965,从来没要求加过班,工资发放也很准时,网上说的一大堆压榨实习生的问题一个也没有遇到（公司真的太好了😭）,最后因为学校开学,离职的时候也很干脆,一天下来离职流程就办好了,哪怕实习时间不算长,但也同样给了实习证明。总而言之,作为第一份实习,它对于我来说是非常完美的。</p>
+<p><img src="https://img-blog.csdnimg.cn/a8b25f90046449249d65ae8c2dcea1b9.png" alt="img"></p>
+<center style="color:#C0C0C0;text-decoration:underline">公司发的奶茶、水果、以及新春大礼包
+</center>
+<h1>收获</h1>
+<p>在实习过程中虽然没有涉及到特别大的项目,但也学到很多渗透方面的技术手法以及一些安全工具的使用,但我觉得最重要的是<strong>从学校到真实工作岗位上思维的转变</strong>,熟悉了网络安全行业知识和工作流程,掌握行业趋势与发展技术,同时关注自身的职业发展路径,摸清行业的应聘前景,对于自己的未来有了更好的<strong>职业规划</strong>,另外,实习还教会了我如何在<strong>团队合作</strong>中积极作用,更好的沟通协作,解决问题的方法。</p>
+<h1>期望和规划</h1>
+<p>马上大三下就要开学了,希望我能够沉淀已学的渗透知识,在渗透技术方面的学习能够更加深入,同时加强带代码审计能力,多参加比赛,多认识朋友,不断的拓宽自己的知识面</p>
 ]]></content>
       <categories>
-        <category>使用体验</category>
+        <category>经历</category>
       </categories>
       <tags>
-        <tag>zerotier</tag>
+        <tag>实习</tag>
       </tags>
   </entry>
   <entry>
     <title>利用ipv6搭建一台服务器</title>
     <url>/2023/02/07/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>继上次发现ipv6以来由于要实习，一直只是在尝试部分小功能的实现，终于在这个春节假期才有了一大段空闲时间来部署服务器</p>
-<h3 id="硬件需求"><a href="#硬件需求" class="headerlink" title="硬件需求"></a>硬件需求</h3><p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>继上次发现ipv6以来由于要实习，一直只是在尝试部分小功能的实现，终于在这个春节假期才有了一大段空闲时间来部署服务器</p>
+<h3 id="硬件需求">硬件需求</h3>
+<p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
 <p>在某鱼上花280买了一台<strong>迷你主机</strong>，处理器是奔腾n3540,4+256的，同时准备一个储存<strong>大于或等于8G</strong>的u盘</p>
 <p><img src="https://img-blog.csdnimg.cn/761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p> 我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
+<h3 id="准备工作">准备工作</h3>
+<p>我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
 <p><a href="http://mirrors.aliyun.com/centos/7/isos/x86_64/">centos-7-isos-x86_64安装包下载_开源镜像站-阿里云 (aliyun.com)</a></p>
 <p><img src="https://img-blog.csdnimg.cn/55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>下载balenaetcher将iso文件烧录至U盘中</p>
 <p><a href="https://www.balena.io/etcher#download-etcher">balenaEtcher - Flash OS images to SD cards &amp; USB drives</a></p>
 <p>可以以这个up主的视频作为参考</p>
-<p><a href="https://b23.tv/LeqXDBR">（上）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a><br> <a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
-<h3 id="安装系统"><a href="#安装系统" class="headerlink" title="安装系统"></a>安装系统</h3><p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
+<p><a href="https://b23.tv/LeqXDBR">（上）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a><br>
+<a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
+<h3 id="安装系统">安装系统</h3>
+<p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
 <p><img src="https://img-blog.csdnimg.cn/e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> 原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
+<p>原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
 <p><a href="https://blog.csdn.net/zwhfyy/article/details/78991446">Centos7安装时引导错误以及解决方案_zwhfyy的博客-CSDN博客_centos 安装报错</a></p>
 <p><a href="https://blog.csdn.net/weixin_34205826/article/details/93020109">Centos安装错误的解决方法_weixin_34205826的博客-CSDN博客</a></p>
-<h3 id="配置网络"><a href="#配置网络" class="headerlink" title="配置网络"></a>配置网络</h3><p>系统安装完成以后就要开始配置网络了，我采取的方法是在局域网内使用固定的ipv4地址，同时开启centos的ipv6地址</p>
+<h3 id="配置网络">配置网络</h3>
+<p>系统安装完成以后就要开始配置网络了，我采取的方法是在局域网内使用固定的ipv4地址，同时开启centos的ipv6地址</p>
 <p>首先使用ifconfig查看网卡名字和分配的ip地址，如果已经有ipv6和ipv4地址了就不用管了，如果没有就需要对网卡配置文件进行修改</p>
 <p>使用以下命令对网卡配置进行修改</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-网卡名字 <span class="comment">#打开网卡配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#没有ipv6则加上这么几句话</span></span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启网卡</span></span><br><span class="line">systemctl restart network</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 <p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>弄好以后可以用外网ping一下看分配到的ipv6地址是否能够ping通</p>
-<p>目前如果在服务器上开启一些服务的话是通过<strong>http:&#x2F;&#x2F;[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个<strong>动态的地址，</strong>随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
-<h3 id="获取域名"><a href="#获取域名" class="headerlink" title="获取域名"></a>获取域名</h3><p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
+<p>目前如果在服务器上开启一些服务的话是通过<strong>http://[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个**动态的地址，**随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
+<h3 id="获取域名">获取域名</h3>
+<p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
 <p><img src="https://img-blog.csdnimg.cn/86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p> 记录类型选择<strong>AAAA表示ipv6地址</strong></p>
+<p>记录类型选择<strong>AAAA表示ipv6地址</strong></p>
 <p>主机记录填写<strong>子域名名称</strong></p>
 <p>记录值填<strong>对应的ipv6地址</strong></p>
 <p>添加完后进行<strong>生效检测</strong>查看是否能够成功解析</p>
 <p><strong>DDNS</strong></p>
 <p>DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。</p>
 <p>网上有很多如何使用DDNS的教程，这里我使用的是是一个大佬分享的python脚本（服务器要安装pyhton运行环境，可以直接下载一个宝塔，会自动安装pyhton3.6）</p>
-<p><a href="https://github.com/zeruns/-Python-aliddns_ipv4-ipv6">zeruns&#x2F;-Python-aliddns_ipv4-ipv6: 阿里云域名ddns动态域名解析Python源码 (github.com)</a></p>
+<p><a href="https://github.com/zeruns/-Python-aliddns_ipv4-ipv6">zeruns/-Python-aliddns_ipv4-ipv6: 阿里云域名ddns动态域名解析Python源码 (github.com)</a></p>
 <p>使用教程：<a href="https://blog.zeruns.tech/archives/507.html">Python实现阿里云域名DDNS支持ipv4和ipv6 - Zeruns’s Blog</a></p>
 <p>（可以先把自己在阿里云上的ipv6地址改成错误的，然后运行一次程序查看ipv6地址是否被修改回来了）</p>
 <p>接着通过linux中的crontab设置定时任务运行python脚本（我的这里似乎不能直接运行python，需要将用shell脚本运行python然后再用在crontab中定时shell脚本）</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/bash</span></span><br><span class="line"><span class="comment">#ddns.sh</span></span><br><span class="line"><span class="built_in">cd</span> /home/xxx  <span class="comment"># 写你自己py文件的文件夹</span></span><br><span class="line">/usr/bin/python3.6 aliddns.py &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-
 <p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>添加定时任务</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 */4 * * * /home/xxx/ddns.sh  <span class="comment">#这里要输入shell脚本的绝对位置</span></span><br><span class="line"><span class="comment">#我是设置的每4个小时运行一次脚本，大家可以根据自己的情况选择脚本的运行时间</span></span><br></pre></td></tr></table></figure>
-
 <p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>这样ipv6地址就和域名绑定起来了</p>
 <p>到此为止基本的搭建任务就结束了</p>
-<h3 id="一些不得不提的安全问题"><a href="#一些不得不提的安全问题" class="headerlink" title="一些不得不提的安全问题"></a>一些不得不提的安全问题</h3><p>我们一般访问自己的linux服务器都是通过ssh的方式访问的，而将ssh服务直接暴露出来会存在一定的安全风险，所以我们最好做一些安全措施来保护我们的服务器不被他人入侵</p>
+<h3 id="一些不得不提的安全问题">一些不得不提的安全问题</h3>
+<p>我们一般访问自己的linux服务器都是通过ssh的方式访问的，而将ssh服务直接暴露出来会存在一定的安全风险，所以我们最好做一些安全措施来保护我们的服务器不被他人入侵</p>
 <p>1.使用密钥登录ssh而非使用密码登录，防止被他人暴力破解</p>
 <p>2.修改ssh服务的默认端口，ssh的默认端口是22，而网上很多端口扫描的工具都会将22端口作为端口进行扫描</p>
 <p>3.取消root登录</p>
@@ -214,6 +306,43 @@
       <tags>
         <tag>ipv6</tag>
         <tag>服务器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Zerotier的使用体验</title>
+    <url>/2023/02/11/zerotier/</url>
+    <content><![CDATA[<h1>背景</h1>
+<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
+<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
+<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
+<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
+<p><img src="https://img-blog.csdnimg.cn/ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
+<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
+<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
+<h1>Zerotier</h1>
+<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
+<p><img src="https://img-blog.csdnimg.cn/43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h2 id="安装配置">安装配置</h2>
+<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
+<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
+<p>同时centos 的安装可以参照这位大佬的文章</p>
+<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
+<h2 id="体验">体验</h2>
+<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
+<p><img src="https://img-blog.csdnimg.cn/d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
+<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
+<h2 id="安全性">安全性</h2>
+<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
+<h1>结语</h1>
+<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
+<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>zerotier</tag>
       </tags>
   </entry>
 </search>
