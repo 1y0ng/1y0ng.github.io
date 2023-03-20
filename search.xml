@@ -152,49 +152,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>Zerotier的使用体验</title>
-    <url>/post/zerotier/</url>
-    <content><![CDATA[<h1>背景</h1>
-<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
-<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
-<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
-<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
-<p><img src="https://img-blog.csdnimg.cn/ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
-<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
-<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
-<h1>Zerotier</h1>
-<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
-<p><img src="https://img-blog.csdnimg.cn/43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h2 id="安装配置">安装配置</h2>
-<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
-<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
-<p>同时centos 的安装可以参照这位大佬的文章</p>
-<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
-<h2 id="体验">体验</h2>
-<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
-<p><img src="https://img-blog.csdnimg.cn/d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
-<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
-<h2 id="安全性">安全性</h2>
-<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
-<h1>结语</h1>
-<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
-<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
-]]></content>
-      <categories>
-        <category>使用体验</category>
-      </categories>
-      <tags>
-        <tag>zerotier</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>新年好</title>
-    <url>/post/happy-new-year/</url>
-    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
-]]></content>
-  </entry>
-  <entry>
     <title>利用ipv6搭建一台服务器</title>
     <url>/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
     <content><![CDATA[<h3 id="背景">背景</h3>
@@ -320,6 +277,116 @@
       </tags>
   </entry>
   <entry>
+    <title>后渗透之权限提升（学习记录）</title>
+    <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</url>
+    <content><![CDATA[<h1>序</h1>
+<p>本来兴致勃勃的想要学一下内网横向渗透的，结果发现其他人随随便便用永恒之蓝就直接拿到了system权限，但同样的靶机，自己电脑上的永恒之蓝完全没用，于是干脆复习了一遍window下的权限提升方法。<br>
+（本文主要是针对windows提权方法进行总结，在实验中以win7为例，采用的提权方法均<strong>失败</strong>了，想要看到成功截图的请移步其他大佬的博客）<br>
+靶机是<code>win7</code>的系统，登录的账户为<code>demo\douser</code>，是demo域下的一个普通域成员</p>
+<h1>系统内核溢出漏洞提权</h1>
+<p>使用msf的<code>post/windows/gather/enum_patches</code>模块搜索系统中缺少的补丁<br>
+<img src="4f5f00b6bc3347f0a86236345577d948.png" alt=""><br>
+好家伙，补丁全打上了<br>
+用<code>post/multi/recon/local_exploit_suggester</code>查看可以利用的漏洞模块<br>
+<img src="29f8aed66ddd45d1b57263ce119d4b63.png" alt="">尝试了给出的几种攻击模块，全部失败</p>
+<h1>计划任务</h1>
+<p>windows中用来执行计划任务的无疑是<code>at</code>和<code>schtasks</code>命令，然而从 Windows Vista 开始，Microsoft 已经不再推荐使用“at”命令来创建计划任务，并且在后续的 Windows 版本中将其标记为“弃用”。所以在win7上我们通过schtasks来尝试提升权限<br>
+<img src="15572ce9a95744a6b28854fa6f7c9db4.png" alt=""><br>
+当前用户并没有操作schtasks的权限，虽然at命令被弃用了，但事实上除了win11以外，<strong>其他的从 Windows Vista 到win10都是可以使用at创建计划任务的</strong>，只不过无法使用/interactive交互式任务。<br>
+<img src="52a4639ce69045dc855e9507b259c634.png" alt="在win11上使用at"><br>
+<img src="83d55d15bd394f53a7d75c7ad3a6c1a8.png" alt="在win2008中使用at"><br>
+所以对于win7我们依旧可以上传木马到目标机器，同时msf开启监听，利用at执行木马，就会返回一个system权限的shell<br>
+但是这里我们依旧没有使用at的权限<br>
+<img src="310523a50df24e6db0f04723766a6e7a.png" alt="在win7上使用at"></p>
+<h1>sc提权</h1>
+<p>之前一直以为sc提权就是schtasks计划任务（主要是schtasks的首字母就是sc），实际上二者没啥关系。</p>
+<p><code>sc 命令</code>是 Windows 操作系统中的一个命令行工具，用于配置和管理 Windows 服务。在一些情况下，可以使用 sc 命令进行提权，例如将一个普通用户权限的服务修改为 LocalSystem 账户权限。</p>
+<p>这种提权的原理是因为在 Windows 系统中，服务通常使用某个特定的账户来运行，如果该账户拥有较高的权限，那么相应的服务也就具备了这些权限。因此，通过使用 sc 命令修改服务所使用的账户，可以实现提升服务权限的目的。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sc Create systemcmd binPath= &quot;cmd /K start&quot; type= own type= interact</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">其中systemcmd是服务名称，大家可以随意填写，binpath是启动的命令，<span class="built_in">type</span>=own是指服务这个服务属于谁，<span class="built_in">type</span>=interact。</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">这里再解释一下 cmd/k start 这个命令，这个命令就是启动一个新的cmd窗口。</span></span><br><span class="line"></span><br><span class="line">sc start systemcmd #启动服务！</span><br></pre></td></tr></table></figure>
+<p>然而依旧没有sc的使用权限<br>
+<img src="1da3fa294d7c4883b1cfa606d14eb060.png" alt=""></p>
+<h1>PS提权</h1>
+<p><code>PsExec</code>是 Sysinternals 工具包中的一款命令行实用程序，可以在远程计算机上执行进程，并且可以在一定程度上提升权限。它的提权原理主要是通过以下步骤实现：</p>
+<blockquote>
+<p>1、使用<code>管理员凭据</code>登录到目标计算机。<br>
+2、将 PsExec 所在的计算机上的可执行文件和其他必需的文件复制到目标计算机上，并确保这些文件可以被管理员访问。<br>
+3、执行 PsExec 命令，并将要运行的程序或脚本等作为参数传递给 PsExec。此时，PsExec 会先以管理员权限在目标计算机上启动一个服务（<code>PsExecSvc</code>），并向该服务发送要执行的命令。<br>
+4、在 PsExecSvc 的帮助下，PsExec 实际上是利用<code>Windows 远程过程调用（RPC）</code>机制来在目标计算机上创建了一个新的进程，并以管理员权限运行该进程。这个新进程就相当于是已经进行了提权操作的进程。</p>
+</blockquote>
+<p>提权命令：<code>psexec.exe -accepteula -s -i -d cmd.exe</code><br>
+我们这里登录的账户并不是管理员，所以寄了<br>
+<img src="e41d4c46fa6245148dea3cea271cdbad.png" alt=""></p>
+<h1>BypassUAC</h1>
+<p><code>UAC（用户账户控制）</code>是从 Windows Vista 开始引入的一种安全功能，可以限制应用程序和用户对计算机系统的更改，并将管理员权限的请求提示给用户以确认。其工作原理如下：</p>
+<blockquote>
+<p>1、当需要执行某个需要管理员权限的操作时，应用程序或用户会向 UAC 发送请求。<br>
+2、UAC 首先会检查当前用户的访问权限，并根据需要弹出一个用户界面，提示用户输入管理员凭据（用户名和密码）。<br>
+3、如果用户输入正确的管理员凭据，UAC 就会创建一个新的安全令牌（Token），其中包含了管理员权限。这个新的令牌称为 Elevated Token。<br>
+4、应用程序或用户在接下来的操作中就可以使用 Elevated Token 所具有的管理员权限来执行高级任务，例如修改系统设置、安装软件等。<br>
+需要注意的是，当使用 Elevated Token 时，应用程序或用户仍然受到 UAC 的监控和限制。如果要执行敏感操作，建议在操作后立即取消 Elevated Token 权限，以降低系统风险。</p>
+</blockquote>
+<p>在msf中集成了bypassuac模块，但我们提权的时候，当前用户必须在<code>管理员组</code>中，且UAC必须为默认设置（即“<code>仅在程序试图更改我的计算机时通知我</code>”）<br>
+<img src="985d2a3964114cf0983a711a09f33498.png" alt=""><br>
+果然还是失败了</p>
+<h1>令牌窃取</h1>
+<p><code>令牌窃取（Token Stealing）</code>是一种攻击技术，可以使用操作系统中的特权漏洞或恶意软件等手段来获取其他进程或用户的<code>安全令牌（Security Token）</code>，从而获得对系统资源和权限的访问控制。</p>
+<p>Kerberos 是 Windows 系统中一个常用的身份验证协议，可以帮助用户在不安全的网络环境中建立安全信任关系，并防止密码被破解或监听等威胁。然而，如果系统中存在 Kerberos 相关的漏洞或错误，攻击者可以利用这些漏洞或错误来进行令牌窃取攻击。</p>
+<p>在 Windows 操作系统中，每个登录用户都会拥有一个唯一的安全令牌，该令牌包含了用户的身份信息、权限等，并且可以被用于身份验证、授权、进程通信等场景下的安全标识和传递。与此同时，在 Kerberos 认证过程中，当用户向 Kerberos 服务器发送凭据请求（TGT 请求）后，Kerberos 服务器将返回一个包含用户身份信息和授权信息的 Kerberos 票据。该票据也可以被视为一种安全令牌，并且能够帮助用户在其他服务或应用程序中进行身份验证和访问控制。</p>
+<p>我们在拿到win7的shell以后可以通过<code>use incognito</code>和<code>list_tokens -u</code>来列出可用的令牌<br>
+<img src="75e4950571944ccd8ab2246406ae3f71.png" alt=""><br>
+明显这里只有demo/douser的令牌，所以令牌窃取无效</p>
+<h1>最后</h1>
+<p>暂时能想到的提权方法就这么多了，实际上也可以使用Powershell的提权脚本<code>Powerup</code>，但这里win7默认是禁止使用Powershell脚本的，并且当前账户也没有权限对其进行修改，所以GG了<br>
+<img src="6f0e512152a54f92b8baa3e0c96f47a4.png" alt=""></p>
+<p>大佬们有什么方法欢迎评论告知</p>
+<p>参考：<br>
+<a href="https://blog.csdn.net/weixin_40412037/article/details/121535553">https://blog.csdn.net/weixin_40412037/article/details/121535553</a></p>
+]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>后渗透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Zerotier的使用体验</title>
+    <url>/post/zerotier/</url>
+    <content><![CDATA[<h1>背景</h1>
+<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
+<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
+<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
+<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
+<p><img src="https://img-blog.csdnimg.cn/ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
+<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
+<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
+<h1>Zerotier</h1>
+<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
+<p><img src="https://img-blog.csdnimg.cn/43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h2 id="安装配置">安装配置</h2>
+<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
+<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
+<p>同时centos 的安装可以参照这位大佬的文章</p>
+<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
+<h2 id="体验">体验</h2>
+<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
+<p><img src="https://img-blog.csdnimg.cn/d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
+<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
+<h2 id="安全性">安全性</h2>
+<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
+<h1>结语</h1>
+<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
+<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>zerotier</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>后渗透之横向移动（学习记录）</title>
     <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</url>
     <content><![CDATA[<h1>环境</h1>
@@ -333,7 +400,7 @@
 <img src="59df3dbf616d4e9bbe97a20a5133463d.png" alt=""></p>
 <h1>计划任务</h1>
 <p>思路是通过计划任务运行上传的木马文件从而拿shell</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">由于对方在内网，所以要通过正向连接的方式创建木马</span></span><br><span class="line">msfvenom -p windows/x64/meterpreter/bind_tcp RHOST=192.168.138.138 LPORT=5555 -f exe &gt;f.exe</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">将木马复制到对方的c盘下</span></span><br><span class="line">copy f.exe \\192.168.138.138\c$</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看是否复制成功</span></span><br><span class="line">dir \\192.168.138.138\c$</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#由于对方在内网，所以要通过正向连接的方式创建木马</span><br><span class="line">msfvenom -p windows/x64/meterpreter/bind_tcp RHOST=192.168.138.138 LPORT=5555 -f exe &gt;f.exe</span><br><span class="line">#将木马复制到对方的c盘下</span><br><span class="line">copy f.exe \\192.168.138.138\c$</span><br><span class="line">#查看是否复制成功</span><br><span class="line">dir \\192.168.138.138\c$</span><br></pre></td></tr></table></figure>
 <p><img src="3c0619264b39461bab91b56ed157b44e.png" alt=""></p>
 <h2 id="at">at</h2>
 <p>首先要关闭对方的防火墙，否则正向连接会失败</p>
@@ -422,78 +489,17 @@ impacket中有smbexec.py工具可以用来攻击<br>
 <p>除此之外，还可以利用一些windows内核漏洞（例如永恒之蓝）去横向，就不多说了。<br>
 可以看到大多数的横向移动都是建立在拥有一个高权限用户和获取到明文密码的前提下的，所以前期的信息收集和权限提升步骤也不必可少。</p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>后渗透之权限提升（学习记录）</title>
-    <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</url>
-    <content><![CDATA[<h1>序</h1>
-<p>本来兴致勃勃的想要学一下内网横向渗透的，结果发现其他人随随便便用永恒之蓝就直接拿到了system权限，但同样的靶机，自己电脑上的永恒之蓝完全没用，于是干脆复习了一遍window下的权限提升方法。<br>
-（本文主要是针对windows提权方法进行总结，在实验中以win7为例，采用的提权方法均<strong>失败</strong>了，想要看到成功截图的请移步其他大佬的博客）<br>
-靶机是<code>win7</code>的系统，登录的账户为<code>demo\douser</code>，是demo域下的一个普通域成员</p>
-<h1>系统内核溢出漏洞提权</h1>
-<p>使用msf的<code>post/windows/gather/enum_patches</code>模块搜索系统中缺少的补丁<br>
-<img src="4f5f00b6bc3347f0a86236345577d948.png" alt=""><br>
-好家伙，补丁全打上了<br>
-用<code>post/multi/recon/local_exploit_suggester</code>查看可以利用的漏洞模块<br>
-<img src="29f8aed66ddd45d1b57263ce119d4b63.png" alt="">尝试了给出的几种攻击模块，全部失败</p>
-<h1>计划任务</h1>
-<p>windows中用来执行计划任务的无疑是<code>at</code>和<code>schtasks</code>命令，然而从 Windows Vista 开始，Microsoft 已经不再推荐使用“at”命令来创建计划任务，并且在后续的 Windows 版本中将其标记为“弃用”。所以在win7上我们通过schtasks来尝试提升权限<br>
-<img src="15572ce9a95744a6b28854fa6f7c9db4.png" alt=""><br>
-当前用户并没有操作schtasks的权限，虽然at命令被弃用了，但事实上除了win11以外，<strong>其他的从 Windows Vista 到win10都是可以使用at创建计划任务的</strong>，只不过无法使用/interactive交互式任务。<br>
-<img src="52a4639ce69045dc855e9507b259c634.png" alt="在win11上使用at"><br>
-<img src="83d55d15bd394f53a7d75c7ad3a6c1a8.png" alt="在win2008中使用at"><br>
-所以对于win7我们依旧可以上传木马到目标机器，同时msf开启监听，利用at执行木马，就会返回一个system权限的shell<br>
-但是这里我们依旧没有使用at的权限<br>
-<img src="310523a50df24e6db0f04723766a6e7a.png" alt="在win7上使用at"></p>
-<h1>sc提权</h1>
-<p>之前一直以为sc提权就是schtasks计划任务（主要是schtasks的首字母就是sc），实际上二者没啥关系。</p>
-<p><code>sc 命令</code>是 Windows 操作系统中的一个命令行工具，用于配置和管理 Windows 服务。在一些情况下，可以使用 sc 命令进行提权，例如将一个普通用户权限的服务修改为 LocalSystem 账户权限。</p>
-<p>这种提权的原理是因为在 Windows 系统中，服务通常使用某个特定的账户来运行，如果该账户拥有较高的权限，那么相应的服务也就具备了这些权限。因此，通过使用 sc 命令修改服务所使用的账户，可以实现提升服务权限的目的。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sc Create systemcmd binPath= &quot;cmd /K start&quot; type= own type= interact</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">其中systemcmd是服务名称，大家可以随意填写，binpath是启动的命令，<span class="built_in">type</span>=own是指服务这个服务属于谁，<span class="built_in">type</span>=interact。</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">这里再解释一下 cmd/k start 这个命令，这个命令就是启动一个新的cmd窗口。</span></span><br><span class="line"></span><br><span class="line">sc start systemcmd #启动服务！</span><br></pre></td></tr></table></figure>
-<p>然而依旧没有sc的使用权限<br>
-<img src="1da3fa294d7c4883b1cfa606d14eb060.png" alt=""></p>
-<h1>PS提权</h1>
-<p><code>PsExec</code>是 Sysinternals 工具包中的一款命令行实用程序，可以在远程计算机上执行进程，并且可以在一定程度上提升权限。它的提权原理主要是通过以下步骤实现：</p>
-<blockquote>
-<p>1、使用<code>管理员凭据</code>登录到目标计算机。<br>
-2、将 PsExec 所在的计算机上的可执行文件和其他必需的文件复制到目标计算机上，并确保这些文件可以被管理员访问。<br>
-3、执行 PsExec 命令，并将要运行的程序或脚本等作为参数传递给 PsExec。此时，PsExec 会先以管理员权限在目标计算机上启动一个服务（<code>PsExecSvc</code>），并向该服务发送要执行的命令。<br>
-4、在 PsExecSvc 的帮助下，PsExec 实际上是利用<code>Windows 远程过程调用（RPC）</code>机制来在目标计算机上创建了一个新的进程，并以管理员权限运行该进程。这个新进程就相当于是已经进行了提权操作的进程。</p>
-</blockquote>
-<p>提权命令：<code>psexec.exe -accepteula -s -i -d cmd.exe</code><br>
-我们这里登录的账户并不是管理员，所以寄了<br>
-<img src="e41d4c46fa6245148dea3cea271cdbad.png" alt=""></p>
-<h1>BypassUAC</h1>
-<p><code>UAC（用户账户控制）</code>是从 Windows Vista 开始引入的一种安全功能，可以限制应用程序和用户对计算机系统的更改，并将管理员权限的请求提示给用户以确认。其工作原理如下：</p>
-<blockquote>
-<p>1、当需要执行某个需要管理员权限的操作时，应用程序或用户会向 UAC 发送请求。<br>
-2、UAC 首先会检查当前用户的访问权限，并根据需要弹出一个用户界面，提示用户输入管理员凭据（用户名和密码）。<br>
-3、如果用户输入正确的管理员凭据，UAC 就会创建一个新的安全令牌（Token），其中包含了管理员权限。这个新的令牌称为 Elevated Token。<br>
-4、应用程序或用户在接下来的操作中就可以使用 Elevated Token 所具有的管理员权限来执行高级任务，例如修改系统设置、安装软件等。<br>
-需要注意的是，当使用 Elevated Token 时，应用程序或用户仍然受到 UAC 的监控和限制。如果要执行敏感操作，建议在操作后立即取消 Elevated Token 权限，以降低系统风险。</p>
-</blockquote>
-<p>在msf中集成了bypassuac模块，但我们提权的时候，当前用户必须在<code>管理员组</code>中，且UAC必须为默认设置（即“<code>仅在程序试图更改我的计算机时通知我</code>”）<br>
-<img src="985d2a3964114cf0983a711a09f33498.png" alt=""><br>
-果然还是失败了</p>
-<h1>令牌窃取</h1>
-<p><code>令牌窃取（Token Stealing）</code>是一种攻击技术，可以使用操作系统中的特权漏洞或恶意软件等手段来获取其他进程或用户的<code>安全令牌（Security Token）</code>，从而获得对系统资源和权限的访问控制。</p>
-<p>Kerberos 是 Windows 系统中一个常用的身份验证协议，可以帮助用户在不安全的网络环境中建立安全信任关系，并防止密码被破解或监听等威胁。然而，如果系统中存在 Kerberos 相关的漏洞或错误，攻击者可以利用这些漏洞或错误来进行令牌窃取攻击。</p>
-<p>在 Windows 操作系统中，每个登录用户都会拥有一个唯一的安全令牌，该令牌包含了用户的身份信息、权限等，并且可以被用于身份验证、授权、进程通信等场景下的安全标识和传递。与此同时，在 Kerberos 认证过程中，当用户向 Kerberos 服务器发送凭据请求（TGT 请求）后，Kerberos 服务器将返回一个包含用户身份信息和授权信息的 Kerberos 票据。该票据也可以被视为一种安全令牌，并且能够帮助用户在其他服务或应用程序中进行身份验证和访问控制。</p>
-<p>我们在拿到win7的shell以后可以通过<code>use incognito</code>和<code>list_tokens -u</code>来列出可用的令牌<br>
-<img src="75e4950571944ccd8ab2246406ae3f71.png" alt=""><br>
-明显这里只有demo/douser的令牌，所以令牌窃取无效</p>
-<h1>最后</h1>
-<p>暂时能想到的提权方法就这么多了，实际上也可以使用Powershell的提权脚本<code>Powerup</code>，但这里win7默认是禁止使用Powershell脚本的，并且当前账户也没有权限对其进行修改，所以GG了<br>
-<img src="6f0e512152a54f92b8baa3e0c96f47a4.png" alt=""></p>
-<p>大佬们有什么方法欢迎评论告知</p>
-<p>参考：<br>
-<a href="https://blog.csdn.net/weixin_40412037/article/details/121535553">https://blog.csdn.net/weixin_40412037/article/details/121535553</a></p>
-]]></content>
       <categories>
         <category>学习记录</category>
       </categories>
       <tags>
         <tag>后渗透</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>新年好</title>
+    <url>/post/happy-new-year/</url>
+    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+]]></content>
   </entry>
 </search>
