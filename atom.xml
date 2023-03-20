@@ -18,8 +18,8 @@
   
   <entry>
     <title></title>
-    <link href="http://example.com/2023/03/20/tset/"/>
-    <id>http://example.com/2023/03/20/tset/</id>
+    <link href="http://example.com/tset/"/>
+    <id>http://example.com/tset/</id>
     <published>2023-03-20T07:34:00.884Z</published>
     <updated>2023-03-20T10:34:29.813Z</updated>
     
@@ -39,8 +39,8 @@
   
   <entry>
     <title>XXE漏洞详解</title>
-    <link href="http://example.com/2023/02/22/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/"/>
-    <id>http://example.com/2023/02/22/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</id>
+    <link href="http://example.com/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/"/>
+    <id>http://example.com/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</id>
     <published>2023-02-22T07:57:28.000Z</published>
     <updated>2023-02-22T08:10:06.417Z</updated>
     
@@ -64,8 +64,8 @@
   
   <entry>
     <title>寒假实习经历</title>
-    <link href="http://example.com/2023/02/19/%E5%AF%92%E5%81%87%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/"/>
-    <id>http://example.com/2023/02/19/%E5%AF%92%E5%81%87%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/</id>
+    <link href="http://example.com/%E5%AF%92%E5%81%87%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/"/>
+    <id>http://example.com/%E5%AF%92%E5%81%87%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/</id>
     <published>2023-02-19T13:00:27.000Z</published>
     <updated>2023-02-22T08:10:38.299Z</updated>
     
@@ -90,8 +90,8 @@
   
   <entry>
     <title>seafile和alist使用体验</title>
-    <link href="http://example.com/2023/02/11/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/"/>
-    <id>http://example.com/2023/02/11/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</id>
+    <link href="http://example.com/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/"/>
+    <id>http://example.com/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</id>
     <published>2023-02-11T06:18:09.000Z</published>
     <updated>2023-02-20T04:36:08.386Z</updated>
     
@@ -118,8 +118,8 @@
   
   <entry>
     <title>Zerotier的使用体验</title>
-    <link href="http://example.com/2023/02/11/zerotier/"/>
-    <id>http://example.com/2023/02/11/zerotier/</id>
+    <link href="http://example.com/zerotier/"/>
+    <id>http://example.com/zerotier/</id>
     <published>2023-02-11T04:57:18.000Z</published>
     <updated>2023-02-20T04:35:48.046Z</updated>
     
@@ -144,8 +144,8 @@
   
   <entry>
     <title>利用ipv6搭建一台服务器</title>
-    <link href="http://example.com/2023/02/07/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
-    <id>http://example.com/2023/02/07/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</id>
+    <link href="http://example.com/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    <id>http://example.com/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</id>
     <published>2023-02-07T11:58:15.000Z</published>
     <updated>2023-02-20T04:35:31.062Z</updated>
     
@@ -173,8 +173,8 @@
   
   <entry>
     <title>利用ipv6实现公网ip</title>
-    <link href="http://example.com/2023/01/29/Using-ipv6-to-realize-public-ip/"/>
-    <id>http://example.com/2023/01/29/Using-ipv6-to-realize-public-ip/</id>
+    <link href="http://example.com/Using-ipv6-to-realize-public-ip/"/>
+    <id>http://example.com/Using-ipv6-to-realize-public-ip/</id>
     <published>2023-01-29T12:05:18.000Z</published>
     <updated>2023-02-20T04:35:59.123Z</updated>
     
@@ -198,8 +198,8 @@
   
   <entry>
     <title>新年好</title>
-    <link href="http://example.com/2023/01/22/happy-new-year/"/>
-    <id>http://example.com/2023/01/22/happy-new-year/</id>
+    <link href="http://example.com/happy-new-year/"/>
+    <id>http://example.com/happy-new-year/</id>
     <published>2023-01-21T16:36:32.000Z</published>
     <updated>2023-02-20T04:35:15.993Z</updated>
     
@@ -219,8 +219,8 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://example.com/2023/01/21/hello-world/"/>
-    <id>http://example.com/2023/01/21/hello-world/</id>
+    <link href="http://example.com/hello-world/"/>
+    <id>http://example.com/hello-world/</id>
     <published>2023-01-21T14:57:41.893Z</published>
     <updated>2023-01-21T14:57:41.893Z</updated>
     
