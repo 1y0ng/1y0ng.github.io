@@ -18,8 +18,8 @@
   
   <entry>
     <title>后渗透之横向移动（学习记录）</title>
-    <link href="http://example.com/2023/03/20/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89"/>
-    <id>http://example.com/2023/03/20/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89</id>
+    <link href="http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/"/>
+    <id>http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</id>
     <published>2023-03-20T13:29:27.000Z</published>
     <updated>2023-03-20T13:29:27.260Z</updated>
     
@@ -31,8 +31,8 @@
   
   <entry>
     <title>后渗透之权限提升（学习记录）</title>
-    <link href="http://example.com/2023/03/20/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89"/>
-    <id>http://example.com/2023/03/20/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89</id>
+    <link href="http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/"/>
+    <id>http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</id>
     <published>2023-03-20T12:23:39.000Z</published>
     <updated>2023-03-20T13:39:21.036Z</updated>
     
@@ -57,8 +57,8 @@
   
   <entry>
     <title>XXE漏洞详解</title>
-    <link href="http://example.com/2023/02/22/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3"/>
-    <id>http://example.com/2023/02/22/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3</id>
+    <link href="http://example.com/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/"/>
+    <id>http://example.com/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</id>
     <published>2023-02-22T07:57:28.000Z</published>
     <updated>2023-02-22T08:10:06.417Z</updated>
     
@@ -82,8 +82,8 @@
   
   <entry>
     <title>seafile和alist使用体验</title>
-    <link href="http://example.com/2023/02/11/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C"/>
-    <id>http://example.com/2023/02/11/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C</id>
+    <link href="http://example.com/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/"/>
+    <id>http://example.com/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</id>
     <published>2023-02-11T06:18:09.000Z</published>
     <updated>2023-02-20T04:36:08.386Z</updated>
     
@@ -110,8 +110,8 @@
   
   <entry>
     <title>Zerotier的使用体验</title>
-    <link href="http://example.com/2023/02/11/zerotier"/>
-    <id>http://example.com/2023/02/11/zerotier</id>
+    <link href="http://example.com/post/zerotier/"/>
+    <id>http://example.com/post/zerotier/</id>
     <published>2023-02-11T04:57:18.000Z</published>
     <updated>2023-02-20T04:35:48.046Z</updated>
     
@@ -136,8 +136,8 @@
   
   <entry>
     <title>利用ipv6搭建一台服务器</title>
-    <link href="http://example.com/2023/02/07/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"/>
-    <id>http://example.com/2023/02/07/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8</id>
+    <link href="http://example.com/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    <id>http://example.com/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</id>
     <published>2023-02-07T11:58:15.000Z</published>
     <updated>2023-02-20T04:35:31.062Z</updated>
     
@@ -165,8 +165,8 @@
   
   <entry>
     <title>利用ipv6实现公网ip</title>
-    <link href="http://example.com/2023/01/29/Using-ipv6-to-realize-public-ip"/>
-    <id>http://example.com/2023/01/29/Using-ipv6-to-realize-public-ip</id>
+    <link href="http://example.com/post/Using-ipv6-to-realize-public-ip/"/>
+    <id>http://example.com/post/Using-ipv6-to-realize-public-ip/</id>
     <published>2023-01-29T12:05:18.000Z</published>
     <updated>2023-02-20T04:35:59.123Z</updated>
     
@@ -190,8 +190,8 @@
   
   <entry>
     <title>新年好</title>
-    <link href="http://example.com/2023/01/22/happy-new-year"/>
-    <id>http://example.com/2023/01/22/happy-new-year</id>
+    <link href="http://example.com/post/happy-new-year/"/>
+    <id>http://example.com/post/happy-new-year/</id>
     <published>2023-01-21T16:36:32.000Z</published>
     <updated>2023-02-20T04:35:15.993Z</updated>
     
@@ -211,8 +211,8 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://example.com/2023/01/21/hello-world"/>
-    <id>http://example.com/2023/01/21/hello-world</id>
+    <link href="http://example.com/post/hello-world/"/>
+    <id>http://example.com/post/hello-world/</id>
     <published>2023-01-21T14:57:41.893Z</published>
     <updated>2023-01-21T14:57:41.893Z</updated>
     
