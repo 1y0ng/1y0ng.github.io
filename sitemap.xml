@@ -2,27 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://example.com/post/test/</loc>
+    <loc>http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</loc>
     
     <lastmod>2023-03-20</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.com/post/tset/</loc>
-    
-    <lastmod>2023-03-20</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.com/post/%E5%AF%92%E5%81%87%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/</loc>
-    
-    <lastmod>2023-02-22</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -147,13 +129,6 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/</loc>
-    <lastmod>2023-03-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://example.com/tags/zerotier/</loc>
     <lastmod>2023-03-20</lastmod>
     <changefreq>weekly</changefreq>
@@ -161,7 +136,14 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/%E5%AE%9E%E4%B9%A0/</loc>
+    <loc>http://example.com/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/</loc>
+    <lastmod>2023-03-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/%E5%90%8E%E6%B8%97%E9%80%8F/</loc>
     <lastmod>2023-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -192,6 +174,13 @@
   
   <url>
     <loc>http://example.com/categories/%E7%BB%8F%E5%8E%86/</loc>
+    <lastmod>2023-03-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</loc>
     <lastmod>2023-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

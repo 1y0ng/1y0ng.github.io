@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-03-20T11:52:02.003Z</updated>
+  <updated>2023-03-20T13:18:25.656Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -17,44 +17,28 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>test</title>
-    <link href="http://example.com/post/test/"/>
-    <id>http://example.com/post/test/</id>
-    <published>2023-03-20T11:31:24.000Z</published>
-    <updated>2023-03-20T11:52:02.003Z</updated>
+    <title>后渗透之权限提升（学习记录）</title>
+    <link href="http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/"/>
+    <id>http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</id>
+    <published>2023-03-20T12:23:39.000Z</published>
+    <updated>2023-03-20T13:18:25.656Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="image-20230320182844775.png" alt="image-20230320182844775"></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;image-20230320182844775.png&quot; alt=&quot;image-20230320182844775&quot;&gt;&lt;/p&gt;
-</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title></title>
-    <link href="http://example.com/post/tset/"/>
-    <id>http://example.com/post/tset/</id>
-    <published>2023-03-20T07:34:00.884Z</published>
-    <updated>2023-03-20T11:32:22.101Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="img/image-20230320182844775.png" alt="image-20230320182844775"></p>]]></content>
+    <content type="html"><![CDATA[<h1>序</h1><p>本来兴致勃勃的想要学一下内网横向渗透的，结果发现其他人随随便便用永恒之蓝就直接拿到了system权限，但同样的靶机，自己电脑上的永恒之蓝完全没用，于是干脆复习了一遍window下的权限提升方法。<br>（本文主要是针对windows提权方法进行总结，在实验中以win7为例，采用的提权方法均<strong>失败</strong>了，想要看到成功截图的请移步其他大佬的博客）<br>靶机是<code>win7</code>的系统，登录的账户为<code>demo\douser</code>，是demo域下的一个普通域成员</p><h1>系统内核溢出漏洞提权</h1><p>使用msf的<code>post/windows/gather/enum_patches</code>模块搜索系统中缺少的补丁<br><img src="4f5f00b6bc3347f0a86236345577d948.png" alt="在这里插入图片描述"><br>好家伙，补丁全打上了<br>用<code>post/multi/recon/local_exploit_suggester</code>查看可以利用的漏洞模块<br><img src="29f8aed66ddd45d1b57263ce119d4b63.png" alt="在这里插入图片描述">尝试了给出的几种攻击模块，全部失败</p><h1>计划任务</h1><p>windows中用来执行计划任务的无疑是<code>at</code>和<code>schtasks</code>命令，然而从 Windows Vista 开始，Microsoft 已经不再推荐使用“at”命令来创建计划任务，并且在后续的 Windows 版本中将其标记为“弃用”。所以在win7上我们通过schtasks来尝试提升权限<br><img src="15572ce9a95744a6b28854fa6f7c9db4.png" alt="在这里插入图片描述"><br>当前用户并没有操作schtasks的权限，虽然at命令被弃用了，但事实上除了win11以外，<strong>其他的从 Windows Vista 到win10都是可以使用at创建计划任务的</strong>，只不过无法使用/interactive交互式任务。<br><img src="52a4639ce69045dc855e9507b259c634.png" alt="在win11上使用at"><br><img src="83d55d15bd394f53a7d75c7ad3a6c1a8.png" alt="在win2008中使用at"><br>所以对于win7我们依旧可以上传木马到目标机器，同时msf开启监听，利用at执行木马，就会返回一个system权限的shell<br>但是这里我们依旧没有使用at的权限<br><img src="310523a50df24e6db0f04723766a6e7a.png" alt="在win7上使用at"></p><h1>sc提权</h1><p>之前一直以为sc提权就是schtasks计划任务（主要是schtasks的首字母就是sc），实际上二者没啥关系。</p><p><code>sc 命令</code>是 Windows 操作系统中的一个命令行工具，用于配置和管理 Windows 服务。在一些情况下，可以使用 sc 命令进行提权，例如将一个普通用户权限的服务修改为 LocalSystem 账户权限。</p><p>这种提权的原理是因为在 Windows 系统中，服务通常使用某个特定的账户来运行，如果该账户拥有较高的权限，那么相应的服务也就具备了这些权限。因此，通过使用 sc 命令修改服务所使用的账户，可以实现提升服务权限的目的。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sc Create systemcmd binPath= <span class="string">&quot;cmd /K start&quot;</span> <span class="built_in">type</span>= own <span class="built_in">type</span>= interact</span><br><span class="line"><span class="comment">#其中systemcmd是服务名称，大家可以随意填写，binpath是启动的命令，type=own是指服务这个服务属于谁，type=interact。</span></span><br><span class="line"><span class="comment">#这里再解释一下 cmd/k start 这个命令，这个命令就是启动一个新的cmd窗口。</span></span><br><span class="line"></span><br><span class="line">sc start systemcmd <span class="comment">#启动服务！</span></span><br></pre></td></tr></table></figure><p>然而依旧没有sc的使用权限<br><img src="1da3fa294d7c4883b1cfa606d14eb060.png" alt="在这里插入图片描述"></p><h1>PS提权</h1><p><code>PsExec</code>是 Sysinternals 工具包中的一款命令行实用程序，可以在远程计算机上执行进程，并且可以在一定程度上提升权限。它的提权原理主要是通过以下步骤实现：</p><blockquote><p>1、使用<code>管理员凭据</code>登录到目标计算机。<br>2、将 PsExec 所在的计算机上的可执行文件和其他必需的文件复制到目标计算机上，并确保这些文件可以被管理员访问。<br>3、执行 PsExec 命令，并将要运行的程序或脚本等作为参数传递给 PsExec。此时，PsExec 会先以管理员权限在目标计算机上启动一个服务（<code>PsExecSvc</code>），并向该服务发送要执行的命令。<br>4、在 PsExecSvc 的帮助下，PsExec 实际上是利用<code>Windows 远程过程调用（RPC）</code>机制来在目标计算机上创建了一个新的进程，并以管理员权限运行该进程。这个新进程就相当于是已经进行了提权操作的进程。</p></blockquote><p>提权命令：<code>psexec.exe -accepteula -s -i -d cmd.exe</code><br>我们这里登录的账户并不是管理员，所以寄了<br><img src="e41d4c46fa6245148dea3cea271cdbad.png" alt="在这里插入图片描述"></p><h1>BypassUAC</h1><p><code>UAC（用户账户控制）</code>是从 Windows Vista 开始引入的一种安全功能，可以限制应用程序和用户对计算机系统的更改，并将管理员权限的请求提示给用户以确认。其工作原理如下：</p><blockquote><p>1、当需要执行某个需要管理员权限的操作时，应用程序或用户会向 UAC 发送请求。<br>2、UAC 首先会检查当前用户的访问权限，并根据需要弹出一个用户界面，提示用户输入管理员凭据（用户名和密码）。<br>3、如果用户输入正确的管理员凭据，UAC 就会创建一个新的安全令牌（Token），其中包含了管理员权限。这个新的令牌称为 Elevated Token。<br>4、应用程序或用户在接下来的操作中就可以使用 Elevated Token 所具有的管理员权限来执行高级任务，例如修改系统设置、安装软件等。<br>需要注意的是，当使用 Elevated Token 时，应用程序或用户仍然受到 UAC 的监控和限制。如果要执行敏感操作，建议在操作后立即取消 Elevated Token 权限，以降低系统风险。</p></blockquote><p>在msf中集成了bypassuac模块，但我们提权的时候，当前用户必须在<code>管理员组</code>中，且UAC必须为默认设置（即“<code>仅在程序试图更改我的计算机时通知我</code>”）<br><img src="985d2a3964114cf0983a711a09f33498.png" alt="在这里插入图片描述"><br>果然还是失败了</p><h1>令牌窃取</h1><p><code>令牌窃取（Token Stealing）</code>是一种攻击技术，可以使用操作系统中的特权漏洞或恶意软件等手段来获取其他进程或用户的<code>安全令牌（Security Token）</code>，从而获得对系统资源和权限的访问控制。</p><p>Kerberos 是 Windows 系统中一个常用的身份验证协议，可以帮助用户在不安全的网络环境中建立安全信任关系，并防止密码被破解或监听等威胁。然而，如果系统中存在 Kerberos 相关的漏洞或错误，攻击者可以利用这些漏洞或错误来进行令牌窃取攻击。</p><p>在 Windows 操作系统中，每个登录用户都会拥有一个唯一的安全令牌，该令牌包含了用户的身份信息、权限等，并且可以被用于身份验证、授权、进程通信等场景下的安全标识和传递。与此同时，在 Kerberos 认证过程中，当用户向 Kerberos 服务器发送凭据请求（TGT 请求）后，Kerberos 服务器将返回一个包含用户身份信息和授权信息的 Kerberos 票据。该票据也可以被视为一种安全令牌，并且能够帮助用户在其他服务或应用程序中进行身份验证和访问控制。</p><p>我们在拿到win7的shell以后可以通过<code>use incognito</code>和<code>list_tokens -u</code>来列出可用的令牌<br><img src="75e4950571944ccd8ab2246406ae3f71.png" alt="在这里插入图片描述"><br>明显这里只有demo/douser的令牌，所以令牌窃取无效</p><h1>最后</h1><p>暂时能想到的提权方法就这么多了，实际上也可以使用Powershell的提权脚本<code>Powerup</code>，但这里win7默认是禁止使用Powershell脚本的，并且当前账户也没有权限对其进行修改，所以GG了<br><img src="6f0e512152a54f92b8baa3e0c96f47a4.png" alt="在这里插入图片描述"></p><p>大佬们有什么方法欢迎评论告知</p><p>参考：<br><a href="https://blog.csdn.net/weixin_40412037/article/details/121535553">https://blog.csdn.net/weixin_40412037/article/details/121535553</a></p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;img/image-20230320182844775.png&quot; alt=&quot;image-20230320182844775&quot;&gt;&lt;/p&gt;
-</summary>
+    <summary type="html">&lt;h1&gt;序&lt;/h1&gt;
+&lt;p&gt;本来兴致勃勃的想要学一下内网横向渗透的，结果发现其他人随随便便用永恒之蓝就直接拿到了system权限，但同样的靶机，自己电脑上的永恒之蓝完全没用，于是干脆复习了一遍window下的权限提升方法。&lt;br&gt;
+（本文主要是针对windows提权方法进行总结，</summary>
       
     
     
     
+    <category term="学习记录" scheme="http://example.com/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"/>
+    
+    
+    <category term="后渗透" scheme="http://example.com/tags/%E5%90%8E%E6%B8%97%E9%80%8F/"/>
     
   </entry>
   
@@ -80,32 +64,6 @@
     
     
     <category term="xxe" scheme="http://example.com/tags/xxe/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>寒假实习经历</title>
-    <link href="http://example.com/post/%E5%AF%92%E5%81%87%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/"/>
-    <id>http://example.com/post/%E5%AF%92%E5%81%87%E5%AE%9E%E4%B9%A0%E7%BB%8F%E5%8E%86/</id>
-    <published>2023-02-19T13:00:27.000Z</published>
-    <updated>2023-02-22T08:10:38.299Z</updated>
-    
-    <content type="html"><![CDATA[<h1>背景</h1><p>大三上要结束了,之前便立下了一个flag,说必须在寒假找到一个实习,于是终于在11月开始了简历的制作,运气比较好,投出了人生的第一份简历后的第三天就收到了hr的面试通知,顺利通过2轮面试之后在1月3日开始了人生中的第一份实习</p><h1>租房</h1><p>由于害怕不适应工作,选择先租了一个礼拜的青年旅舍,后面才在豆瓣上找了房子与别人合租,三室一厅,舍友一共养了四只猫猫（提前体验铲屎官生活,嘻嘻~~）,这次租房,真是让我明白到了“<strong>塞翁失马焉知非福</strong>”的道理,本来和别人约好了周日去看房,结果周六晚上被告知说已经房子租出去了,得我一晚没睡重新找房😠,但也多亏了这一波操作让我在第二天找到了离公司更近,环境更好的房子😆</p><p><img src="https://img-blog.csdnimg.cn/293776e497114a11a7bcdd3850a23812.png" alt="img"></p><center style="color:#C0C0C0;text-decoration:underline">超可爱的猫猫,嘻嘻~~</center><h1>实习环境</h1><p>实习公司是一家国内小有名气的网络安全公司,其下的网络空间搜索引擎在安全圈里可谓人尽皆知。工作地点在湖南长沙（因为我老家也在长沙）,工作内容还算轻松,并且遇到了有一位非常耐心的导师（导师说话真的好温柔,我哭死😭）,同事也很热心（前期工作都是靠同事引导的）,工作是965,从来没要求加过班,工资发放也很准时,网上说的一大堆压榨实习生的问题一个也没有遇到（公司真的太好了😭）,最后因为学校开学,离职的时候也很干脆,一天下来离职流程就办好了,哪怕实习时间不算长,但也同样给了实习证明。总而言之,作为第一份实习,它对于我来说是非常完美的。</p><p><img src="https://img-blog.csdnimg.cn/a8b25f90046449249d65ae8c2dcea1b9.png" alt="img"></p><center style="color:#C0C0C0;text-decoration:underline">公司发的奶茶、水果、以及新春大礼包</center><h1>收获</h1><p>在实习过程中虽然没有涉及到特别大的项目,但也学到很多渗透方面的技术手法以及一些安全工具的使用,但我觉得最重要的是<strong>从学校到真实工作岗位上思维的转变</strong>,熟悉了网络安全行业知识和工作流程,掌握行业趋势与发展技术,同时关注自身的职业发展路径,摸清行业的应聘前景,对于自己的未来有了更好的<strong>职业规划</strong>,另外,实习还教会了我如何在<strong>团队合作</strong>中积极作用,更好的沟通协作,解决问题的方法。</p><h1>期望和规划</h1><p>马上大三下就要开学了,希望我能够沉淀已学的渗透知识,在渗透技术方面的学习能够更加深入,同时加强带代码审计能力,多参加比赛,多认识朋友,不断的拓宽自己的知识面</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1&gt;背景&lt;/h1&gt;
-&lt;p&gt;大三上要结束了,之前便立下了一个flag,说必须在寒假找到一个实习,于是终于在11月开始了简历的制作,运气比较好,投出了人生的第一份简历后的第三天就收到了hr的面试通知,顺利通过2轮面试之后在1月3日开始了人生中的第一份实习&lt;/p&gt;
-&lt;h1&gt;租房&lt;/</summary>
-      
-    
-    
-    
-    <category term="经历" scheme="http://example.com/categories/%E7%BB%8F%E5%8E%86/"/>
-    
-    
-    <category term="实习" scheme="http://example.com/tags/%E5%AE%9E%E4%B9%A0/"/>
     
   </entry>
   
