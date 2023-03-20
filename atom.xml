@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-03-20T13:28:02.958Z</updated>
+  <updated>2023-03-20T13:29:27.260Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -17,20 +17,33 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>后渗透之横向移动（学习记录）</title>
+    <link href="http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89"/>
+    <id>http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89</id>
+    <published>2023-03-20T13:29:27.000Z</published>
+    <updated>2023-03-20T13:29:27.260Z</updated>
+    
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>后渗透之权限提升（学习记录）</title>
-    <link href="http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/"/>
-    <id>http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</id>
+    <link href="http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89"/>
+    <id>http://example.com/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89</id>
     <published>2023-03-20T12:23:39.000Z</published>
-    <updated>2023-03-20T13:28:02.958Z</updated>
+    <updated>2023-03-20T13:39:21.036Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="序">序</h2><p>本来兴致勃勃的想要学一下内网横向渗透的，结果发现其他人随随便便用永恒之蓝就直接拿到了system权限，但同样的靶机，自己电脑上的永恒之蓝完全没用，于是干脆复习了一遍window下的权限提升方法。<br>（本文主要是针对windows提权方法进行总结，在实验中以win7为例，采用的提权方法均<strong>失败</strong>了，想要看到成功截图的请移步其他大佬的博客）<br>靶机是<code>win7</code>的系统，登录的账户为<code>demo\douser</code>，是demo域下的一个普通域成员</p><h1>系统内核溢出漏洞提权</h1><p>使用msf的<code>post/windows/gather/enum_patches</code>模块搜索系统中缺少的补丁<br><img src="4f5f00b6bc3347f0a86236345577d948.png" alt="在这里插入图片描述"><br>好家伙，补丁全打上了<br>用<code>post/multi/recon/local_exploit_suggester</code>查看可以利用的漏洞模块<br><img src="29f8aed66ddd45d1b57263ce119d4b63.png" alt="在这里插入图片描述">尝试了给出的几种攻击模块，全部失败</p><h1>计划任务</h1><p>windows中用来执行计划任务的无疑是<code>at</code>和<code>schtasks</code>命令，然而从 Windows Vista 开始，Microsoft 已经不再推荐使用“at”命令来创建计划任务，并且在后续的 Windows 版本中将其标记为“弃用”。所以在win7上我们通过schtasks来尝试提升权限<br><img src="15572ce9a95744a6b28854fa6f7c9db4.png" alt="在这里插入图片描述"><br>当前用户并没有操作schtasks的权限，虽然at命令被弃用了，但事实上除了win11以外，<strong>其他的从 Windows Vista 到win10都是可以使用at创建计划任务的</strong>，只不过无法使用/interactive交互式任务。<br><img src="52a4639ce69045dc855e9507b259c634.png" alt="在win11上使用at"><br><img src="83d55d15bd394f53a7d75c7ad3a6c1a8.png" alt="在win2008中使用at"><br>所以对于win7我们依旧可以上传木马到目标机器，同时msf开启监听，利用at执行木马，就会返回一个system权限的shell<br>但是这里我们依旧没有使用at的权限<br><img src="310523a50df24e6db0f04723766a6e7a.png" alt="在win7上使用at"></p><h1>sc提权</h1><p>之前一直以为sc提权就是schtasks计划任务（主要是schtasks的首字母就是sc），实际上二者没啥关系。</p><p><code>sc 命令</code>是 Windows 操作系统中的一个命令行工具，用于配置和管理 Windows 服务。在一些情况下，可以使用 sc 命令进行提权，例如将一个普通用户权限的服务修改为 LocalSystem 账户权限。</p><p>这种提权的原理是因为在 Windows 系统中，服务通常使用某个特定的账户来运行，如果该账户拥有较高的权限，那么相应的服务也就具备了这些权限。因此，通过使用 sc 命令修改服务所使用的账户，可以实现提升服务权限的目的。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sc Create systemcmd binPath= <span class="string">&quot;cmd /K start&quot;</span> <span class="built_in">type</span>= own <span class="built_in">type</span>= interact</span><br><span class="line"><span class="comment">#其中systemcmd是服务名称，大家可以随意填写，binpath是启动的命令，type=own是指服务这个服务属于谁，type=interact。</span></span><br><span class="line"><span class="comment">#这里再解释一下 cmd/k start 这个命令，这个命令就是启动一个新的cmd窗口。</span></span><br><span class="line"></span><br><span class="line">sc start systemcmd <span class="comment">#启动服务！</span></span><br></pre></td></tr></table></figure><p>然而依旧没有sc的使用权限<br><img src="1da3fa294d7c4883b1cfa606d14eb060.png" alt="在这里插入图片描述"></p><h1>PS提权</h1><p><code>PsExec</code>是 Sysinternals 工具包中的一款命令行实用程序，可以在远程计算机上执行进程，并且可以在一定程度上提升权限。它的提权原理主要是通过以下步骤实现：</p><blockquote><p>1、使用<code>管理员凭据</code>登录到目标计算机。<br>2、将 PsExec 所在的计算机上的可执行文件和其他必需的文件复制到目标计算机上，并确保这些文件可以被管理员访问。<br>3、执行 PsExec 命令，并将要运行的程序或脚本等作为参数传递给 PsExec。此时，PsExec 会先以管理员权限在目标计算机上启动一个服务（<code>PsExecSvc</code>），并向该服务发送要执行的命令。<br>4、在 PsExecSvc 的帮助下，PsExec 实际上是利用<code>Windows 远程过程调用（RPC）</code>机制来在目标计算机上创建了一个新的进程，并以管理员权限运行该进程。这个新进程就相当于是已经进行了提权操作的进程。</p></blockquote><p>提权命令：<code>psexec.exe -accepteula -s -i -d cmd.exe</code><br>我们这里登录的账户并不是管理员，所以寄了<br><img src="e41d4c46fa6245148dea3cea271cdbad.png" alt="在这里插入图片描述"></p><h1>BypassUAC</h1><p><code>UAC（用户账户控制）</code>是从 Windows Vista 开始引入的一种安全功能，可以限制应用程序和用户对计算机系统的更改，并将管理员权限的请求提示给用户以确认。其工作原理如下：</p><blockquote><p>1、当需要执行某个需要管理员权限的操作时，应用程序或用户会向 UAC 发送请求。<br>2、UAC 首先会检查当前用户的访问权限，并根据需要弹出一个用户界面，提示用户输入管理员凭据（用户名和密码）。<br>3、如果用户输入正确的管理员凭据，UAC 就会创建一个新的安全令牌（Token），其中包含了管理员权限。这个新的令牌称为 Elevated Token。<br>4、应用程序或用户在接下来的操作中就可以使用 Elevated Token 所具有的管理员权限来执行高级任务，例如修改系统设置、安装软件等。<br>需要注意的是，当使用 Elevated Token 时，应用程序或用户仍然受到 UAC 的监控和限制。如果要执行敏感操作，建议在操作后立即取消 Elevated Token 权限，以降低系统风险。</p></blockquote><p>在msf中集成了bypassuac模块，但我们提权的时候，当前用户必须在<code>管理员组</code>中，且UAC必须为默认设置（即“<code>仅在程序试图更改我的计算机时通知我</code>”）<br><img src="985d2a3964114cf0983a711a09f33498.png" alt="在这里插入图片描述"><br>果然还是失败了</p><h1>令牌窃取</h1><p><code>令牌窃取（Token Stealing）</code>是一种攻击技术，可以使用操作系统中的特权漏洞或恶意软件等手段来获取其他进程或用户的<code>安全令牌（Security Token）</code>，从而获得对系统资源和权限的访问控制。</p><p>Kerberos 是 Windows 系统中一个常用的身份验证协议，可以帮助用户在不安全的网络环境中建立安全信任关系，并防止密码被破解或监听等威胁。然而，如果系统中存在 Kerberos 相关的漏洞或错误，攻击者可以利用这些漏洞或错误来进行令牌窃取攻击。</p><p>在 Windows 操作系统中，每个登录用户都会拥有一个唯一的安全令牌，该令牌包含了用户的身份信息、权限等，并且可以被用于身份验证、授权、进程通信等场景下的安全标识和传递。与此同时，在 Kerberos 认证过程中，当用户向 Kerberos 服务器发送凭据请求（TGT 请求）后，Kerberos 服务器将返回一个包含用户身份信息和授权信息的 Kerberos 票据。该票据也可以被视为一种安全令牌，并且能够帮助用户在其他服务或应用程序中进行身份验证和访问控制。</p><p>我们在拿到win7的shell以后可以通过<code>use incognito</code>和<code>list_tokens -u</code>来列出可用的令牌<br><img src="75e4950571944ccd8ab2246406ae3f71.png" alt="在这里插入图片描述"><br>明显这里只有demo/douser的令牌，所以令牌窃取无效</p><h1>最后</h1><p>暂时能想到的提权方法就这么多了，实际上也可以使用Powershell的提权脚本<code>Powerup</code>，但这里win7默认是禁止使用Powershell脚本的，并且当前账户也没有权限对其进行修改，所以GG了<br><img src="6f0e512152a54f92b8baa3e0c96f47a4.png" alt="在这里插入图片描述"></p><p>大佬们有什么方法欢迎评论告知</p><p>参考：<br><a href="https://blog.csdn.net/weixin_40412037/article/details/121535553">https://blog.csdn.net/weixin_40412037/article/details/121535553</a></p>]]></content>
+    <content type="html"><![CDATA[<h1>序</h1><p>本来兴致勃勃的想要学一下内网横向渗透的，结果发现其他人随随便便用永恒之蓝就直接拿到了system权限，但同样的靶机，自己电脑上的永恒之蓝完全没用，于是干脆复习了一遍window下的权限提升方法。<br>（本文主要是针对windows提权方法进行总结，在实验中以win7为例，采用的提权方法均<strong>失败</strong>了，想要看到成功截图的请移步其他大佬的博客）<br>靶机是<code>win7</code>的系统，登录的账户为<code>demo\douser</code>，是demo域下的一个普通域成员</p><h1>系统内核溢出漏洞提权</h1><p>使用msf的<code>post/windows/gather/enum_patches</code>模块搜索系统中缺少的补丁<br><img src="4f5f00b6bc3347f0a86236345577d948.png" alt="在这里插入图片描述"><br>好家伙，补丁全打上了<br>用<code>post/multi/recon/local_exploit_suggester</code>查看可以利用的漏洞模块<br><img src="29f8aed66ddd45d1b57263ce119d4b63.png" alt="在这里插入图片描述">尝试了给出的几种攻击模块，全部失败</p><h1>计划任务</h1><p>windows中用来执行计划任务的无疑是<code>at</code>和<code>schtasks</code>命令，然而从 Windows Vista 开始，Microsoft 已经不再推荐使用“at”命令来创建计划任务，并且在后续的 Windows 版本中将其标记为“弃用”。所以在win7上我们通过schtasks来尝试提升权限<br><img src="15572ce9a95744a6b28854fa6f7c9db4.png" alt="在这里插入图片描述"><br>当前用户并没有操作schtasks的权限，虽然at命令被弃用了，但事实上除了win11以外，<strong>其他的从 Windows Vista 到win10都是可以使用at创建计划任务的</strong>，只不过无法使用/interactive交互式任务。<br><img src="52a4639ce69045dc855e9507b259c634.png" alt="在win11上使用at"><br><img src="83d55d15bd394f53a7d75c7ad3a6c1a8.png" alt="在win2008中使用at"><br>所以对于win7我们依旧可以上传木马到目标机器，同时msf开启监听，利用at执行木马，就会返回一个system权限的shell<br>但是这里我们依旧没有使用at的权限<br><img src="310523a50df24e6db0f04723766a6e7a.png" alt="在win7上使用at"></p><h1>sc提权</h1><p>之前一直以为sc提权就是schtasks计划任务（主要是schtasks的首字母就是sc），实际上二者没啥关系。</p><p><code>sc 命令</code>是 Windows 操作系统中的一个命令行工具，用于配置和管理 Windows 服务。在一些情况下，可以使用 sc 命令进行提权，例如将一个普通用户权限的服务修改为 LocalSystem 账户权限。</p><p>这种提权的原理是因为在 Windows 系统中，服务通常使用某个特定的账户来运行，如果该账户拥有较高的权限，那么相应的服务也就具备了这些权限。因此，通过使用 sc 命令修改服务所使用的账户，可以实现提升服务权限的目的。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sc Create systemcmd binPath= &quot;cmd /K start&quot; type= own type= interact</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">其中systemcmd是服务名称，大家可以随意填写，binpath是启动的命令，<span class="built_in">type</span>=own是指服务这个服务属于谁，<span class="built_in">type</span>=interact。</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">这里再解释一下 cmd/k start 这个命令，这个命令就是启动一个新的cmd窗口。</span></span><br><span class="line"></span><br><span class="line">sc start systemcmd #启动服务！</span><br></pre></td></tr></table></figure><p>然而依旧没有sc的使用权限<br><img src="1da3fa294d7c4883b1cfa606d14eb060.png" alt="在这里插入图片描述"></p><h1>PS提权</h1><p><code>PsExec</code>是 Sysinternals 工具包中的一款命令行实用程序，可以在远程计算机上执行进程，并且可以在一定程度上提升权限。它的提权原理主要是通过以下步骤实现：</p><blockquote><p>1、使用<code>管理员凭据</code>登录到目标计算机。<br>2、将 PsExec 所在的计算机上的可执行文件和其他必需的文件复制到目标计算机上，并确保这些文件可以被管理员访问。<br>3、执行 PsExec 命令，并将要运行的程序或脚本等作为参数传递给 PsExec。此时，PsExec 会先以管理员权限在目标计算机上启动一个服务（<code>PsExecSvc</code>），并向该服务发送要执行的命令。<br>4、在 PsExecSvc 的帮助下，PsExec 实际上是利用<code>Windows 远程过程调用（RPC）</code>机制来在目标计算机上创建了一个新的进程，并以管理员权限运行该进程。这个新进程就相当于是已经进行了提权操作的进程。</p></blockquote><p>提权命令：<code>psexec.exe -accepteula -s -i -d cmd.exe</code><br>我们这里登录的账户并不是管理员，所以寄了<br><img src="e41d4c46fa6245148dea3cea271cdbad.png" alt="在这里插入图片描述"></p><h1>BypassUAC</h1><p><code>UAC（用户账户控制）</code>是从 Windows Vista 开始引入的一种安全功能，可以限制应用程序和用户对计算机系统的更改，并将管理员权限的请求提示给用户以确认。其工作原理如下：</p><blockquote><p>1、当需要执行某个需要管理员权限的操作时，应用程序或用户会向 UAC 发送请求。<br>2、UAC 首先会检查当前用户的访问权限，并根据需要弹出一个用户界面，提示用户输入管理员凭据（用户名和密码）。<br>3、如果用户输入正确的管理员凭据，UAC 就会创建一个新的安全令牌（Token），其中包含了管理员权限。这个新的令牌称为 Elevated Token。<br>4、应用程序或用户在接下来的操作中就可以使用 Elevated Token 所具有的管理员权限来执行高级任务，例如修改系统设置、安装软件等。<br>需要注意的是，当使用 Elevated Token 时，应用程序或用户仍然受到 UAC 的监控和限制。如果要执行敏感操作，建议在操作后立即取消 Elevated Token 权限，以降低系统风险。</p></blockquote><p>在msf中集成了bypassuac模块，但我们提权的时候，当前用户必须在<code>管理员组</code>中，且UAC必须为默认设置（即“<code>仅在程序试图更改我的计算机时通知我</code>”）<br><img src="985d2a3964114cf0983a711a09f33498.png" alt="在这里插入图片描述"><br>果然还是失败了</p><h1>令牌窃取</h1><p><code>令牌窃取（Token Stealing）</code>是一种攻击技术，可以使用操作系统中的特权漏洞或恶意软件等手段来获取其他进程或用户的<code>安全令牌（Security Token）</code>，从而获得对系统资源和权限的访问控制。</p><p>Kerberos 是 Windows 系统中一个常用的身份验证协议，可以帮助用户在不安全的网络环境中建立安全信任关系，并防止密码被破解或监听等威胁。然而，如果系统中存在 Kerberos 相关的漏洞或错误，攻击者可以利用这些漏洞或错误来进行令牌窃取攻击。</p><p>在 Windows 操作系统中，每个登录用户都会拥有一个唯一的安全令牌，该令牌包含了用户的身份信息、权限等，并且可以被用于身份验证、授权、进程通信等场景下的安全标识和传递。与此同时，在 Kerberos 认证过程中，当用户向 Kerberos 服务器发送凭据请求（TGT 请求）后，Kerberos 服务器将返回一个包含用户身份信息和授权信息的 Kerberos 票据。该票据也可以被视为一种安全令牌，并且能够帮助用户在其他服务或应用程序中进行身份验证和访问控制。</p><p>我们在拿到win7的shell以后可以通过<code>use incognito</code>和<code>list_tokens -u</code>来列出可用的令牌<br><img src="75e4950571944ccd8ab2246406ae3f71.png" alt="在这里插入图片描述"><br>明显这里只有demo/douser的令牌，所以令牌窃取无效</p><h1>最后</h1><p>暂时能想到的提权方法就这么多了，实际上也可以使用Powershell的提权脚本<code>Powerup</code>，但这里win7默认是禁止使用Powershell脚本的，并且当前账户也没有权限对其进行修改，所以GG了<br><img src="6f0e512152a54f92b8baa3e0c96f47a4.png" alt="在这里插入图片描述"></p><p>大佬们有什么方法欢迎评论告知</p><p>参考：<br><a href="https://blog.csdn.net/weixin_40412037/article/details/121535553">https://blog.csdn.net/weixin_40412037/article/details/121535553</a></p>]]></content>
     
     
       
       
-    <summary type="html">&lt;h2 id=&quot;序&quot;&gt;序&lt;/h2&gt;
+    <summary type="html">&lt;h1&gt;序&lt;/h1&gt;
 &lt;p&gt;本来兴致勃勃的想要学一下内网横向渗透的，结果发现其他人随随便便用永恒之蓝就直接拿到了system权限，但同样的靶机，自己电脑上的永恒之蓝完全没用，于是干脆复习了一遍window下的权限提升方法。&lt;br&gt;
-（本文主要是针对windows提权</summary>
+（本文主要是针对windows提权方法进行总结，</summary>
       
     
     
@@ -44,8 +57,8 @@
   
   <entry>
     <title>XXE漏洞详解</title>
-    <link href="http://example.com/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/"/>
-    <id>http://example.com/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</id>
+    <link href="http://example.com/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3"/>
+    <id>http://example.com/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3</id>
     <published>2023-02-22T07:57:28.000Z</published>
     <updated>2023-02-22T08:10:06.417Z</updated>
     
@@ -69,8 +82,8 @@
   
   <entry>
     <title>seafile和alist使用体验</title>
-    <link href="http://example.com/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/"/>
-    <id>http://example.com/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</id>
+    <link href="http://example.com/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C"/>
+    <id>http://example.com/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C</id>
     <published>2023-02-11T06:18:09.000Z</published>
     <updated>2023-02-20T04:36:08.386Z</updated>
     
@@ -97,8 +110,8 @@
   
   <entry>
     <title>Zerotier的使用体验</title>
-    <link href="http://example.com/post/zerotier/"/>
-    <id>http://example.com/post/zerotier/</id>
+    <link href="http://example.com/post/zerotier"/>
+    <id>http://example.com/post/zerotier</id>
     <published>2023-02-11T04:57:18.000Z</published>
     <updated>2023-02-20T04:35:48.046Z</updated>
     
@@ -123,8 +136,8 @@
   
   <entry>
     <title>利用ipv6搭建一台服务器</title>
-    <link href="http://example.com/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
-    <id>http://example.com/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</id>
+    <link href="http://example.com/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"/>
+    <id>http://example.com/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8</id>
     <published>2023-02-07T11:58:15.000Z</published>
     <updated>2023-02-20T04:35:31.062Z</updated>
     
@@ -152,8 +165,8 @@
   
   <entry>
     <title>利用ipv6实现公网ip</title>
-    <link href="http://example.com/post/Using-ipv6-to-realize-public-ip/"/>
-    <id>http://example.com/post/Using-ipv6-to-realize-public-ip/</id>
+    <link href="http://example.com/post/Using-ipv6-to-realize-public-ip"/>
+    <id>http://example.com/post/Using-ipv6-to-realize-public-ip</id>
     <published>2023-01-29T12:05:18.000Z</published>
     <updated>2023-02-20T04:35:59.123Z</updated>
     
@@ -177,8 +190,8 @@
   
   <entry>
     <title>新年好</title>
-    <link href="http://example.com/post/happy-new-year/"/>
-    <id>http://example.com/post/happy-new-year/</id>
+    <link href="http://example.com/post/happy-new-year"/>
+    <id>http://example.com/post/happy-new-year</id>
     <published>2023-01-21T16:36:32.000Z</published>
     <updated>2023-02-20T04:35:15.993Z</updated>
     
@@ -198,8 +211,8 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://example.com/post/hello-world/"/>
-    <id>http://example.com/post/hello-world/</id>
+    <link href="http://example.com/post/hello-world"/>
+    <id>http://example.com/post/hello-world</id>
     <published>2023-01-21T14:57:41.893Z</published>
     <updated>2023-01-21T14:57:41.893Z</updated>
     
