@@ -16,6 +16,7 @@ hr:before {
     text-rendering: auto;
     -webkit-font-smoothing: antialiased
 }
+
 #article-container h1:before,
 #article-container h2:before,
 #article-container h3:before,
@@ -37,7 +38,8 @@ hr:before {
     animation: avatar_turn_around 1s linear infinite; */
 }
 #article-container h1 {
-    padding-left: 1.4rem
+    padding-left: 1.4rem;
+    transition: all 0.2s ease-out
 }
 
 #article-container h1 code {
@@ -45,17 +47,28 @@ hr:before {
 }
 
 #article-container h1:before {
-    margin-left: -1.3rem;
-    top: calc(50% - .5rem);
-    font-size: 1rem
+    margin-left: -26px;
+    top: calc(50% - .4rem);
+    font-size: 20px
 }
 
+#article-container h1:hover:before, 
+#article-container h2:hover:before, 
+#article-container h3:hover:before, 
+#article-container h4:hover:before, 
+#article-container h5:hover:before, 
+#article-container h6:hover:before {
+    color: #3887ff; 
+}
+
+
 #article-container h1:hover {
-    padding-left: 1.6rem
+    padding-left: 1.8rem;
 }
 
 #article-container h2 {
-    padding-left: 1.3rem
+    padding-left: 1.3rem;
+    transition: all 0.2s ease-out
 }
 
 #article-container h2 code {
@@ -73,6 +86,7 @@ hr:before {
 }
 
 #article-container h3 {
+	transition: all 0.2s ease-out;
     padding-left: 1.2rem
 }
 
@@ -93,6 +107,7 @@ hr:before {
 }
 
 #article-container h4 {
+	transition: all 0.2s ease-out;
     padding-left: 1.1rem
 }
 
@@ -111,6 +126,7 @@ hr:before {
 }
 
 #article-container h5 {
+	transition: all 0.2s ease-out;
     padding-left: 1rem
 }
 
@@ -129,6 +145,7 @@ hr:before {
 }
 
 #article-container h6 {
+	transition: all 0.2s ease-out;
     padding-left: 1rem
 }
 
