@@ -1242,19 +1242,10 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
-    <title>卡巴斯基免杀学习</title>
-    <url>/post/%E5%8D%A1%E5%B7%B4%E6%96%AF%E5%9F%BA%E5%85%8D%E6%9D%80%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<p><img src="image-20230712135016234.png" alt="image-20230712135016234"></p>
-<p><img src="image-20230712135122692.png" alt="image-20230712135122692"></p>
-<p>缺陷：只能加载c#编写的exe</p>
-<p><img src="image-20230712155435601.png" alt="image-20230712155435601"></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>基于c++的简单加壳程序</title>
+    <title>msi木马创建</title>
     <url>/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/</url>
     <content><![CDATA[<h1 id="MSI文件">MSI文件</h1>
-<p>MSI 文件指的是 Windows Installer Package 文件，它是一种用于安装、升级、修复和卸载软件的安装程序包格式。</p>
+<p><code>MSI 文件</code>指的是 <code>Windows Installer Package </code>文件，它是一种用于安装、升级、修复和卸载软件的安装程序包格式。</p>
 <p>Windows Installer 是 Microsoft Windows 操作系统中的一种安装技术，用于管理和执行软件的安装和卸载过程。MSI 文件是 Windows Installer 技术的核心组成部分，它以.msi 文件扩展名来标识。</p>
 <p>MSI 文件是一种数据库式文件，其中包含了安装程序所需的文件、注册表项、配置信息、脚本和其他相关组件。它提供了一种标准化的方式来描述和定义软件的安装过程，使得软件的安装和管理更加可靠和可预测。</p>
 <p>通过运行 MSI 文件，Windows Installer 将打开一个安装向导，引导用户完成软件的安装过程。安装过程中，Windows Installer 会根据 MSI 文件中的指令和设置，将文件复制到适当的位置，注册组件、创建快捷方式，执行系统配置等操作，最终将软件成功安装到目标计算机上。</p>
@@ -1263,30 +1254,30 @@ InitialContext#lookup</p>
 <p>常见的msi:</p>
 <p><img src="image-20230831230437851.png" alt="image-20230831230437851"></p>
 <h1 id="木马制作思路">木马制作思路</h1>
-<p>在MSI软件包中，制作者可以使用自定义操作（Custom Actions）来执行特定的任务，例如运行可执行文件、执行脚本、修改注册表等。当执行安装过程时，MSI软件包会按照事先定义的规则和流程执行这些自定义操作。如果将恶意的exe（也可以是dll、js和vbs）文件作为msi安装过程中要运行的文件，将直接触发恶意代码。</p>
-<p>msiexec是Windows操作系统中的命令行实用程序，用于处理MSI（Microsoft Installer）文件。它是Microsoft Installer的执行引擎，负责解析和执行MSI文件中定义的安装、修复、更新和卸载操作。msiexec支持远程加载msi文件并安装。</p>
+<p>在MSI软件包中，<code>制作者可以使用自定义操作（Custom Actions）来执行特定的任务</code>，例如运行可执行文件、执行脚本、修改注册表等。当执行安装过程时，MSI软件包会按照事先定义的规则和流程执行这些自定义操作。如果将恶意的exe（也可以是dll、js和vbs）文件作为msi安装过程中要运行的文件，将直接触发恶意代码。</p>
+<p><code>msiexec</code>是Windows操作系统中的命令行实用程序，用于处理MSI（Microsoft Installer）文件。它是Microsoft Installer的执行引擎，负责解析和执行MSI文件中定义的安装、修复、更新和卸载操作。msiexec支持<code>远程加载</code>msi文件并安装。</p>
 <p>相当于通过msiexec间接运行我们的恶意exe，整个过程无文件落地。</p>
 <h1 id="创建msi文件">创建msi文件</h1>
 <p>msi文件可以通过<a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">Advanced Installer</a><a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">1</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">，Discover</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">2</a>，或者Visual Studio等方式创建，这里我们以Visual Studio 2022为例。</p>
 <h2 id="下载安装插件">下载安装插件</h2>
-<p>首先要下载安装Visual Studio Installer Projects插件，在vs中点击左上角拓展——&gt;管理拓展，直接搜索下载安装</p>
+<p>首先要下载安装<code>Visual Studio Installer Projects</code>插件，在vs中点击左上角<code>拓展</code>—&gt;<code>管理拓展</code>，直接搜索下载安装</p>
 <p><img src="image-20230831232418630.png" alt="image-20230831232418630"></p>
 <p>这样可能会比较慢，也可以直接下载<a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects">拓展包</a>安装。</p>
 <h2 id="添加Setup-Project项目">添加Setup Project项目</h2>
-<p>创建一个新的Setup Project项目</p>
+<p>创建一个新的<code>Setup Project</code>项目</p>
 <p><img src="image-20230831232701251.png" alt="image-20230831232701251"></p>
-<p>添加项目输出</p>
+<p>添加<code>项目输出</code></p>
 <p><img src="image-20230831232813669.png" alt="image-20230831232813669"></p>
-<p>选择主输出</p>
+<p>选择<code>主输出</code></p>
 <p><img src="image-20230831232832022.png" alt="image-20230831232832022"></p>
 <blockquote>
 <p>可能会遇到项目输出是空的情况，应该是解决方案配置的问题，建议不要创建一个Setup Project项目的解决方案，而是在已有解决方案项目的情况下添加Setup Project项目</p>
 <p><img src="image-20230831234805675.png" alt="image-20230831234805675"></p>
 </blockquote>
 <h2 id="添加恶意exe">添加恶意exe</h2>
-<p>右键项目选择自定义操作</p>
+<p>右键项目选择<code>自定义操作</code></p>
 <p><img src="image-20230831232942395.png" alt="image-20230831232942395"></p>
-<p>发现有四个操作分别为安装&quot;、“提交”、“回滚&quot;和&quot;卸载”</p>
+<p>发现有四个操作分别为<code>&quot;安装&quot;、&quot;提交&quot;、&quot;回滚&quot;和&quot;卸载&quot;</code></p>
 <p><img src="image-20230831233023014.png" alt="image-20230831233023014"></p>
 <p>在安装程序中，“安装”、“提交”、&quot;回滚&quot;和&quot;卸载&quot;是四个常见的操作类型，它们用于描述不同的安装过程中的行为和阶段。</p>
 <ol>
