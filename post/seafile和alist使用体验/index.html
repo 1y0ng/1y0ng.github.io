@@ -91,6 +91,10 @@
           <a href="/tags/">Tags</a>
         </li>
       
+        <li class="nav-item" data-path="/Tool/">
+          <a href="/Tool/">Tool</a>
+        </li>
+      
     </ul>
   </div>
 </div>
@@ -150,7 +154,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2023-02-20 12:36:08
+          2024-08-21 16:38:22
         </span>
         
               <span class="post-tags">
@@ -173,8 +177,8 @@
       </div>
       <div class="markdown-body">
         <h3 id="背景">背景</h3>
-<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/b714094e70284d59a3211d8279c39bdb.jpg" alt="b714094e70284d59a3211d8279c39bdb.jpg"  /><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong><br>
+<img src="ab1a82c6bfabc1191ebdb4b0574351e2.jpeg" alt="ab1a82c6bfabc1191ebdb4b0574351e2.jpeg"></p>
 <h3 id="seafile">seafile</h3>
 <p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
@@ -187,7 +191,7 @@
 <p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
 <p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
 <p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
-<p><img src="https://img-blog.csdnimg.cn/17f9bc567d1d42b9b38de90751182d38.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p><img src="3332e0ca17ddc316dff9dfce8e855a7b.png" alt="3332e0ca17ddc316dff9dfce8e855a7b.png"></p>
 <h3 id="alist">alist</h3>
 <p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
 <p>alist的部署更加简单，具体可以看这位博主的文章</p>
@@ -204,9 +208,9 @@
 <p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
 <h3 id="alist的安全问题">alist的安全问题</h3>
 <p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
-<p><img src="https://img-blog.csdnimg.cn/d8e57c2b9ad746fabebceedd38332d81.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p><img src="d084b60e129e0b01c6c9ff098f0ef590.png" alt="d084b60e129e0b01c6c9ff098f0ef590.png"></p>
 <p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
-<p><img src="https://img-blog.csdnimg.cn/c811906dc6474fadbf5ef3751dee8221.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p><img src="5fb6ece552d92978ae906da09115795a.png" alt="5fb6ece552d92978ae906da09115795a.png"></p>
 <p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
 <p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
 <p><a target="_blank" rel="noopener" href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
@@ -229,7 +233,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2023-02-20 12:36:08
+              2024-08-21 16:38:22
             </span>
             
                   <span class="post-tags">

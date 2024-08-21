@@ -17,8 +17,12 @@
     var dbms = document.getElementById("dbms").value;
     // alert(option1);
     var resultElement = document.getElementById("result");
-    
-    
-    var sentence = `python sqlmap.py -${option1} ${target} -p ${point} --random-agent --proxy ${proxy} --risk=3 --level=5 --threads 10 ${technique} ${dbms}`;
+    if (!point) {
+      point = "";  // 直接返回空字符串
+    } else {
+      point = "-p " + point;  // 在 point 前面加上 "-p"
+    }
+
+    var sentence = `python sqlmap.py -${option1} ${target}  ${point} --random-agent --proxy ${proxy} --risk=3 --level=5 --threads 10 ${technique} ${dbms}`;
     resultElement.textContent = sentence;
   }
