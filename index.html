@@ -1,296 +1,507 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>1y0ng's Blog - there is no flag</title><meta name="author" content="1y0ng"><meta name="copyright" content="1y0ng"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
-<meta property="og:title" content="1y0ng&#39;s Blog">
-<meta property="og:url" content="http://example.com/index.html">
-<meta property="og:site_name" content="1y0ng&#39;s Blog">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://mms2.baidu.com/it/u=1947906842,837644983&fm=253&app=120&f=JPEG&fmt=auto&q=75?w=500&h=500">
-<meta property="article:author" content="1y0ng">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://mms2.baidu.com/it/u=1947906842,837644983&fm=253&app=120&f=JPEG&fmt=auto&q=75?w=500&h=500"><link rel="shortcut icon" href="/img/favicon2.png"><link rel="canonical" href="http://example.com/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Righteous" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
-  root: '/',
-  algolia: undefined,
-  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
-  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
-  noticeOutdate: undefined,
-  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
-  copy: {
-    success: '复制成功',
-    error: '复制错误',
-    noSupport: '浏览器不支持'
-  },
-  relativeDate: {
-    homepage: false,
-    post: false
-  },
-  runtime: '天',
-  date_suffix: {
-    just: '刚刚',
-    min: '分钟前',
-    hour: '小时前',
-    day: '天前',
-    month: '个月前'
-  },
-  copyright: undefined,
-  lightbox: 'fancybox',
-  Snackbar: undefined,
-  source: {
-    justifiedGallery: {
-      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
-      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
-    }
-  },
-  isPhotoFigcaption: false,
-  islazyload: false,
-  isAnchor: false,
-  percent: {
-    toc: true,
-    rightside: false,
-  }
-}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
-  title: '1y0ng\'s Blog',
-  isPost: false,
-  isHome: true,
-  isHighlightShrink: false,
-  isToc: false,
-  postUpdate: '2024-01-16 09:55:20'
-}</script><noscript><style type="text/css">
-  #nav {
-    opacity: 1
-  }
-  .justified-gallery img {
-    opacity: 1
-  }
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
 
-  #recent-posts time,
-  #post-meta time {
-    display: inline !important
-  }
-</style></noscript><script>(win=>{
-    win.saveToLocal = {
-      set: function setWithExpiry(key, value, ttl) {
-        if (ttl === 0) return
-        const now = new Date()
-        const expiryDay = ttl * 86400000
-        const item = {
-          value: value,
-          expiry: now.getTime() + expiryDay,
-        }
-        localStorage.setItem(key, JSON.stringify(item))
-      },
-
-      get: function getWithExpiry(key) {
-        const itemStr = localStorage.getItem(key)
-
-        if (!itemStr) {
-          return undefined
-        }
-        const item = JSON.parse(itemStr)
-        const now = new Date()
-
-        if (now.getTime() > item.expiry) {
-          localStorage.removeItem(key)
-          return undefined
-        }
-        return item.value
-      }
-    }
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="1y0ng" />
+  <!-- Open Graph Description 简短摘要-->
   
-    win.getScript = url => new Promise((resolve, reject) => {
-      const script = document.createElement('script')
-      script.src = url
-      script.async = true
-      script.onerror = reject
-      script.onload = script.onreadystatechange = function() {
-        const loadState = this.readyState
-        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-        script.onload = script.onreadystatechange = null
-        resolve()
-      }
-      document.head.appendChild(script)
-    })
+  <!-- 用于搜索引擎的文章摘要 -->
   
-    win.getCSS = url => new Promise((resolve, reject) => {
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = url
-      link.onload = () => resolve()
-      link.onerror = () => reject()
-      document.head.appendChild(link)
-    })
   
-      win.activateDarkMode = function () {
-        document.documentElement.setAttribute('data-theme', 'dark')
-        if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
-        }
-      }
-      win.activateLightMode = function () {
-        document.documentElement.setAttribute('data-theme', 'light')
-        if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
-        }
-      }
-      const t = saveToLocal.get('theme')
+  
+  <title>
     
-          if (t === 'dark') activateDarkMode()
-          else if (t === 'light') activateLightMode()
-        
-      const asideStatus = saveToLocal.get('aside-status')
-      if (asideStatus !== undefined) {
-        if (asideStatus === 'hide') {
-          document.documentElement.classList.add('hide-aside')
-        } else {
-          document.documentElement.classList.remove('hide-aside')
-        }
-      }
-    
-    const detectApple = () => {
-      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
-        document.documentElement.classList.add('apple')
-      }
+     1y0ng&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon2.png">
+    <link rel="icon" href="/images/favicon2.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
     }
-    detectApple()
-    })(window)</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/tou.css"><link rel="stylesheet" href="/css/background.css"><link rel="stylesheet" href="/css/font.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
-</head><body><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><div class="loading-img"></div><div class="loading-image-dot"></div></div></div><script>const preloader = {
-  endLoading: () => {
-    document.body.style.overflow = 'auto';
-    document.getElementById('loading-box').classList.add("loaded")
-  },
-  initLoading: () => {
-    document.body.style.overflow = '';
-    document.getElementById('loading-box').classList.remove("loaded")
+  </script>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head>
 
-  }
-}
-window.addEventListener('load',()=> { preloader.endLoading() })
 
-if (false) {
-  document.addEventListener('pjax:send', () => { preloader.initLoading() })
-  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
-}</script><link rel="stylesheet" href="/css/progress_bar.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="http://mms2.baidu.com/it/u=1947906842,837644983&amp;fm=253&amp;app=120&amp;f=JPEG&amp;fmt=auto&amp;q=75?w=500&amp;h=500" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/html/tools/tools.html"><i class="fa-fw fas fa-toolbox"></i><span> 工具</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url('http://p5.qhimg.com/bdr/__85/t016608f207bd942436.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="1y0ng's Blog"><span class="site-name">1y0ng's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/html/tools/tools.html"><i class="fa-fw fas fa-toolbox"></i><span> 工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">1y0ng's Blog</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/1y0ng" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://1y0ng.github.io" target="_blank" title="Home Page"><i class="fas fa-house"></i></a><a class="social-icon" href="https://blog.csdn.net/qq_62370574?type=blog" target="_blank" title="CSDN"><i class="fas fa-c"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/linux%E6%8F%90%E6%9D%83%E4%B9%8Bdirtycow/" title="linux提权之dirtycow">linux提权之dirtycow</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-12-23T01:46:25.000Z" title="发表于 2023-12-23 09:46:25">2023-12-23</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-01-16T01:53:04.613Z" title="更新于 2024-01-16 09:53:04">2024-01-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/linux/">linux</a></span></div><div class="content">Dirty COW（脏牛）漏洞是一种影响Linux操作系统的本地特权升级漏洞，其全称为&quot;Copy-On-Write&quot;（写时复制）漏洞。这个漏洞在2016年被公开，并且影响了大量的Linux内核版本。
-Dirty  COW漏洞的根本原因是Linux在竞态条件下的复制时写入（Copy-On-Write）机制的实现存在缺陷。Copy-On-Write是一种内存管理技术，它允许多个进程共享同一个物理内存页面的副本，直到其中一个进程尝试修改该页面时，系统才会复制出一个新的页面供修改进程使用。
-竞态条件（Race Condition）是多个并发操作或线程访问共享资源时可能出现的一种问题。竞态条件发生在多个操作之间存在依赖关系，并且操作的执行顺序会影响最终的结果。
-听起来似乎比较复杂，我们可以简单一点
-假设有一个变量a
-1a=&quot;dirty&quot;
-同时还有另一个变量b
-1b=a
-尽管这是两个变量，但它们都指向同一个内存对象，因为不需要为相同的值占用两倍的内存量。但如果修改了b变量，操作系统就会为这个变量分配单独的内存。
-1b+=&quot;cow&quot;
-修改时 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/" title="msi木马创建">msi木马创建</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-22T02:30:44.000Z" title="发表于 2023-08-22 10:30:44">2023-08-22</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-09T02:26:38.525Z" title="更新于 2023-09-09 10:26:38">2023-09-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="content">MSI文件
-MSI 文件指的是 Windows Installer Package 文件，它是一种用于安装、升级、修复和卸载软件的安装程序包格式。
-Windows Installer 是 Microsoft Windows 操作系统中的一种安装技术，用于管理和执行软件的安装和卸载过程。MSI 文件是 Windows Installer 技术的核心组成部分，它以.msi 文件扩展名来标识。
-MSI 文件是一种数据库式文件，其中包含了安装程序所需的文件、注册表项、配置信息、脚本和其他相关组件。它提供了一种标准化的方式来描述和定义软件的安装过程，使得软件的安装和管理更加可靠和可预测。
-通过运行 MSI 文件，Windows Installer 将打开一个安装向导，引导用户完成软件的安装过程。安装过程中，Windows Installer 会根据 MSI 文件中的指令和设置，将文件复制到适当的位置，注册组件、创建快捷方式，执行系统配置等操作，最终将软件成功安装到目标计算机上。
-MSI 文件具有一些特性，如安装过程的事务性、修复和升级功能、卸载功能、自定义操作等。它们被广泛用于 Windows  ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%87%86%E6%8E%A5%E5%85%A5/" title="一个简单的准接入">一个简单的准接入</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-02T06:05:10.000Z" title="发表于 2023-07-02 14:05:10">2023-07-02</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-07-02T08:59:38.601Z" title="更新于 2023-07-02 16:59:38">2023-07-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="content">目标
-教育护网的时候出现了钓鱼的木马样本被安全人员分析导致cs服务器的ip被封的情况，就想着写一个简单的准接入控制平台，来控制肉鸡是否允许连接至cs服务器。
-理想效果是：点击木马以后，会先发送连接请求到接入控制服务器，在服务器上允许接入以后，木马运行shellcode，否则程序结束。
-肉鸡在请求连接的时候，会携带电脑的部分信息（处理器数量、内存大小等），方便攻击者判断是否为虚拟机环境
-开搞
-思路：控制服务器打算用python的flask来写，客户端与服务器的通信采用socket连接
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/favicon2.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">1y0ng</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
 
-客户端会发送自己的内存大小以及处理器数量给服务端
-服务端将数据在网页中显示
-攻击者选择是否允许接入
-将选择结果返回给客户端
 
-获取内存大小以及处理器数量
-windows中自带了API可以非常方便的用来获取这两个参数，分别是GlobalMemoryStatusEx方法和GetSystemInfo方法
-具体代码：
-1234567891011//获取内存大小MEMORYSTATUSEX meminfo;meminfo.dwLength = sizeof(MEMORYSTATUSEX);GlobalMemoryS ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E9%80%83%E9%80%B8%E5%AD%A6%E4%B9%A0/" title="恶意代码逃逸学习">恶意代码逃逸学习</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-06-15T06:55:30.000Z" title="发表于 2023-06-15 14:55:30">2023-06-15</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-15T15:25:43.461Z" title="更新于 2023-06-15 23:25:43">2023-06-15</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="content">在渗透的过程中会经常遇到对方机器安装了杀软的情况，这时就需要用到免杀技术，之前钓鱼邮件中提到的免杀是用GO写的，但我觉得这种东西还是更靠近计算机底层为好，正好这几天看了倾旋大佬的博客，对于用c++来实现恶意代码逃逸学到了很多，特此记录
-简单的加载shellcode
-首先我们要让cobalt strike生成的shellcode运行起来一共就三个步骤
+<script src="/js/activeNav.js"></script>
 
-申请计算机内存
-将shellcode加载进内存
-执行这一段内存
 
-上面三个步骤对应的代码为：
-123456789101112131415#include &lt;Windows.h&gt;using namespace std;/* length: 891 bytes */unsigned char buf[] = &quot;\xfc\x48\x83\xe4\xf0\xe8\xc8\x00\x00\x00\x41\x51\x41\x50\x52\x51\x56\x48\x31\xd2\x65\x48\x8b\x52\x60\x48\x8b\x52\x18\x48\x8b......&quot;;int main() &#123;	int ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/agent%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/" title="agent内存马学习">agent内存马学习</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-06-06T06:57:17.000Z" title="发表于 2023-06-06 14:57:17">2023-06-06</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-15T15:28:46.779Z" title="更新于 2023-06-15 23:28:46">2023-06-15</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/JAVA/">JAVA</a></span></div><div class="content">在Java中,agent是一种可以在运行时修改字节码的机制,它可以用来实现诸如性能监控、代码覆盖率分析、日志记录等功能。java agent主要分为两种——premain和agentmain
-premain
-首先新建一个maven项目,并创建一个PreDemo类
-123456789import java.lang.instrument.Instrumentation;public class PreDemo &#123;    public static void premain(String args, Instrumentation inst) throws Exception&#123;        for (int i = 0; i &lt; 5; i++) &#123;            System.out.println(&quot;hello I`m premain agent!!!&quot;);        &#125;    &#125;&#125;
-创建META-INF/MANIFEST.MF,需要指定Premain-Class
-123Manifest- ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%AD%A6%E4%B9%A0/" title="邮箱钓鱼学习">邮箱钓鱼学习</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-06-04T07:35:21.000Z" title="发表于 2023-06-04 15:35:21">2023-06-04</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-14T11:54:04.166Z" title="更新于 2023-06-14 19:54:04">2023-06-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="content">邮箱钓鱼是一种常见的网络攻击手段,它利用伪造的电子邮件来诱导目标用户点击恶意链接或附件,从而窃取敏感信息或执行恶意代码。在进行网络攻击的时候非常常见,毕竟资产最薄弱的部分依旧还是人。
-制作免杀马
-邮箱钓鱼攻击的成功与否很大程度上取决于攻击者能否绕过目标系统的防御措施,如杀毒软件、防火墙、沙箱等。因此,学习如何制作免杀的恶意代码是提高邮箱钓鱼攻击效果的关键。
-目前网上有非常多能够帮助shellcode免杀的工具,也可以自己尝试写一写,这里以绕过360为目标
-参考云山雾隐的shellcode免杀入门文章我们可以得到一个基础的免杀马
-大致原理是对shellcode进行异或加密再base64编码得到密文,然后再对密文进行解码同时加载到内存中,但这种方式同样容易被查杀（2023.6.2测试被杀）,所以我们可以分开写,弄两个文件,一个文件（文件名为.DS_Store）存放我们所加密的shellcode,另外一个可执行文件负责读取shellcode并加载到内存中
-shell.go代码如下：
-1234567891011121314151617181920212223242526272829303132 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/%E5%88%9D%E8%AF%86JAVA%E5%86%85%E5%AD%98%E9%A9%AC/" title="初识JAVA内存马">初识JAVA内存马</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-05-02T05:26:02.000Z" title="发表于 2023-05-02 13:26:02">2023-05-02</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-14T11:51:08.618Z" title="更新于 2023-06-14 19:51:08">2023-06-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/JAVA/">JAVA</a></span></div><div class="content">介绍
-Java内存马（Java Memory Shell）是一种利用Java虚拟机（JVM）中的内存对象和反射技术来执行恶意代码的攻击手段。
-与传统木马相比，Java内存马具有以下几个优势：
 
-隐藏性更强：Java内存马不需要在受害者主机上创建任何文件，因此可以极大地减少被检测到的风险。它们完全存在于JVM内存中，很难通过常规的病毒扫描程序或防火墙来检测和拦截。
-反应速度更快：Java内存马直接利用JVM中已经加载的Java类和对象，在攻击者成功上传恶意代码后即可立即执行，反应速度更快。
-跨平台支持更好：由于JVM是跨平台的，因此Java内存马可以在各种操作系统上运行，包括Windows、Linux、macOS等。
-
-内存马包括很多类型，这里以tomcat内存马作为学习
-环境准备
-在idea中首先创建一个JavaWeb项目
-
-勾上Servlet
-
-然后就完成了一个web项目的创建
-我们可以看到idea为我们新建了一个HelloServlet作为例子，同时这里是通过注释的方式来连接url与对应的Servlet的
-
-为了方便学习，我们将利用web.xml的方式修改url与Servlet间的 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/%E6%9A%97%E6%9C%88ack%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" title="暗月ack靶场学习记录">暗月ack靶场学习记录</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-30T02:32:53.000Z" title="发表于 2023-04-30 10:32:53">2023-04-30</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-14T11:51:01.742Z" title="更新于 2023-06-14 19:51:01">2023-06-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%B8%97%E9%80%8F/">渗透</a></span></div><div class="content">最近打了一套新的靶场——暗月ack,学到了很多新东西,特此记录
-烂土豆（RottenPotato）
-烂土豆（Rotten Potato） MS16-075 是一种利用 Windows 客户端操作系统中 NT AUTHORITY\SYSTEM 权限漏洞的攻击方法,可以实现本地提权,对应的补丁号为KB3164038
-适用版本：Windows 7、8、10、2008、2012
-当攻击者转发适用于在同一计算机上运行的其他服务的身份验证请求时,Microsoft 服务器消息块 (SMB) 中存在特权提升漏洞。成功利用此漏洞的攻击者可以使用提升的特权执行任意代码
-若要利用此漏洞,攻击者首先必须登录系统。然后,攻击者可以运行一个为利用此漏洞而经特殊设计的应用程序,从而控制受影响的系统,可见,该漏洞的利用方式还是比较简单的
-首先在拥有一个登录用户的情况下输入whoami /prive查看当前用户的权限
-如果发现有SeAssignPrimaryTokenPrivilege权限或者SeImpersonatePrivilege 权限并且系统未打对应的补丁则可以成功利用烂土豆提权
-MSSQL拿shell
-拿到 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%B9%8Bms14-068%E5%92%8C%E9%BB%84%E9%87%91%E3%80%81%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE/" title="内网渗透之ms14_068和黄金、白银票据">内网渗透之ms14_068和黄金、白银票据</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-14T05:30:26.000Z" title="发表于 2023-04-14 13:30:26">2023-04-14</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-14T11:53:42.833Z" title="更新于 2023-06-14 19:53:42">2023-06-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%B8%97%E9%80%8F/">渗透</a></span></div><div class="content">MS14-068
-MS14-068 是微软在 2014 年 11 月发布的一个安全公告,其中提到了 Windows 操作系统中存在的一个漏洞,对应的补丁号是KB3011780.该漏洞被称为 Kerberos Checksum Vulnerability,允许攻击者通过伪造 Kerberos 协议包来获取域控制器的权限,从而可能导致整个 Active Directory 域受到攻击.
-该漏洞影响 Windows Server 2003、Windows Vista、Windows Server 2008、Windows 7 和 Windows Server 2008 R2 等多个版本的 Windows 操作系统,并被评定为危急级别.
-原理
-在学习这个漏洞之前我们要先明白kerberos协议的认证流程：
-
-在kerberos最初的设计流程中只说明了如何证明客户端的真实身份,并没有说明客户端是否有权限访问这个服务,为了解决这个问题,微软引入了PAC（Privilege Attribute Certificate）用来辨明用户的身份和权限.
-PAC 包含了用户身份信息（包括用户的用户名、域名、S ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bfastjson/" title="java反序列化之fastjson">java反序列化之fastjson</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-10T12:23:14.000Z" title="发表于 2023-04-10 20:23:14">2023-04-10</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-14T11:56:11.447Z" title="更新于 2023-06-14 19:56:11">2023-06-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/JAVA/">JAVA</a></span></div><div class="content">FastJson 1.2.22 - 1.2.24
-fastjson是java反序列化中一个经典的漏洞了,早些在使用java写爬虫程序的时候就用过这个库,今天就针对其反序列化漏洞再来学习一次。
-首先先介绍一下JavaBean ，JavaBean 包括一个默认的构造函数、私有的成员变量以及公共的 getter 和 setter 方法。这些方法用于对类中的属性进行读取和赋值操作,并且可以通过反射机制对其进行访问。
-JavaBean 类通常被用作数据传输对象（DTO）或持久化对象（POJO）,并且经常与 Web 应用程序框架（如 Spring MVC）一起使用。通过将数据映射到 JavaBean 对象中,我们可以方便地进行数据绑定、表单验证以及数据库访问等操作。
-以下是一个简单的 JavaBean 类示例：
-1234567891011121314151617181920212223242526272829303132public class Person &#123;    private String name;    private int age;    public Person()  ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><a class="page-number" href="/page/3/#content-inner">3</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="http://mms2.baidu.com/it/u=1947906842,837644983&amp;fm=253&amp;app=120&amp;f=JPEG&amp;fmt=auto&amp;q=75?w=500&amp;h=500" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">1y0ng</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/1y0ng"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/1y0ng" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://1y0ng.github.io" target="_blank" title="Home Page"><i class="fas fa-house"></i></a><a class="social-icon" href="https://blog.csdn.net/qq_62370574?type=blog" target="_blank" title="CSDN"><i class="fas fa-c"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/linux%E6%8F%90%E6%9D%83%E4%B9%8Bdirtycow/" title="linux提权之dirtycow">linux提权之dirtycow</a><time datetime="2023-12-23T01:46:25.000Z" title="发表于 2023-12-23 09:46:25">2023-12-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/" title="msi木马创建">msi木马创建</a><time datetime="2023-08-22T02:30:44.000Z" title="发表于 2023-08-22 10:30:44">2023-08-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%87%86%E6%8E%A5%E5%85%A5/" title="一个简单的准接入">一个简单的准接入</a><time datetime="2023-07-02T06:05:10.000Z" title="发表于 2023-07-02 14:05:10">2023-07-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E9%80%83%E9%80%B8%E5%AD%A6%E4%B9%A0/" title="恶意代码逃逸学习">恶意代码逃逸学习</a><time datetime="2023-06-15T06:55:30.000Z" title="发表于 2023-06-15 14:55:30">2023-06-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/agent%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/" title="agent内存马学习">agent内存马学习</a><time datetime="2023-06-06T06:57:17.000Z" title="发表于 2023-06-06 14:57:17">2023-06-06</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
-            <i class="fas fa-folder-open"></i>
-            <span>分类</span>
+      <div class="flex-container">
+        <div class="container index">
+  <div class="post-list">
+    <!-- 遍历渲染文章 -->
+    
+      <div class="post-item" title="PythonFlask内存马的另辟途径">
+        <div class="time-m-d">2024-05-06</div>
+        <div class="title">
+          <a href="/post/PythonFlask%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%8F%A6%E8%BE%9F%E9%80%94%E5%BE%84/">
             
-            </div>
-            <ul class="card-category-list" id="aside-cat-list">
-            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JAVA/"><span class="card-category-list-name">JAVA</span><span class="card-category-list-count">10</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/linux/"><span class="card-category-list-name">linux</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/"><span class="card-category-list-name">使用体验</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/"><span class="card-category-list-name">技术</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%B8%97%E9%80%8F/"><span class="card-category-list-name">渗透</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%BB%8F%E5%8E%86/"><span class="card-category-list-name">经历</span><span class="card-category-list-count">1</span></a></li>
-            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/alist/" style="font-size: 1.1em; color: #999">alist</a> <a href="/tags/ipv6/" style="font-size: 1.23em; color: #999ea6">ipv6</a> <a href="/tags/seafile/" style="font-size: 1.1em; color: #999">seafile</a> <a href="/tags/xxe/" style="font-size: 1.1em; color: #999">xxe</a> <a href="/tags/zerotier/" style="font-size: 1.1em; color: #999">zerotier</a> <a href="/tags/%E5%85%8D%E6%9D%80/" style="font-size: 1.23em; color: #999ea6">免杀</a> <a href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" style="font-size: 1.23em; color: #999ea6">内存马</a> <a href="/tags/%E5%87%86%E5%85%A5/" style="font-size: 1.1em; color: #999">准入</a> <a href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" style="font-size: 1.5em; color: #99a9bf">反序列化</a> <a href="/tags/%E6%8F%90%E6%9D%83/" style="font-size: 1.37em; color: #99a4b2">提权</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 1.1em; color: #999">服务器</a> <a href="/tags/%E6%9C%A8%E9%A9%AC/" style="font-size: 1.1em; color: #999">木马</a> <a href="/tags/%E6%A8%AA%E5%90%91/" style="font-size: 1.1em; color: #999">横向</a> <a href="/tags/%E7%A4%BE%E5%B7%A5/" style="font-size: 1.1em; color: #999">社工</a> <a href="/tags/%E7%BB%B4%E6%9D%83/" style="font-size: 1.1em; color: #999">维权</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 1.1em; color: #999">靶场</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
-    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/12/"><span class="card-archive-list-date">十二月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/08/"><span class="card-archive-list-date">八月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/07/"><span class="card-archive-list-date">七月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/06/"><span class="card-archive-list-date">六月 2023</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/05/"><span class="card-archive-list-date">五月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/04/"><span class="card-archive-list-date">四月 2023</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/03/"><span class="card-archive-list-date">三月 2023</span><span class="card-archive-list-count">8</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/02/"><span class="card-archive-list-date">二月 2023</span><span class="card-archive-list-count">4</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">26</div></div><div class="webinfo-item"><div class="item-name">已运行时间 :</div><div class="item-count" id="runtimeshow" data-publishDate="2023-01-21T16:00:00.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">44.8k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-01-16T01:55:20.154Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('http://p5.qhimg.com/bdr/__85/t016608f207bd942436.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By 1y0ng</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">I hope you are surrounded, and your path should be full of flowers and people.<p><a target="_blank" href="https://hexo.io/"><img src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&logo=hexo" title="博客框架为Hexo"></a>&nbsp;<a target="_blank" href="https://butterfly.js.org/"><img src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&logo=bitdefender" title="主题采用butterfly"></a>&nbsp;<a target="_blank" href="https://github.com/"><img src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&logo=GitHub" title="本站项目由Gtihub托管"></a>&nbsp;<a target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&logo=Claris" title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可"></a></p></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>window.typedJSFn = {
-  init: (str) => {
-    window.typed = new Typed('#subtitle', Object.assign({
-      strings: str,
-      startDelay: 300,
-      typeSpeed: 150,
-      loop: true,
-      backSpeed: 50,
-    }, null))
-  },
-  run: (subtitleType) => {
-    if (true) {
-      if (typeof Typed === 'function') {
-        subtitleType()
-      } else {
-        getScript('https://cdn.jsdelivr.net/npm/typed.js/lib/typed.min.js').then(subtitleType)
-      }
-    } else {
-      subtitleType()
+              
+                <span>PythonFlask内存马的另辟途径</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="linux提权之dirtycow">
+        <div class="time-m-d">2023-12-23</div>
+        <div class="title">
+          <a href="/post/linux%E6%8F%90%E6%9D%83%E4%B9%8Bdirtycow/">
+            
+              
+                <span>linux提权之dirtycow</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="msi木马创建">
+        <div class="time-m-d">2023-08-22</div>
+        <div class="title">
+          <a href="/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/">
+            
+              
+                <span>msi木马创建</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="一个简单的准接入">
+        <div class="time-m-d">2023-07-02</div>
+        <div class="title">
+          <a href="/post/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%87%86%E6%8E%A5%E5%85%A5/">
+            
+              
+                <span>一个简单的准接入</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="恶意代码逃逸学习">
+        <div class="time-m-d">2023-06-15</div>
+        <div class="title">
+          <a href="/post/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E9%80%83%E9%80%B8%E5%AD%A6%E4%B9%A0/">
+            
+              
+                <span>恶意代码逃逸学习</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="agent内存马学习">
+        <div class="time-m-d">2023-06-06</div>
+        <div class="title">
+          <a href="/post/agent%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/">
+            
+              
+                <span>agent内存马学习</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="邮箱钓鱼学习">
+        <div class="time-m-d">2023-06-04</div>
+        <div class="title">
+          <a href="/post/%E9%82%AE%E7%AE%B1%E9%92%93%E9%B1%BC%E5%AD%A6%E4%B9%A0/">
+            
+              
+                <span>邮箱钓鱼学习</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="初识JAVA内存马">
+        <div class="time-m-d">2023-05-02</div>
+        <div class="title">
+          <a href="/post/%E5%88%9D%E8%AF%86JAVA%E5%86%85%E5%AD%98%E9%A9%AC/">
+            
+              
+                <span>初识JAVA内存马</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="暗月ack靶场学习记录">
+        <div class="time-m-d">2023-04-30</div>
+        <div class="title">
+          <a href="/post/%E6%9A%97%E6%9C%88ack%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
+            
+              
+                <span>暗月ack靶场学习记录</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="内网渗透之ms14_068和黄金、白银票据">
+        <div class="time-m-d">2023-04-14</div>
+        <div class="title">
+          <a href="/post/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%B9%8Bms14-068%E5%92%8C%E9%BB%84%E9%87%91%E3%80%81%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE/">
+            
+              
+                <span>内网渗透之ms14_068和黄金、白银票据</span>
+              
+            
+          </a>
+        </div>
+      </div>
+    
+  </div>
+  <nav class="post-navigation">
+    
+    <span class="page-num">1 / 3</span>
+    
+      <a href="/page/2/"><i class="iconfont icon-angleright"></i></a>
+    
+  </nav>
+</div>
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
     }
-  }
-}
-</script><script>function subtitleType () {
-  if (true) {
-    typedJSFn.init(["我欲乘风向北行，雪落轩辕大如席","我欲借船向东游，绰约仙子迎风立","我欲踏云千万里，庙堂龙吟奈我何","昆仑之巅梦日光，沧海绝境在青山","长风万里燕归来，不见天涯人不回"])
-  } else {
-    document.getElementById("subtitle").innerHTML = '我欲乘风向北行，雪落轩辕大如席'
-  }
-}
-typedJSFn.run(subtitleType)</script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
