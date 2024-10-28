@@ -54,6 +54,7 @@ http://example.com/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/
 http://example.com/tags/%E6%A8%AA%E5%90%91/
 http://example.com/tags/%E9%9D%B6%E5%9C%BA/
 http://example.com/tags/%E7%A4%BE%E5%B7%A5/
+http://example.com/tags/ctf/
 http://example.com/categories/%E6%8A%80%E6%9C%AF/
 http://example.com/categories/linux/
 http://example.com/categories/JAVA/
