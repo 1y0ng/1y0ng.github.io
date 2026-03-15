@@ -369,5 +369,5 @@ if ($data!==false){
 `
       }
     }
-    finshell.textContent=shell
+    finshell.innerText=shell
   }
